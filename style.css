@@ -186,10 +186,10 @@ video::-webkit-media-controls {
     will-change: transform, opacity;
 }
 .feature-image-in {
-    animation: imgIn 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: imgIn 1400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .feature-image-out {
-    animation: imgOut 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: imgOut 1400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes imgIn {
     0%   { transform: translateX(24px) scale(1.06); opacity: 0; }
@@ -198,4 +198,35 @@ video::-webkit-media-controls {
 @keyframes imgOut {
     0%   { transform: translateX(0)    scale(1.0);  opacity: 1; }
     100% { transform: translateX(-24px) scale(1.06); opacity: 0; }
+}
+
+/* Smooth expand/collapse for sub-options */
+.sub-options {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+    overflow: hidden;
+    transition: max-height 1400ms cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 1200ms ease,
+                transform 1400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sub-options.open {
+    max-height: 320px;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-transition {
+    opacity: 0;
+    transform: translateY(28px) scale(0.985);
+    filter: blur(14px);
+    transition: opacity 1800ms cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1800ms cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.page-transition.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
 }
