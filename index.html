@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GWG Portfolio - GWG Studios
+    
+    </title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Config for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#0a0a0a',
+                            dark: '#1a1a1a',
+                            gray: '#808080',
+                            light: '#e5e5e5',
+                            white: '#ffffff',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#111111] text-brand-white overflow-x-hidden">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-2 flex justify-between items-center rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-xl w-[90vw] max-w-6xl transition-all duration-300">
+        <div class="h-10 md:h-12">
+            <img src="0001.gif" alt="GWG Logo" class="h-full object-contain">
+        </div>
+        <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest">
+            <a href="#work" class="hover:text-brand-gray transition-colors">Work</a>
+            <a href="#about" class="hover:text-brand-gray transition-colors">About</a>
+            <a href="#contact" class="hover:text-brand-gray transition-colors">Contact</a>
+        </div>
+        <button class="md:hidden text-white">Menu</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <video id="hero-video" class="hero-video w-full h-full object-cover" autoplay muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg">
+                <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="vignette absolute inset-0 z-0"></div>
+        
+        <div class="relative z-10 text-center pointer-events-none mix-blend-difference">
+            <h1 class="text-6xl md:text-8xl font-extrabold tracking-tighter mb-4">
+                GRAPHIC <br> & 3D DESIGN
+            </h1>
+            <p class="text-xl md:text-2xl font-light text-brand-gray tracking-wide">
+                Crafting Digital Experiences
+            </p>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </header>
+
+    <!-- Highlights Section (Apple-Inspired V2) -->
+    <section id="highlights" class="relative py-24 bg-[#111111] overflow-hidden flex flex-col items-center">
+        <div class="max-w-[1400px] w-full mx-auto px-6 md:px-12 mb-12 flex justify-between items-end">
+            <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight">
+                Get the highlights.
+            </h2>
+            <a href="#" class="text-[#2997ff] text-base hover:underline flex items-center gap-1 mb-2">
+                Watch the film
+                <svg class="w-4 h-4 border border-[#2997ff] rounded-full p-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </a>
+        </div>
+
+        <!-- Slider Container -->
+        <div class="relative w-full overflow-hidden mb-8">
+            <div id="slider-track" class="flex gap-6 px-6 md:px-[calc(50vw-35%)] transition-transform duration-700 ease-out will-change-transform">
+                
+                <!-- Slide 1 -->
+                <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700">
+                    <video class="w-full h-full object-cover" muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg">
+                        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                    </video>
+                    
+                    <!-- Overlay Content -->
+                    <div class="absolute top-10 left-0 w-full text-center z-10">
+                        <p class="text-white text-lg md:text-xl font-semibold drop-shadow-md">Cinematic storytelling that captures attention.</p>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700 opacity-60 scale-95">
+                    <video class="w-full h-full object-cover" muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg">
+                        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
+                    </video>
+                    <div class="absolute top-10 left-0 w-full text-center z-10">
+                        <p class="text-white text-lg md:text-xl font-semibold drop-shadow-md">Advanced 3D rendering for modern brands.</p>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700 opacity-60 scale-95">
+                    <video class="w-full h-full object-cover" muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg">
+                        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+                    </video>
+                    <div class="absolute top-10 left-0 w-full text-center z-10">
+                        <p class="text-white text-lg md:text-xl font-semibold drop-shadow-md">Fluid motion graphics that inspire.</p>
+                    </div>
+                </div>
+
+                 <!-- Slide 4 -->
+                 <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700 opacity-60 scale-95">
+                    <video class="w-full h-full object-cover" muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg">
+                        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
+                    </video>
+                    <div class="absolute top-10 left-0 w-full text-center z-10">
+                        <p class="text-white text-lg md:text-xl font-semibold drop-shadow-md">High-fidelity visual effects.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Static Controls (Outside Slider) -->
+        <div id="main-controls" class="flex items-center gap-4 z-20">
+            <!-- Pagination Pill -->
+            <div class="control-glass rounded-full px-6 py-3 flex items-center gap-4 h-12">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <!-- Play/Pause Button -->
+            <button id="main-play-btn" class="control-glass h-12 w-12 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-colors">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- Closer Look Section -->
+    <section id="closer" class="relative py-24 px-6 bg-[#111111]">
+        <div class="max-w-[1200px] mx-auto">
+            <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight mb-8">
+                Take a closer look.
+            </h2>
+
+            <div class="rounded-[28px] bg-[#0b0b0b]/90 border border-white/10 shadow-2xl p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Left: Feature Pills + Bubble -->
+                    <div class="relative">
+                        <div class="flex flex-col gap-3" id="feature-list">
+                            <button class="feature-pill active flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 border border-white/10 text-left text-sm hover:bg-white/15 transition"
+                                    data-title="Colours"
+                                    data-desc="Explore refined finishes with durable coatings engineered for everyday life."
+                                    data-img="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1200&q=80">
+                                <span class="inline-block w-2 h-2 rounded-full bg-orange-400"></span>
+                                <span>Colours</span>
+                            </button>
+                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
+                                    data-title="Aluminium unibody"
+                                    data-desc="CNC‑milled aluminium enclosure provides exceptional rigidity with lightweight design."
+                                    data-img="https://images.unsplash.com/photo-1563298723-dcfebaa392e3?auto=format&fit=crop&w=1200&q=80">
+                                <span class="inline-block w-2 h-2 rounded-full bg-[#9CA3AF]"></span>
+                                <span>Aluminium unibody</span>
+                            </button>
+                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
+                                    data-title="Vapour chamber"
+                                    data-desc="Deionised water sealed inside moves heat away from the chip, allowing higher sustained performance."
+                                    data-img="https://images.unsplash.com/photo-1581091012184-7c54cf7b1f5c?auto=format&fit=crop&w=1200&q=80">
+                                <span class="inline-block w-2 h-2 rounded-full bg-[#9CA3AF]"></span>
+                                <span>Vapour chamber</span>
+                            </button>
+                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
+                                    data-title="Ceramic Shield"
+                                    data-desc="Tougher than any smartphone glass, engineered for improved drop performance."
+                                    data-img="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1200&q=80">
+                                <span class="inline-block w-2 h-2 rounded-full bg-[#9CA3AF]"></span>
+                                <span>Ceramic Shield</span>
+                            </button>
+                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
+                                    data-title="Pro display"
+                                    data-desc="An immersive, colour‑accurate panel with extreme brightness and deep contrast."
+                                    data-img="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80">
+                                <span class="inline-block w-2 h-2 rounded-full bg-[#9CA3AF]"></span>
+                                <span>Immersive pro display</span>
+                            </button>
+                        </div>
+
+                        <!-- Description Bubble -->
+                        <div id="feature-bubble" class="hidden md:block absolute left-[170px] top-0 max-w-sm bg-white/10 border border-white/15 rounded-2xl p-4 text-sm text-[#e5e5e5] shadow-xl backdrop-blur-xl transition-all duration-300"></div>
+                    </div>
+
+                    <!-- Right: Image -->
+                    <div>
+                        <div class="relative rounded-2xl overflow-hidden bg-black border border-white/10 shadow-2xl aspect-[16/10]">
+                            <img id="feature-image" src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1200&q=80" alt="Feature visual" class="feature-image w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Work Section -->
+    <section id="work" class="py-20 px-8 bg-[#111111]">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold mb-16 tracking-tighter border-b border-brand-dark pb-4">SELECTED WORK</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Project 1 -->
+                <div class="group relative overflow-hidden cursor-pointer">
+                    <div class="aspect-w-16 aspect-h-9 bg-brand-dark transition-transform duration-500 group-hover:scale-105">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" alt="Project 1" class="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <div>
+                            <h3 class="text-2xl font-bold">Abstract Forms</h3>
+                            <p class="text-brand-gray text-sm">3D Animation / Art Direction</p>
+                        </div>
+                        <span class="text-brand-gray group-hover:text-white transition-colors">01</span>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="group relative overflow-hidden cursor-pointer mt-0 md:mt-24">
+                    <div class="aspect-w-16 aspect-h-9 bg-brand-dark transition-transform duration-500 group-hover:scale-105">
+                        <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" alt="Project 2" class="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <div>
+                            <h3 class="text-2xl font-bold">Neon Cyber</h3>
+                            <p class="text-brand-gray text-sm">Graphic Design / Branding</p>
+                        </div>
+                        <span class="text-brand-gray group-hover:text-white transition-colors">02</span>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="group relative overflow-hidden cursor-pointer">
+                    <div class="aspect-w-16 aspect-h-9 bg-brand-dark transition-transform duration-500 group-hover:scale-105">
+                        <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" alt="Project 3" class="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <div>
+                            <h3 class="text-2xl font-bold">Glass Morphism</h3>
+                            <p class="text-brand-gray text-sm">UI/UX / 3D</p>
+                        </div>
+                        <span class="text-brand-gray group-hover:text-white transition-colors">03</span>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="group relative overflow-hidden cursor-pointer mt-0 md:mt-24">
+                    <div class="aspect-w-16 aspect-h-9 bg-brand-dark transition-transform duration-500 group-hover:scale-105">
+                        <img src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" alt="Project 4" class="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <div>
+                            <h3 class="text-2xl font-bold">Fluid Motion</h3>
+                            <p class="text-brand-gray text-sm">Motion Graphics</p>
+                        </div>
+                        <span class="text-brand-gray group-hover:text-white transition-colors">04</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-8 bg-brand-dark text-brand-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-sm font-bold uppercase tracking-widest text-brand-gray mb-8">About the Studio</h2>
+            <p class="text-3xl md:text-5xl font-light leading-tight mb-12">
+                We are a creative studio specializing in high-end graphic design and immersive 3D animations. We believe in minimalism and the power of visual storytelling.
+            </p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h4 class="font-bold mb-2">Design</h4>
+                    <ul class="text-brand-gray text-sm space-y-1">
+                        <li>Branding</li>
+                        <li>UI/UX</li>
+                        <li>Print</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">3D</h4>
+                    <ul class="text-brand-gray text-sm space-y-1">
+                        <li>Modeling</li>
+                        <li>Animation</li>
+                        <li>Rendering</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">Motion</h4>
+                    <ul class="text-brand-gray text-sm space-y-1">
+                        <li>2D Animation</li>
+                        <li>VFX</li>
+                        <li>Editing</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">Tech</h4>
+                    <ul class="text-brand-gray text-sm space-y-1">
+                        <li>Web Development</li>
+                        <li>Interactive 3D</li>
+                        <li>Creative Coding</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-8 bg-[#111111]">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-6xl md:text-8xl font-bold mb-8 hover:text-brand-gray transition-colors cursor-pointer">
+                <a href="mailto:hello@gwg.com">LET'S TALK</a>
+            </h2>
+            <div class="flex justify-center space-x-8 text-brand-gray uppercase text-sm tracking-widest">
+                <a href="#" class="hover:text-white transition-colors">Instagram</a>
+                <a href="#" class="hover:text-white transition-colors">Behance</a>
+                <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+            </div>
+            <p class="mt-12 text-brand-gray text-xs">
+                &copy; 2024 GWG Studio. All rights reserved.
+            </p>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

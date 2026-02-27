@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #111111; /* Darker Gray */
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #111111; 
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #333; 
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+/* Selection */
+::selection {
+    background: #ffffff;
+    color: #000000;
+}
+
+/* 3D Canvas */
+#canvas-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    opacity: 0.6; /* Slight transparency to blend with background */
+}
+
+/* Utility */
+.mix-blend-difference {
+    mix-blend-mode: difference;
+}
+
+.tracking-tighter {
+    letter-spacing: -0.05em;
+}
+
+.tracking-widest {
+    letter-spacing: 0.2em;
+}
+
+/* Image Hover Effect */
+.img-hover-zoom {
+    transition: transform 0.5s ease;
+}
+
+.img-hover-zoom:hover {
+    transform: scale(1.05);
+}
+
+/* Highlights Section (Apple-Style) */
+
+/* Override inline transition for the track to ensure it matches the cards */
+#slider-track {
+    transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) !important; /* Very slow, cinematic ease */
+}
+
+.video-card {
+    transition: all 1.6s cubic-bezier(0.16, 1, 0.3, 1); /* Matches track speed */
+    transform-origin: center center;
+    border-radius: 32px;
+    overflow: hidden;
+    /* Force clipping for rounded corners during transform */
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+    mask-image: radial-gradient(white, black);
+    transform: translateZ(0); /* Hardware acceleration fix */
+}
+
+.video-card video {
+    border-radius: 32px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.video-card.active {
+    opacity: 1;
+    transform: scale(1); /* No pop */
+    z-index: 10;
+    /* Reduced shadow for flatter look */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5); 
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Inactive slides styling */
+.video-card.opacity-60 {
+    opacity: 0.3;
+    transform: scale(1); /* No shrink */
+    filter: blur(2px) grayscale(50%);
+}
+
+/* Control Bar Styling */
+.control-glass {
+    background: rgba(29, 29, 31, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background-color: #808080;
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); /* Slow, smooth elastic transition */
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: #ffffff;
+    width: 40px; /* Wider pill shape */
+}
+
+.dot:hover:not(.active) {
+    background-color: #b3b3b3;
+}
+
+/* Hide default video controls */
+video::-webkit-media-controls {
+    display: none !important;
+}
+
+/* Ensure controls are clickable */
+#main-controls {
+    pointer-events: auto;
+}
+
+.cinematic-bg {
+    width: 100%;
+    height: 100%;
+    background:
+      radial-gradient(1200px circle at var(--x, 50%) var(--y, 40%), rgba(255,255,255,0.06), transparent 60%),
+      linear-gradient(180deg, #0b0b0b 0%, #111111 60%, #0b0b0b 100%);
+    filter: saturate(1.05) contrast(1.05);
+    animation: glowMove 12s ease-in-out infinite alternate;
+}
+
+@keyframes glowMove {
+    0% { --x: 40%; --y: 35%; }
+    50% { --x: 60%; --y: 45%; }
+    100% { --x: 50%; --y: 40%; }
+}
+
+.vignette {
+    background: radial-gradient(1200px circle at 50% 40%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.35) 100%);
+    pointer-events: none;
+}
+
+.hero-video {
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    filter: brightness(0.6) saturate(0.8) contrast(1.1);
+    will-change: opacity;
+}
+
+.hero-video.ready {
+    opacity: 1;
+}
+
+/* Slide + Zoom image transitions (Closer Look) */
+.feature-image {
+    will-change: transform, opacity;
+}
+.feature-image-in {
+    animation: imgIn 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.feature-image-out {
+    animation: imgOut 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes imgIn {
+    0%   { transform: translateX(24px) scale(1.06); opacity: 0; }
+    100% { transform: translateX(0)    scale(1.0);  opacity: 1; }
+}
+@keyframes imgOut {
+    0%   { transform: translateX(0)    scale(1.0);  opacity: 1; }
+    100% { transform: translateX(-24px) scale(1.06); opacity: 0; }
+}
