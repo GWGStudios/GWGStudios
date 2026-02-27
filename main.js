@@ -190,19 +190,36 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.classList.add('opacity-0');
             bubble.classList.remove('opacity-100');
         }
+        function updateFrameForImage(imgEl) {
+            if (!imgEl || !imgEl.naturalWidth || !imgEl.naturalHeight) return;
+            const parent = imgContainer.parentElement;
+            const maxWidth = parent ? parent.clientWidth : imgContainer.clientWidth;
+            const maxHeight = Math.round(window.innerHeight * 0.6);
+            const scale = Math.min(maxWidth / imgEl.naturalWidth, maxHeight / imgEl.naturalHeight, 1);
+            const targetW = Math.max(1, Math.round(imgEl.naturalWidth * scale));
+            const targetH = Math.max(1, Math.round(imgEl.naturalHeight * scale));
+            imgContainer.style.width = `${targetW}px`;
+            imgContainer.style.height = `${targetH}px`;
+        }
         function swapImage(img) {
             if (!img || animLock) return;
             animLock = true;
             const nextImg = document.createElement('img');
             nextImg.src = img;
             nextImg.alt = 'Feature visual';
-            nextImg.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-cover';
+            nextImg.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-contain';
+            nextImg.addEventListener('load', () => updateFrameForImage(nextImg), { once: true });
+            if (nextImg.complete) {
+                updateFrameForImage(nextImg);
+            }
+            imgContainer.classList.add('is-swapping');
             imgContainer.appendChild(nextImg);
             image.classList.add('feature-image-out');
             const end = () => {
                 image.classList.remove('feature-image-out');
                 image.src = img;
                 imgContainer.removeChild(nextImg);
+                imgContainer.classList.remove('is-swapping');
                 animLock = false;
             };
             setTimeout(end, 1400);
@@ -262,6 +279,12 @@ document.addEventListener("DOMContentLoaded", () => {
             hideBubble();
             openPanel(null);
         }
+        if (image.complete) {
+            updateFrameForImage(image);
+        } else {
+            image.addEventListener('load', () => updateFrameForImage(image), { once: true });
+        }
+        window.addEventListener('resize', () => updateFrameForImage(image));
         pills.forEach(p => {
             p.addEventListener('click', () => activatePill(p));
             const hasPanel = p.getAttribute('data-expand') === 'true';

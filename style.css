@@ -186,6 +186,7 @@ video::-webkit-media-controls {
 .feature-image {
     will-change: opacity, filter;
     border-radius: 18px;
+    display: block;
 }
 .feature-image-in {
     animation: imgIn 1400ms ease forwards;
@@ -213,6 +214,12 @@ video::-webkit-media-controls {
 
 .feature-frame {
     isolation: isolate;
+    transition: transform 600ms ease, opacity 600ms ease, width 600ms ease, height 600ms ease;
+}
+
+.feature-frame.is-swapping {
+    transform: scale(0.985);
+    opacity: 0.92;
 }
 
 /* Smooth expand/collapse for sub-options */
