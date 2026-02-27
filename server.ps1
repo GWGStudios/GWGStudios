@@ -1,8 +1,8 @@
 $listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add("http://localhost:8000/")
+$listener.Prefixes.Add("http://localhost:8002/")
 $listener.Start()
 
-Write-Host "Server started at http://localhost:8000/"
+Write-Host "Server started at http://localhost:8002/"
 
 $mimeTypes = @{
     ".html" = "text/html"

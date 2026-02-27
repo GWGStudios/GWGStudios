@@ -167,39 +167,42 @@
                     <div class="relative">
                         <div class="flex flex-col gap-3" id="feature-list">
                             <!-- Expandable: Graphic Design -->
-                            <button class="feature-pill active flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 border border-white/10 text-left text-sm hover:bg-white/15 transition"
+                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/15 transition"
                                     data-expand="true"
-                                    data-title="Graphic Design"
-                                    data-desc="Explore curated graphic design styles with live previews."
-                                    data-img="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1200&q=80">
+                                    data-title="Graphic Designing"
+                                    data-desc="Minimal 2D design showcase with clean, slow reveals."
+                                    data-img="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80">
                                 <span class="inline-block w-2 h-2 rounded-full bg-orange-400"></span>
-                                <span>Graphic Design</span>
+                                <span>Graphic Designing</span>
                             </button>
-                            <!-- Sub-options for Graphic Design -->
-                            <div class="sub-options grid grid-cols-2 gap-3 pl-8">
-                                <button class="sub-option group relative rounded-xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition"
-                                        data-desc="Minimal layout with bold typography."
+                            <div class="sub-options work-grid grid grid-cols-2 gap-2 pl-6 sm:gap-3 sm:pl-8">
+                                <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
+                                        data-title="Poster Series"
+                                        data-desc="Bold 2D posters exploring geometry and rhythm."
+                                        data-img="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80">
+                                    <img src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=600&q=70" alt="Poster Series" class="w-full h-24 sm:h-28 object-cover opacity-90">
+                                    <span class="work-card-title">Poster Series</span>
+                                </button>
+                                <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
+                                        data-title="Brand System"
+                                        data-desc="Minimal identity system with type-led layouts."
                                         data-img="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80">
-                                    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=70" alt="Minimal" class="w-full h-24 object-cover opacity-90 group-hover:opacity-100">
-                                    <span class="absolute bottom-1 left-1 text-[11px] px-2 py-0.5 rounded-full bg-black/50">Minimal</span>
+                                    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=70" alt="Brand System" class="w-full h-24 sm:h-28 object-cover opacity-90">
+                                    <span class="work-card-title">Brand System</span>
                                 </button>
-                                <button class="sub-option group relative rounded-xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition"
-                                        data-desc="Vibrant gradients and striking shapes."
-                                        data-img="https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=1200&q=80">
-                                    <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=600&q=70" alt="Vibrant" class="w-full h-24 object-cover opacity-90 group-hover:opacity-100">
-                                    <span class="absolute bottom-1 left-1 text-[11px] px-2 py-0.5 rounded-full bg-black/50">Vibrant</span>
-                                </button>
-                                <button class="sub-option group relative rounded-xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition"
-                                        data-desc="Editorial style with elegant serif typesetting."
+                                <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
+                                        data-title="Editorial Spread"
+                                        data-desc="Magazine-style composition and typographic flow."
                                         data-img="https://images.unsplash.com/photo-1520975593861-84f59ec2e3a1?auto=format&fit=crop&w=1200&q=80">
-                                    <img src="https://images.unsplash.com/photo-1520975593861-84f59ec2e3a1?auto=format&fit=crop&w=600&q=70" alt="Editorial" class="w-full h-24 object-cover opacity-90 group-hover:opacity-100">
-                                    <span class="absolute bottom-1 left-1 text-[11px] px-2 py-0.5 rounded-full bg-black/50">Editorial</span>
+                                    <img src="https://images.unsplash.com/photo-1520975593861-84f59ec2e3a1?auto=format&fit=crop&w=600&q=70" alt="Editorial Spread" class="w-full h-24 sm:h-28 object-cover opacity-90">
+                                    <span class="work-card-title">Editorial Spread</span>
                                 </button>
-                                <button class="sub-option group relative rounded-xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition"
-                                        data-desc="Geometric posters with high contrast."
+                                <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
+                                        data-title="Pattern Study"
+                                        data-desc="Experimental pattern system for 2D surfaces."
                                         data-img="https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=1200&q=80">
-                                    <img src="https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=600&q=70" alt="Geometric" class="w-full h-24 object-cover opacity-90 group-hover:opacity-100">
-                                    <span class="absolute bottom-1 left-1 text-[11px] px-2 py-0.5 rounded-full bg-black/50">Geometric</span>
+                                    <img src="https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=600&q=70" alt="Pattern Study" class="w-full h-24 sm:h-28 object-cover opacity-90">
+                                    <span class="work-card-title">Pattern Study</span>
                                 </button>
                             </div>
                             <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"

@@ -1,4 +1,5 @@
 
+
 if (typeof THREE !== 'undefined') {
     initThreeJS();
 }
@@ -179,45 +180,99 @@ document.addEventListener("DOMContentLoaded", () => {
     if (pills.length && bubble && image && list) {
         const imgContainer = image.parentElement;
         let animLock = false;
-        function activatePill(pill) {
+        function setBubble(text, target) {
+            bubble.textContent = text;
+            bubble.style.top = (target.offsetTop - 6) + 'px';
+            bubble.classList.remove('opacity-0');
+            bubble.classList.add('opacity-100');
+        }
+        function swapImage(img) {
+            if (!img || animLock) return;
+            animLock = true;
+            const nextImg = document.createElement('img');
+            nextImg.src = img;
+            nextImg.alt = 'Feature visual';
+            nextImg.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-cover';
+            imgContainer.appendChild(nextImg);
+            image.classList.add('feature-image-out');
+            const end = () => {
+                image.classList.remove('feature-image-out');
+                image.src = img;
+                imgContainer.removeChild(nextImg);
+                animLock = false;
+            };
+            setTimeout(end, 620);
+        }
+        function openPanel(panel) {
+            const current = list.querySelector('.sub-options.open');
+            if (current && current !== panel) {
+                current.classList.remove('open');
+                if (panel) {
+                    setTimeout(() => {
+                        if (!panel.classList.contains('open')) {
+                            panel.classList.add('open');
+                            const cards = panel.querySelectorAll('.work-card');
+                            cards.forEach((card, index) => {
+                                card.style.setProperty('--delay', `${index * 140}ms`);
+                            });
+                        }
+                    }, 220);
+                }
+                return;
+            }
+            if (!panel) {
+                if (current) current.classList.remove('open');
+                return;
+            }
+            panel.classList.add('open');
+            const cards = panel.querySelectorAll('.work-card');
+            cards.forEach((card, index) => {
+                card.style.setProperty('--delay', `${index * 140}ms`);
+            });
+        }
+        function activatePill(pill, options = {}) {
             if (animLock) return;
+            const wasActive = pill.classList.contains('active');
             pills.forEach(p => p.classList.remove('active', 'bg-white/10'));
             pill.classList.add('active', 'bg-white/10');
             
             const desc = pill.getAttribute('data-desc') || '';
             const img = pill.getAttribute('data-img') || '';
-            bubble.textContent = desc;
-            bubble.style.top = (pill.offsetTop - 6) + 'px';
-            bubble.classList.remove('opacity-0');
-            bubble.classList.add('opacity-100');
-            if (img) {
-                animLock = true;
-                // Create next image element
-                const nextImg = document.createElement('img');
-                nextImg.src = img;
-                nextImg.alt = 'Feature visual';
-                nextImg.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-cover';
-                imgContainer.appendChild(nextImg);
-
-                // Animate current out
-                image.classList.add('feature-image-out');
-                
-                const end = () => {
-                    image.classList.remove('feature-image-out');
-                    // Swap src to the new one and remove temp
-                    image.src = img;
-                    imgContainer.removeChild(nextImg);
-                    animLock = false;
-                };
-                // End after the duration
-                setTimeout(end, 620);
+            setBubble(desc, pill);
+            swapImage(img);
+            list.querySelectorAll('.sub-option.active').forEach(el => el.classList.remove('active'));
+            const panel = pill.getAttribute('data-expand') === 'true' ? pill.nextElementSibling : null;
+            const suppressOpen = options.suppressOpen === true;
+            if (panel && panel.classList.contains('sub-options')) {
+                if (suppressOpen) {
+                    openPanel(null);
+                    return;
+                }
+                if (wasActive && panel.classList.contains('open')) {
+                    openPanel(null);
+                    return;
+                }
+                openPanel(panel);
+                return;
             }
+            openPanel(null);
         }
         pills.forEach(p => {
             p.addEventListener('click', () => activatePill(p));
         });
-        // Initialize first
-        activatePill(pills[0]);
+        const subOptions = list.querySelectorAll('.sub-option');
+        subOptions.forEach(option => {
+            option.addEventListener('click', (event) => {
+                event.stopPropagation();
+                list.querySelectorAll('.sub-option.active').forEach(el => el.classList.remove('active'));
+                option.classList.add('active');
+                const desc = option.getAttribute('data-desc') || '';
+                const img = option.getAttribute('data-img') || '';
+                setBubble(desc, option);
+                swapImage(img);
+            });
+        });
+        activatePill(pills[0], { suppressOpen: true });
     }
 
     gsap.from("h1", {

@@ -205,16 +205,67 @@ video::-webkit-media-controls {
 .sub-options {
     max-height: 0;
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-6px) scaleY(0.98);
+    transform-origin: 0 0;
     overflow: hidden;
-    transition: max-height 1400ms cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 1200ms ease,
-                transform 1400ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: max-height 2400ms cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 2000ms ease,
+                transform 2400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .sub-options.open {
-    max-height: 320px;
+    max-height: 520px;
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scaleY(1);
+}
+
+.work-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    transform: translateY(16px) scale(0.97);
+    opacity: 0;
+    filter: blur(8px);
+    will-change: transform, opacity, filter;
+    transition: transform 1400ms cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 1200ms ease,
+                filter 1200ms ease;
+}
+
+.work-card img {
+    transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1), filter 900ms ease;
+}
+
+.work-card:hover img {
+    transform: scale(1.04);
+    filter: saturate(1.1);
+}
+
+.work-card-title {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.45);
+    color: #eaeaea;
+    backdrop-filter: blur(6px);
+}
+
+.sub-options.open .work-card {
+    animation: workReveal 2000ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--delay, 0ms);
+}
+
+.work-card.active {
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+@keyframes workReveal {
+    0% { opacity: 0; transform: translateY(18px) scale(0.97); filter: blur(10px); }
+    70% { opacity: 0.85; transform: translateY(4px) scale(0.995); filter: blur(2px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
 .page-transition {
