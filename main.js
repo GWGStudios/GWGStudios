@@ -186,6 +186,10 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.classList.remove('opacity-0');
             bubble.classList.add('opacity-100');
         }
+        function hideBubble() {
+            bubble.classList.add('opacity-0');
+            bubble.classList.remove('opacity-100');
+        }
         function swapImage(img) {
             if (!img || animLock) return;
             animLock = true;
@@ -201,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 imgContainer.removeChild(nextImg);
                 animLock = false;
             };
-            setTimeout(end, 620);
+            setTimeout(end, 1400);
         }
         function openPanel(panel) {
             const current = list.querySelector('.sub-options.open');
@@ -222,6 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             if (!panel) {
                 if (current) current.classList.remove('open');
+                hideBubble();
                 return;
             }
             panel.classList.add('open');
@@ -238,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const desc = pill.getAttribute('data-desc') || '';
             const img = pill.getAttribute('data-img') || '';
-            setBubble(desc, pill);
             swapImage(img);
             list.querySelectorAll('.sub-option.active').forEach(el => el.classList.remove('active'));
             const panel = pill.getAttribute('data-expand') === 'true' ? pill.nextElementSibling : null;
@@ -255,10 +259,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 openPanel(panel);
                 return;
             }
+            hideBubble();
             openPanel(null);
         }
         pills.forEach(p => {
             p.addEventListener('click', () => activatePill(p));
+            const hasPanel = p.getAttribute('data-expand') === 'true';
+            if (!hasPanel) {
+                p.addEventListener('mouseenter', () => {
+                    const desc = p.getAttribute('data-desc') || '';
+                    setBubble(desc, p);
+                });
+                p.addEventListener('mouseleave', () => {
+                    hideBubble();
+                });
+            }
         });
         const subOptions = list.querySelectorAll('.sub-option');
         subOptions.forEach(option => {
@@ -272,6 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 swapImage(img);
             });
         });
+        hideBubble();
         activatePill(pills[0], { suppressOpen: true });
     }
 
