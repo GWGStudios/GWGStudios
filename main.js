@@ -1,3 +1,4 @@
+
 if (typeof THREE !== 'undefined') {
     initThreeJS();
 }
@@ -157,6 +158,18 @@ document.addEventListener("DOMContentLoaded", () => {
         heroVideo.addEventListener('loadeddata', onReady, { once: true });
         heroVideo.play().then(onReady).catch(() => {});
     }
+
+    const revealTargets = document.querySelectorAll('header, section');
+    revealTargets.forEach(el => el.classList.add('page-transition'));
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    revealTargets.forEach(el => revealObserver.observe(el));
 
     // Closer Look interactions
     const pills = document.querySelectorAll('.feature-pill');
