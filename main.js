@@ -345,11 +345,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const playBtn = document.getElementById('main-play-btn');
         const dots = mainControls.querySelectorAll('.dot');
         if (pill && playBtn && dots.length) {
-            // Start state: hidden, pushed down
-            // We do NOT scale them down to 0, to avoid visibility glitches.
-            // Just push them down and fade them out.
+            // Start state: hidden, pushed down, and tiny
+            // We use scale: 0.1 instead of 0 to avoid layout/visibility glitches, but it will look like it emerges from nothing.
             gsap.set(mainControls, { opacity: 0, y: 100 });
-            gsap.set([playBtn, pill], { opacity: 0, y: 50 });
+            gsap.set([playBtn, pill], { opacity: 0, scale: 0.2, y: 50 });
             gsap.set(dots, { opacity: 0 });
             
             const controlsObserver = new IntersectionObserver((entries) => {
@@ -359,22 +358,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     const tl = gsap.timeline();
                     
-                    // 1. Slide the whole container up from bottom
+                    // 1. Move the container up first
                     tl.to(mainControls, {
                         opacity: 1,
                         y: 0,
                         duration: 0.8,
                         ease: "power3.out"
                     })
-                    // 2. Animate the buttons emerging (sliding up + fading in)
-                    // We removed the scale animation to be safe and clean.
+                    // 2. Grow the buttons from small to full size as they slide up
                     .to([playBtn, pill], {
                         opacity: 1,
                         y: 0,
-                        duration: 0.6,
+                        scale: 1,
+                        duration: 0.8,
                         ease: "back.out(1.5)",
-                        stagger: 0.1
-                    }, "-=0.6")
+                        stagger: 0.15
+                    }, "-=0.7") // Overlap significantly so they grow AS the container rises
                     // 3. Dots fade in
                     .to(dots, {
                         opacity: 1,
