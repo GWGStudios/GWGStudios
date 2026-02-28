@@ -1,5 +1,6 @@
 
 
+
 if (typeof THREE !== 'undefined') {
     initThreeJS();
 }
@@ -344,38 +345,42 @@ document.addEventListener("DOMContentLoaded", () => {
         const playBtn = document.getElementById('main-play-btn');
         const dots = mainControls.querySelectorAll('.dot');
         if (pill && playBtn && dots.length) {
-            gsap.set(mainControls, { opacity: 0, y: 40 });
-            gsap.set(playBtn, { opacity: 0, scale: 0.3 });
-            gsap.set(pill, { opacity: 0, scaleX: 0.25, scaleY: 0.25 });
-            gsap.set(dots, { opacity: 0, y: 10 });
+            // Start state: hidden, pushed down
+            // We do NOT scale them down to 0, to avoid visibility glitches.
+            // Just push them down and fade them out.
+            gsap.set(mainControls, { opacity: 0, y: 100 });
+            gsap.set([playBtn, pill], { opacity: 0, y: 50 });
+            gsap.set(dots, { opacity: 0 });
+            
             const controlsObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (!entry.isIntersecting) return;
                     controlsObserver.unobserve(mainControls);
+                    
                     const tl = gsap.timeline();
+                    
+                    // 1. Slide the whole container up from bottom
                     tl.to(mainControls, {
                         opacity: 1,
                         y: 0,
-                        duration: 0.5,
+                        duration: 0.8,
                         ease: "power3.out"
-                    }).to(playBtn, {
-                        opacity: 1,
-                        scale: 1,
-                        duration: 0.5,
-                        ease: "back.out(1.8)"
-                    }, "-=0.1").to(pill, {
-                        opacity: 1,
-                        scaleX: 1,
-                        scaleY: 1,
-                        duration: 0.6,
-                        ease: "power3.out"
-                    }, "-=0.1").to(dots, {
+                    })
+                    // 2. Animate the buttons emerging (sliding up + fading in)
+                    // We removed the scale animation to be safe and clean.
+                    .to([playBtn, pill], {
                         opacity: 1,
                         y: 0,
+                        duration: 0.6,
+                        ease: "back.out(1.5)",
+                        stagger: 0.1
+                    }, "-=0.6")
+                    // 3. Dots fade in
+                    .to(dots, {
+                        opacity: 1,
                         duration: 0.4,
-                        stagger: 0.08,
-                        ease: "power2.out"
-                    }, "-=0.2");
+                        stagger: 0.08
+                    }, "-=0.4");
                 });
             }, { threshold: 0.4 });
             controlsObserver.observe(mainControls);
