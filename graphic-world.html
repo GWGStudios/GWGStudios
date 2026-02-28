@@ -30,16 +30,23 @@
 </head>
 <body class="bg-[#111111] text-brand-white min-h-screen">
   <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-5 py-1 flex justify-between items-center rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-xl w-[92vw] sm:w-[86vw] md:w-[72vw] lg:w-[64vw] max-w-5xl transition-all duration-300">
-    <div class="h-7 md:h-10">
+    <div class="h-8 md:h-10">
       <img src="0001.gif" alt="GWG Logo" class="h-full object-contain">
     </div>
-    <div id="main-nav-links" class="flex relative items-center space-x-4 md:space-x-8 text-[11px] sm:text-xs md:text-sm uppercase tracking-widest whitespace-nowrap">
+    <div id="main-nav-links" class="hidden md:flex relative space-x-8 text-sm uppercase tracking-widest">
       <a href="index.html" class="nav-link hover:text-brand-gray transition-colors">Home</a>
       <a href="graphic-world.html" class="nav-link hover:text-brand-gray transition-colors nav-link-active">Graphic World</a>
       <a href="3d-world.html" class="nav-link hover:text-brand-gray transition-colors">3D World</a>
     </div>
-    <button class="hidden text-white">Menu</button>
+    <button class="md:hidden text-white">Menu</button>
   </nav>
+  <div id="mobile-nav-panel" class="mobile-menu-panel" style="top: 80px;">
+    <div class="mobile-menu-list md:hidden">
+      <a href="index.html" class="hover:text-white transition">Home</a>
+      <a href="graphic-world.html" class="hover:text-white transition">Graphic World</a>
+      <a href="3d-world.html" class="hover:text-white transition">3D World</a>
+    </div>
+  </div>
   <main class="min-h-screen flex items-center justify-center p-8">
     <div class="text-center">
       <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-4">Graphic World</h1>
