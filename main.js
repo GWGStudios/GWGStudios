@@ -176,10 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Closer Look interactions
     const pills = document.querySelectorAll('.feature-pill');
     const bubble = document.getElementById('feature-bubble');
-    const image = document.getElementById('feature-image');
+    let baseMedia = document.getElementById('feature-image');
     const list = document.getElementById('feature-list');
-    if (pills.length && bubble && image && list) {
-        const imgContainer = image.parentElement;
+    if (pills.length && bubble && baseMedia && list) {
+        const imgContainer = baseMedia.parentElement;
         let animLock = false;
         function setBubble(text, target) {
             bubble.textContent = text;
@@ -191,35 +191,48 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.classList.add('opacity-0');
             bubble.classList.remove('opacity-100');
         }
-        function updateFrameForImage(imgEl) {
-            if (!imgEl || !imgEl.naturalWidth || !imgEl.naturalHeight) return;
+        function updateFrameForMedia(el) {
+            const w = el.tagName === 'VIDEO' ? el.videoWidth : el.naturalWidth;
+            const h = el.tagName === 'VIDEO' ? el.videoHeight : el.naturalHeight;
+            if (!w || !h) return;
             const parent = imgContainer.parentElement;
             const maxWidth = parent ? parent.clientWidth : imgContainer.clientWidth;
             const maxHeight = Math.round(window.innerHeight * 0.6);
-            const scale = Math.min(maxWidth / imgEl.naturalWidth, maxHeight / imgEl.naturalHeight, 1);
-            const targetW = Math.max(1, Math.round(imgEl.naturalWidth * scale));
-            const targetH = Math.max(1, Math.round(imgEl.naturalHeight * scale));
+            const scale = Math.min(maxWidth / w, maxHeight / h, 1);
+            const targetW = Math.max(1, Math.round(w * scale));
+            const targetH = Math.max(1, Math.round(h * scale));
             imgContainer.style.width = `${targetW}px`;
             imgContainer.style.height = `${targetH}px`;
         }
-        function swapImage(img) {
-            if (!img || animLock) return;
+        function swapMedia(url) {
+            if (!url || animLock) return;
             animLock = true;
-            const nextImg = document.createElement('img');
-            nextImg.src = img;
-            nextImg.alt = 'Feature visual';
-            nextImg.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-contain';
-            nextImg.addEventListener('load', () => updateFrameForImage(nextImg), { once: true });
-            if (nextImg.complete) {
-                updateFrameForImage(nextImg);
+            let nextEl;
+            if (/\.mp4(\?|$)/i.test(url)) {
+                nextEl = document.createElement('video');
+                nextEl.src = url;
+                nextEl.muted = true;
+                nextEl.loop = true;
+                nextEl.autoplay = true;
+                nextEl.playsInline = true;
+                nextEl.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-contain';
+                nextEl.addEventListener('loadeddata', () => updateFrameForMedia(nextEl), { once: true });
+            } else {
+                nextEl = document.createElement('img');
+                nextEl.src = url;
+                nextEl.alt = 'Feature visual';
+                nextEl.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-contain';
+                nextEl.addEventListener('load', () => updateFrameForMedia(nextEl), { once: true });
+                if (nextEl.complete) updateFrameForMedia(nextEl);
             }
             imgContainer.classList.add('is-swapping');
-            imgContainer.appendChild(nextImg);
-            image.classList.add('feature-image-out');
+            imgContainer.appendChild(nextEl);
+            baseMedia.classList.add('feature-image-out');
             const end = () => {
-                image.classList.remove('feature-image-out');
-                image.src = img;
-                imgContainer.removeChild(nextImg);
+                baseMedia.classList.remove('feature-image-out');
+                imgContainer.removeChild(baseMedia);
+                nextEl.id = 'feature-image';
+                baseMedia = nextEl;
                 imgContainer.classList.remove('is-swapping');
                 animLock = false;
             };
@@ -261,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const desc = pill.getAttribute('data-desc') || '';
             const img = pill.getAttribute('data-img') || '';
-            swapImage(img);
+            swapMedia(img);
             list.querySelectorAll('.sub-option.active').forEach(el => el.classList.remove('active'));
             const panel = pill.getAttribute('data-expand') === 'true' ? pill.nextElementSibling : null;
             const suppressOpen = options.suppressOpen === true;
@@ -280,12 +293,14 @@ document.addEventListener("DOMContentLoaded", () => {
             hideBubble();
             openPanel(null);
         }
-        if (image.complete) {
-            updateFrameForImage(image);
+        if (baseMedia.tagName === 'IMG') {
+            if (baseMedia.complete) updateFrameForMedia(baseMedia);
+            else baseMedia.addEventListener('load', () => updateFrameForMedia(baseMedia), { once: true });
         } else {
-            image.addEventListener('load', () => updateFrameForImage(image), { once: true });
+            if (baseMedia.readyState >= 2) updateFrameForMedia(baseMedia);
+            else baseMedia.addEventListener('loadeddata', () => updateFrameForMedia(baseMedia), { once: true });
         }
-        window.addEventListener('resize', () => updateFrameForImage(image));
+        window.addEventListener('resize', () => updateFrameForMedia(baseMedia));
         pills.forEach(p => {
             p.addEventListener('click', () => activatePill(p));
             const hasPanel = p.getAttribute('data-expand') === 'true';
@@ -308,7 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const desc = option.getAttribute('data-desc') || '';
                 const img = option.getAttribute('data-img') || '';
                 setBubble(desc, option);
-                swapImage(img);
+                swapMedia(img);
             });
         });
         hideBubble();
