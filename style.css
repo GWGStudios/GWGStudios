@@ -75,7 +75,7 @@ body {
 
 /* Override inline transition for the track to ensure it matches the cards */
 #slider-track {
-    transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) !important; /* Very slow, cinematic ease */
+    transition: none !important;
 }
 
 .video-card {
@@ -130,15 +130,29 @@ body {
     background-color: #808080;
     transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); /* Slow, smooth elastic transition */
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
 .dot.active {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.25); /* Track for progress */
     width: 40px; /* Wider pill shape */
 }
 
 .dot:hover:not(.active) {
     background-color: #b3b3b3;
+}
+
+.dot .dot-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #ffffff;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 60ms linear; /* frequent small updates feel smooth */
 }
 
 /* Hide default video controls */

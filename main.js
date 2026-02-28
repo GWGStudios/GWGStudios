@@ -408,12 +408,33 @@ document.addEventListener("DOMContentLoaded", () => {
         // Main Static Controls
         const mainPlayBtn = document.getElementById('main-play-btn');
         const dots = document.querySelectorAll('#main-controls .dot');
+        // Ensure each dot has an inner fill element for progress
+        dots.forEach(dot => {
+            if (!dot.querySelector('.dot-fill')) {
+                const fill = document.createElement('div');
+                fill.className = 'dot-fill';
+                dot.appendChild(fill);
+            }
+        });
         
         let currentIndex = 0;
         let isPlaying = true;
+        let animating = false;
+        let progressRAF = null;
+        
+        function computeTranslateX(index) {
+            const trackRect = track.parentElement.getBoundingClientRect();
+            const containerCenter = trackRect.width / 2;
+            const gap = 24;
+            const style = window.getComputedStyle(track);
+            const paddingLeft = parseFloat(style.paddingLeft);
+            const w = slides[index].offsetWidth;
+            const center = paddingLeft + (index * (w + gap)) + (w / 2);
+            return containerCenter - center;
+        }
         
         // Initial setup
-        updateSlidePosition();
+        updateSlidePosition(false);
         
         // Start playing videos on user interaction or intersection
         const observer = new IntersectionObserver((entries) => {
@@ -429,21 +450,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const highlightsSection = document.getElementById('highlights');
         if(highlightsSection) observer.observe(highlightsSection);
 
-        function updateSlidePosition() {
-            // Recalculate dimensions for robust centering
-            const trackRect = track.parentElement.getBoundingClientRect();
-            const containerCenter = trackRect.width / 2;
-            const gap = 24; // 1.5rem gap from CSS
-            
-            const style = window.getComputedStyle(track);
-            const paddingLeft = parseFloat(style.paddingLeft);
-            
-            const currentSlideLayoutWidth = slides[currentIndex].offsetWidth;
-            const currentSlideVisualCenter = paddingLeft + (currentIndex * (currentSlideLayoutWidth + gap)) + (currentSlideLayoutWidth / 2);
-            
-            const translateX = containerCenter - currentSlideVisualCenter;
-            
-            track.style.transform = `translateX(${translateX}px)`;
+        function updateSlidePosition(animate = true) {
+            const translateX = computeTranslateX(currentIndex);
+            if (window.gsap && animate) {
+                animating = true;
+                window.gsap.to(track, {
+                    x: translateX,
+                    duration: 1.2,
+                    ease: "power3.inOut",
+                    onComplete: () => { animating = false; }
+                });
+            } else {
+                track.style.transform = `translate3d(${translateX}px,0,0)`;
+            }
             
             // Update Slides State
             slides.forEach((slide, index) => {
@@ -451,8 +470,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 if (index === currentIndex) {
                     slide.classList.add('active');
-                    // Remove scale/opacity manipulation classes if we want a flat look
-                    // but keep opacity-60 for dimming inactive ones
                     slide.classList.remove('opacity-60'); 
                     
                     if (isPlaying) {
@@ -464,6 +481,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     video.pause();
                     video.currentTime = 0;
+                    try { video.onended = null; } catch(_) {}
                 }
             });
 
@@ -473,17 +491,49 @@ document.addEventListener("DOMContentLoaded", () => {
                     dot.classList.add('active');
                 } else {
                     dot.classList.remove('active');
+                    const f = dot.querySelector('.dot-fill');
+                    if (f) f.style.transform = 'scaleX(0)';
                 }
             });
             
             // Update Play Button Icon
             updatePlayButtonIcon();
+
+            // Ensure progress and auto-advance are bound for the active slide
+            if (isPlaying) {
+                cancelProgress();
+                setDotFill(currentIndex, 0);
+                playCurrentVideo();
+            }
+        }
+
+        function setDotFill(index, fraction) {
+            const dot = dots[index];
+            if (!dot) return;
+            const fill = dot.querySelector('.dot-fill');
+            if (fill) {
+                const f = Math.max(0, Math.min(1, isFinite(fraction) ? fraction : 0));
+                fill.style.transform = `scaleX(${f})`;
+            }
+        }
+
+        function cancelProgress() {
+            if (progressRAF !== null) {
+                cancelAnimationFrame(progressRAF);
+                progressRAF = null;
+            }
         }
 
         function playCurrentVideo() {
             const currentSlide = slides[currentIndex];
             const video = currentSlide.querySelector('video');
             if (video) {
+                try {
+                    video.loop = false;
+                    if (video.hasAttribute && video.hasAttribute('loop')) {
+                        video.removeAttribute('loop');
+                    }
+                } catch (_) {}
                 video.play().catch(e => {
                     console.log("Autoplay prevented:", e);
                     isPlaying = false;
@@ -494,8 +544,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 // When video ends, go next
                 video.onended = () => {
+                    setDotFill(currentIndex, 1);
                     nextSlide();
                 };
+                
+                // Animate the dot progress while video plays
+                const tick = () => {
+                    const dur = video.duration || 0;
+                    const cur = video.currentTime || 0;
+                    const frac = dur > 0 ? (cur / dur) : 0;
+                    setDotFill(currentIndex, frac);
+                    if (!video.paused && !video.ended) {
+                        progressRAF = requestAnimationFrame(tick);
+                    } else {
+                        progressRAF = null;
+                    }
+                };
+                cancelProgress();
+                setDotFill(currentIndex, 0);
+                progressRAF = requestAnimationFrame(tick);
             }
         }
 
@@ -506,11 +573,14 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             isPlaying = false;
             updatePlayButtonIcon();
+            cancelProgress();
         }
 
         function nextSlide() {
+            cancelProgress();
+            setDotFill(currentIndex, 0);
             currentIndex = (currentIndex + 1) % slides.length;
-            updateSlidePosition();
+            updateSlidePosition(true);
         }
 
         function updatePlayButtonIcon() {
@@ -541,15 +611,18 @@ document.addEventListener("DOMContentLoaded", () => {
         if (dots.length > 0) {
             dots.forEach((dot, dotIndex) => {
                 dot.addEventListener('click', () => {
+                    cancelProgress();
+                    setDotFill(currentIndex, 0);
                     currentIndex = dotIndex;
-                    updateSlidePosition();
+                    isPlaying = true; // start playing when user navigates
+                    updateSlidePosition(true);
                 });
             });
         }
 
         // Resize Handler
         window.addEventListener('resize', () => {
-            updateSlidePosition();
+            updateSlidePosition(false);
         });
     }
 });
