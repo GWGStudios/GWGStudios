@@ -160,6 +160,186 @@ document.addEventListener("DOMContentLoaded", () => {
         heroVideo.addEventListener('loadeddata', onReady, { once: true });
         heroVideo.play().then(onReady).catch(() => {});
     }
+    const downArrow = document.querySelector('header .animate-bounce');
+    if (downArrow) {
+        downArrow.style.cursor = 'pointer';
+        downArrow.addEventListener('click', () => {
+            const headerEl = document.querySelector('header');
+            const nextSection = (headerEl && headerEl.nextElementSibling) || document.getElementById('highlights') || document.querySelector('section');
+            if (nextSection && nextSection.scrollIntoView) {
+                nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+    const showcaseSection = document.getElementById('showcase');
+    const showcaseVideo = document.getElementById('showcase-video');
+    if (showcaseVideo && showcaseSection) {
+        let locking = false;
+        let touchY = 0;
+        let progress = 0;
+        let target = 0;
+        let goal = 0;
+        let rafId = null;
+        const minLen = Math.max(window.innerHeight * 4, 3200);
+        const EPS = 0.002;
+        let cooldown = false;
+        let edgeAccum = 0;
+        const edgeThreshold = 180;
+        let cooldownTimer = null;
+        showcaseVideo.pause();
+        try { showcaseVideo.loop = false; } catch(_) {}
+        function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+        let lastTs = 0;
+        let vel = 0;
+        const TARGET_FOLLOW = 0.3;
+        const PROGRESS_FOLLOW = 0.25;
+        function easeTick(ts) {
+            if (!locking) { rafId = null; return; }
+            const dt = lastTs ? Math.max(0.5, Math.min(2.0, (ts - lastTs) / 16.67)) : 1;
+            lastTs = ts;
+            // Target follows goal smoothly, then progress follows target
+            target += (goal - target) * TARGET_FOLLOW;
+            const delta = target - progress;
+            progress += delta * PROGRESS_FOLLOW;
+            const dur = showcaseVideo.duration || 0;
+            if (dur > 0) {
+                const desired = dur * progress;
+                const cur = showcaseVideo.currentTime || 0;
+                const diff = desired - cur;
+                // Direct timeline mapping: set currentTime to desired position
+                try { if (Math.abs(diff) > 0.0002) showcaseVideo.currentTime = desired; } catch(_) {}
+                const bar = document.getElementById('showcase-progress-bar');
+                if (bar) bar.style.width = `${Math.round(progress * 100)}%`;
+                const blur = document.querySelector('#showcase .showcase-blur');
+                if (blur) {
+                    const o = Math.max(0, Math.min(0.25, Math.abs(diff) * 8));
+                    blur.style.opacity = String(o);
+                }
+            }
+            rafId = requestAnimationFrame(easeTick);
+        }
+        function startRaf() { if (rafId == null) rafId = requestAnimationFrame(easeTick); }
+        function scrollToSibling(dir) {
+            const el = dir > 0 ? showcaseSection.nextElementSibling : showcaseSection.previousElementSibling;
+            if (el && el.scrollIntoView) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        function onWheel(e) {
+            const d = e.deltaY || 0;
+            e.preventDefault();
+            if (progress >= 1 - EPS && d > 0) {
+                edgeAccum += d;
+                if (edgeAccum >= edgeThreshold) { release(1); return; }
+                goal = 1;
+            } else if (progress <= EPS && d < 0) {
+                edgeAccum += -d;
+                if (edgeAccum >= edgeThreshold) { release(-1); return; }
+                goal = 0;
+            } else {
+                edgeAccum = 0;
+                goal = clamp01(goal + d / minLen);
+            }
+            startRaf();
+            const bar = document.getElementById('showcase-progress-bar');
+            if (bar) bar.style.width = `${Math.round(progress * 100)}%`;
+        }
+        function onTouchStart(e) {
+            if (!e.touches || e.touches.length === 0) return;
+            touchY = e.touches[0].clientY;
+        }
+        function onTouchMove(e) {
+            if (!e.touches || e.touches.length === 0) return;
+            const ny = e.touches[0].clientY;
+            const dy = touchY - ny;
+            touchY = ny;
+            e.preventDefault();
+            if (progress >= 1 - EPS && dy > 0) {
+                edgeAccum += dy;
+                if (edgeAccum >= edgeThreshold) { release(1); return; }
+                goal = 1;
+            } else if (progress <= EPS && dy < 0) {
+                edgeAccum += -dy;
+                if (edgeAccum >= edgeThreshold) { release(-1); return; }
+                goal = 0;
+            } else {
+                edgeAccum = 0;
+                goal = clamp01(goal + dy / minLen);
+            }
+            startRaf();
+            const bar = document.getElementById('showcase-progress-bar');
+            if (bar) bar.style.width = `${Math.round(progress * 100)}%`;
+        }
+        function onKey(e) {
+            let d = 0;
+            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') d = 120;
+            if (e.key === 'ArrowUp' || e.key === 'PageUp') d = -120;
+            if (d !== 0) {
+                e.preventDefault();
+                if (progress >= 1 - EPS && d > 0) {
+                    edgeAccum += d;
+                    if (edgeAccum >= edgeThreshold) { release(1); return; }
+                    goal = 1;
+                } else if (progress <= EPS && d < 0) {
+                    edgeAccum += -d;
+                    if (edgeAccum >= edgeThreshold) { release(-1); return; }
+                    goal = 0;
+                } else {
+                    edgeAccum = 0;
+                    goal = clamp01(goal + d / minLen);
+                }
+                startRaf();
+                const bar = document.getElementById('showcase-progress-bar');
+                if (bar) bar.style.width = `${Math.round(progress * 100)}%`;
+            }
+        }
+        function lock() {
+            if (locking || cooldown) return;
+            locking = true;
+            goal = clamp01(progress);
+            target = goal;
+            edgeAccum = 0;
+            window.scrollTo({ top: showcaseSection.offsetTop });
+            window.addEventListener('wheel', onWheel, { passive: false });
+            window.addEventListener('touchstart', onTouchStart, { passive: false });
+            window.addEventListener('touchmove', onTouchMove, { passive: false });
+            window.addEventListener('keydown', onKey, { passive: false });
+            startRaf();
+            const bar = document.getElementById('showcase-progress-bar');
+            if (bar) bar.style.width = `${Math.round(progress * 100)}%`;
+            const blur = document.querySelector('#showcase .showcase-blur');
+            if (blur) blur.style.opacity = '0';
+        }
+        function release(dir) {
+            if (!locking) return;
+            locking = false;
+            cooldown = true;
+            window.removeEventListener('wheel', onWheel, { passive: false });
+            window.removeEventListener('touchstart', onTouchStart, { passive: false });
+            window.removeEventListener('touchmove', onTouchMove, { passive: false });
+            window.removeEventListener('keydown', onKey, { passive: false });
+            if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
+            target = dir > 0 ? 1 : 0;
+            progress = target;
+            try {
+                const dur = showcaseVideo.duration || 0;
+                if (dur > 0) showcaseVideo.currentTime = dur * progress;
+            } catch(_) {}
+            if (cooldownTimer) clearTimeout(cooldownTimer);
+            cooldownTimer = setTimeout(() => { cooldown = false; }, 600);
+        }
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.target !== showcaseSection) return;
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+                    lock();
+                } else {
+                }
+            });
+        }, { threshold: [0, 0.25, 0.5, 0.6, 0.75, 1] });
+        obs.observe(showcaseSection);
+        showcaseVideo.addEventListener('loadedmetadata', () => {});
+    }
 
     const revealTargets = document.querySelectorAll('header, section');
     revealTargets.forEach(el => el.classList.add('page-transition'));
@@ -210,7 +390,16 @@ document.addEventListener("DOMContentLoaded", () => {
             let nextEl;
             if (/\.mp4(\?|$)/i.test(url)) {
                 nextEl = document.createElement('video');
-                nextEl.src = url;
+                let useUrl = url;
+                try {
+                    const m = url.match(/^(.*)\\.mp4(.*)$/i);
+                    if (m) {
+                        const compressed = m[1] + '_25mb.mp4' + (m[2] || '');
+                        nextEl.addEventListener('error', () => { nextEl.src = url; }, { once: true });
+                        useUrl = compressed;
+                    }
+                } catch(_) {}
+                nextEl.src = useUrl;
                 nextEl.muted = true;
                 nextEl.loop = true;
                 nextEl.autoplay = true;

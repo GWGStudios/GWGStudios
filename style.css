@@ -318,3 +318,26 @@ video::-webkit-media-controls {
     transform: translateY(0) scale(1);
     filter: blur(0);
 }
+
+.showcase-blur {
+    background: radial-gradient(1000px circle at 50% 45%, rgba(255,255,255,0.08), transparent 60%);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 120ms linear;
+}
+
+.showcase-progress {
+    width: min(420px, 50vw);
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    overflow: hidden;
+}
+
+.showcase-progress #showcase-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.65));
+    transition: width 80ms linear;
+}
