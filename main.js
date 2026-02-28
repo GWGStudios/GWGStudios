@@ -338,6 +338,50 @@ document.addEventListener("DOMContentLoaded", () => {
         delay: 1.5
     });
 
+    const mainControls = document.getElementById('main-controls');
+    if (mainControls) {
+        const pill = mainControls.querySelector('.control-glass');
+        const playBtn = document.getElementById('main-play-btn');
+        const dots = mainControls.querySelectorAll('.dot');
+        if (pill && playBtn && dots.length) {
+            gsap.set(mainControls, { opacity: 0, y: 40 });
+            gsap.set(playBtn, { opacity: 0, scale: 0.3 });
+            gsap.set(pill, { opacity: 0, scaleX: 0.25, scaleY: 0.25 });
+            gsap.set(dots, { opacity: 0, y: 10 });
+            const controlsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    controlsObserver.unobserve(mainControls);
+                    const tl = gsap.timeline();
+                    tl.to(mainControls, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.5,
+                        ease: "power3.out"
+                    }).to(playBtn, {
+                        opacity: 1,
+                        scale: 1,
+                        duration: 0.5,
+                        ease: "back.out(1.8)"
+                    }, "-=0.1").to(pill, {
+                        opacity: 1,
+                        scaleX: 1,
+                        scaleY: 1,
+                        duration: 0.6,
+                        ease: "power3.out"
+                    }, "-=0.1").to(dots, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.4,
+                        stagger: 0.08,
+                        ease: "power2.out"
+                    }, "-=0.2");
+                });
+            }, { threshold: 0.4 });
+            controlsObserver.observe(mainControls);
+        }
+    }
+
     // --- Apple-Inspired Slider Logic ---
     const track = document.getElementById('slider-track');
     if (track) {
