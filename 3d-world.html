@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D World - GWG Studios</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              black: '#0a0a0a',
+              dark: '#1a1a1a',
+              gray: '#808080',
+              light: '#e5e5e5',
+              white: '#ffffff',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-[#111111] text-brand-white min-h-screen">
+  <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-5 py-1 flex justify-between items-center rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-xl w-[92vw] sm:w-[86vw] md:w-[72vw] lg:w-[64vw] max-w-5xl transition-all duration-300">
+    <div class="h-8 md:h-10">
+      <img src="0001.gif" alt="GWG Logo" class="h-full object-contain">
+    </div>
+    <div id="main-nav-links" class="hidden md:flex relative space-x-8 text-sm uppercase tracking-widest">
+      <a href="index.html" class="nav-link hover:text-brand-gray transition-colors">Home</a>
+      <a href="graphic-world.html" class="nav-link hover:text-brand-gray transition-colors">Graphic World</a>
+      <a href="3d-world.html" class="nav-link hover:text-brand-gray transition-colors nav-link-active">3D World</a>
+    </div>
+    <button class="md:hidden text-white">Menu</button>
+  </nav>
+  <main class="min-h-screen flex items-center justify-center p-8">
+    <div class="text-center">
+      <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-4">3D World</h1>
+      <p class="text-lg md:text-xl text-brand-gray max-w-xl mx-auto">
+        Dive into our 3D realm. This is a placeholder page — tailor as needed.
+      </p>
+    </div>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
