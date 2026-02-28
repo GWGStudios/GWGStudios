@@ -37,6 +37,15 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+    <script>
+        (function () {
+            var h = location.hostname;
+            var isLocal = h === "localhost" || h === "127.0.0.1";
+            if (!isLocal && location.protocol === "http:") {
+                location.replace("https://" + location.host + location.pathname + location.search + location.hash);
+            }
+        })();
+    </script>
 </head>
 <body class="bg-[#111111] text-brand-white overflow-x-hidden">
     
@@ -57,7 +66,7 @@
     <header class="relative h-screen w-full flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0 overflow-hidden">
             <video id="hero-video" class="hero-video w-full h-full object-cover" autoplay muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg">
-                <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
             </video>
         </div>
         <div class="vignette absolute inset-0 z-0"></div>
@@ -97,7 +106,7 @@
                 <!-- Slide 1 -->
                 <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700">
                     <video class="w-full h-full object-cover" muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg">
-                        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
                     </video>
                     
                     <!-- Overlay Content -->
@@ -109,7 +118,7 @@
                 <!-- Slide 2 -->
                 <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700 opacity-60 scale-95">
                     <video class="w-full h-full object-cover" muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg">
-                        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
                     </video>
                     <div class="absolute top-10 left-0 w-full text-center z-10">
                         <p class="text-white text-lg md:text-xl font-semibold drop-shadow-md">Advanced 3D rendering for modern brands.</p>
@@ -119,7 +128,7 @@
                 <!-- Slide 3 -->
                 <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700 opacity-60 scale-95">
                     <video class="w-full h-full object-cover" muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg">
-                        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
                     </video>
                     <div class="absolute top-10 left-0 w-full text-center z-10">
                         <p class="text-white text-lg md:text-xl font-semibold drop-shadow-md">Fluid motion graphics that inspire.</p>
@@ -129,7 +138,7 @@
                  <!-- Slide 4 -->
                  <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700 opacity-60 scale-95">
                     <video class="w-full h-full object-cover" muted playsinline loop poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg">
-                        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
                     </video>
                     <div class="absolute top-10 left-0 w-full text-center z-10">
                         <p class="text-white text-lg md:text-xl font-semibold drop-shadow-md">High-fidelity visual effects.</p>
