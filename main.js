@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     mobilePanel.classList.remove('open', 'menu-anim-out');
                     menuBtn.classList.remove('menu-btn-expanded', 'menu-btn-anim-out');
                     menuAnimating = false;
-                }, 320);
+                }, 700);
             } else {
                 mobilePanel.classList.remove('menu-anim-out');
                 mobilePanel.classList.add('open', 'menu-anim-in');
@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     mobilePanel.classList.remove('menu-anim-in');
                     menuBtn.classList.remove('menu-btn-anim-in');
                     menuAnimating = false;
-                }, 420);
+                }, 1000);
             }
         }
         if (menuBtn && mobilePanel) {
@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         mobilePanel.classList.remove('open', 'menu-anim-out');
                         menuBtn.classList.remove('menu-btn-expanded', 'menu-btn-anim-out');
                         menuAnimating = false;
-                    }, 320);
+                    }, 700);
                 });
             });
             window.addEventListener('resize', () => {
