@@ -169,6 +169,71 @@
             </button>
         </div>
     </section>
+    <!-- Reviews Section -->
+    <section id="reviews" class="py-24 px-6 bg-[#111111] page-transition">
+        <div class="max-w-[1200px] mx-auto">
+            <div class="flex items-end justify-between mb-10">
+                <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight">What clients say</h2>
+                <span class="text-sm uppercase tracking-widest text-brand-gray">Reviews</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <!-- Card 1 -->
+                <div class="glass-card review-card rounded-2xl p-6 md:p-7 text-[#e5e5e5]">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10">
+                            <img src="https://i.pravatar.cc/80?img=12" alt="Avatar" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="font-semibold">Aarav Shah</div>
+                            <div class="text-xs uppercase tracking-widest text-brand-gray">Product Lead</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 mb-3 text-yellow-400">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span class="text-yellow-700">★</span>
+                    </div>
+                    <p class="text-sm leading-relaxed">
+                        The motion aesthetics and 3D craft are outstanding. Smooth, premium animations with a clean brand feel.
+                    </p>
+                </div>
+                <!-- Card 2 -->
+                <div class="glass-card review-card rounded-2xl p-6 md:p-7 text-[#e5e5e5]">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10">
+                            <img src="https://i.pravatar.cc/80?img=25" alt="Avatar" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="font-semibold">Nisha Verma</div>
+                            <div class="text-xs uppercase tracking-widest text-brand-gray">Creative Director</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 mb-3 text-yellow-400">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <p class="text-sm leading-relaxed">
+                        Minimal design with cinematic detail. The liquid‑glass UI is perfectly executed and feels refined.
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="glass-card review-card rounded-2xl p-6 md:p-7 text-[#e5e5e5]">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10">
+                            <img src="https://i.pravatar.cc/80?img=7" alt="Avatar" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="font-semibold">Kabir Mehta</div>
+                            <div class="text-xs uppercase tracking-widest text-brand-gray">Founder</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 mb-3 text-yellow-400">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <p class="text-sm leading-relaxed">
+                        Attention to detail is next‑level. The interactive canvas background keeps viewers engaged throughout.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Closer Look Section -->
     <section id="closer" class="relative py-24 px-6 bg-[#111111]">
@@ -188,7 +253,7 @@
                                     data-title="Graphic Designing"
                                     data-desc="Minimal 2D design showcase with clean, slow reveals."
                                     data-img="graphis%202d/optimized/poster-series-full.jpg">
-                                <span class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
+                                <span class="indicator" aria-hidden="true"></span>
                                 <span>Graphic Designing</span>
                             </button>
                             <div class="sub-options work-grid grid grid-cols-2 gap-2 pl-6 sm:gap-3 sm:pl-8">
@@ -225,28 +290,28 @@
                                     data-title="3D Key Art"
                                     data-desc="Hero graphics blending lighting, material studies, and depth."
                                     data-img="graphis%202d/optimized/ge0001_1.mp4">
-                                <span class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
+                                <span class="indicator" aria-hidden="true"></span>
                                 <span>3D Key Art</span>
                             </button>
                             <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
                                     data-title="Product Visualization"
                                     data-desc="3D product renders for campaigns, pitch decks, and launches."
                                     data-img="assets/iron.glb">
-                                <span class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
+                                <span class="indicator" aria-hidden="true"></span>
                                 <span>Product Visualization</span>
                             </button>
                             <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
                                     data-title="3D Modeling"
                                     data-desc="Detailed hard‑surface and organic modeling for visuals."
                                     data-img="graphis%202d/0301.mp4">
-                                <span class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
+                                <span class="indicator" aria-hidden="true"></span>
                                 <span>3D Modeling</span>
                             </button>
                             <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
                                     data-title="3D realism"
                                     data-desc="Cinematic 3D motion graphics with smooth transitions."
                                     data-img="graphis%202d/0067.mp4">
-                                <span class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
+                                <span class="indicator" aria-hidden="true"></span>
                                 <span>3D realism</span>
                             </button>
                         </div>
@@ -266,7 +331,7 @@
         </div>
     </section>
     <section id="showcase" class="relative h-screen w-full bg-[#111111] page-transition">
-        <video id="showcase-video" class="absolute inset-0 w-full h-full object-cover" src="assets/dwsa0000-0115.mp4" muted playsinline preload="auto"></video>
+        <video id="showcase-video" class="absolute inset-0 w-full h-full object-cover" src="assets/dwsa0000-0115.mp4" muted playsinline preload="auto" loop></video>
         <div class="absolute inset-0 bg-black/30"></div>
         <div class="showcase-blur absolute inset-0 pointer-events-none"></div>
         <div class="showcase-progress absolute bottom-6 left-1/2 -translate-x-1/2">
@@ -338,6 +403,9 @@
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <!-- Three.js + GLTFLoader for interactive canvas background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

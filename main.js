@@ -34,7 +34,7 @@ function initThreeJS() {
     const loader = new THREE.GLTFLoader();
     
     loader.load(
-        'Untitled.glb',
+        'untitled.glb',
         function (gltf) {
             loadedModel = gltf.scene;
             
@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const showcaseVideo = document.getElementById('showcase-video');
     if (showcaseVideo && showcaseSection) {
         let rafId = null;
-        try { showcaseVideo.loop = false; } catch(_) {}
+        try { showcaseVideo.loop = true; } catch(_) {}
         const bar = document.getElementById('showcase-progress-bar');
         function tick() {
             if (!showcaseVideo || showcaseVideo.paused || showcaseVideo.ended) { rafId = null; return; }
@@ -416,6 +416,35 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Move Reviews section after the video section (#showcase)
+    (function moveReviewsAfterShowcase() {
+        const reviews = document.getElementById('reviews');
+        const showcase = document.getElementById('showcase');
+        if (!reviews || !showcase) return;
+        if (showcase.parentElement) {
+            showcase.after(reviews);
+        }
+    })();
+
+    // Reviews reveal animation
+    const reviews = document.getElementById('reviews');
+    if (reviews && window.gsap) {
+        const cards = reviews.querySelectorAll('.review-card');
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                obs.unobserve(reviews);
+                gsap.from(cards, {
+                    opacity: 0,
+                    y: 24,
+                    duration: 0.8,
+                    ease: "power3.out",
+                    stagger: 0.15
+                });
+            });
+        }, { threshold: 0.3 });
+        obs.observe(reviews);
+    }
     // Closer Look interactions
     const pills = document.querySelectorAll('.feature-pill');
     const bubble = document.getElementById('feature-bubble');
@@ -571,21 +600,15 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
         function activatePill(pill, options = {}) {
-            if (animLock) return;
             const wasActive = pill.classList.contains('active');
             pills.forEach(p => p.classList.remove('active', 'bg-white/10'));
             pill.classList.add('active', 'bg-white/10');
-            pills.forEach(p => {
-                const dot = p.querySelector('.inline-block.w-2.h-2.rounded-full');
-                if (dot) {
-                    dot.classList.remove('bg-orange-400', 'bg-gray-400');
-                    dot.classList.add(p === pill ? 'bg-orange-400' : 'bg-gray-400');
-                }
-            });
-            
+            // Indicator morph is handled via CSS (.feature-pill.active .indicator), no JS classes needed
             const desc = pill.getAttribute('data-desc') || '';
             const img = pill.getAttribute('data-img') || '';
-            swapMedia(img);
+            if (!animLock) {
+                swapMedia(img);
+            }
             list.querySelectorAll('.sub-option.active').forEach(el => el.classList.remove('active'));
             const panel = pill.getAttribute('data-expand') === 'true' ? pill.nextElementSibling : null;
             const suppressOpen = options.suppressOpen === true;
@@ -665,51 +688,11 @@ document.addEventListener("DOMContentLoaded", () => {
         delay: 1.5
     });
 
+    // Ensure controls are visible by default (remove intersection reveal that could hide dots)
     const mainControls = document.getElementById('main-controls');
     if (mainControls) {
-        const pill = mainControls.querySelector('.control-glass');
-        const playBtn = document.getElementById('main-play-btn');
-        const dots = mainControls.querySelectorAll('.dot');
-        if (pill && playBtn && dots.length) {
-            // Start state: hidden, pushed down, and tiny
-            // We use scale: 0.1 instead of 0 to avoid layout/visibility glitches, but it will look like it emerges from nothing.
-            gsap.set(mainControls, { opacity: 0, y: 100 });
-            gsap.set([playBtn, pill], { opacity: 0, scale: 0.2, y: 50 });
-            gsap.set(dots, { opacity: 0 });
-            
-            const controlsObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (!entry.isIntersecting) return;
-                    controlsObserver.unobserve(mainControls);
-                    
-                    const tl = gsap.timeline();
-                    
-                    // 1. Move the container up first
-                    tl.to(mainControls, {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.8,
-                        ease: "power3.out"
-                    })
-                    // 2. Grow the buttons from small to full size as they slide up
-                    .to([playBtn, pill], {
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        duration: 0.8,
-                        ease: "back.out(1.5)",
-                        stagger: 0.15
-                    }, "-=0.7") // Overlap significantly so they grow AS the container rises
-                    // 3. Dots fade in
-                    .to(dots, {
-                        opacity: 1,
-                        duration: 0.4,
-                        stagger: 0.08
-                    }, "-=0.4");
-                });
-            }, { threshold: 0.4 });
-            controlsObserver.observe(mainControls);
-        }
+        mainControls.style.opacity = '1';
+        mainControls.style.transform = 'translateY(0)';
     }
 
     // --- Apple-Inspired Slider Logic ---
