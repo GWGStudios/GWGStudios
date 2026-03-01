@@ -434,7 +434,19 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.classList.add('opacity-0');
             bubble.classList.remove('opacity-100');
         }
+        function setFixedFrameFor3D() {
+            const parent = imgContainer.parentElement;
+            const maxWidth = parent ? parent.clientWidth : imgContainer.clientWidth;
+            const maxHeight = Math.round(window.innerHeight * 0.6);
+            const size = Math.max(240, Math.min(maxWidth, maxHeight, 640));
+            imgContainer.style.width = `${size}px`;
+            imgContainer.style.height = `${size}px`;
+        }
         function updateFrameForMedia(el) {
+            if (el.tagName === 'IFRAME') {
+                setFixedFrameFor3D();
+                return;
+            }
             const w = el.tagName === 'VIDEO' ? el.videoWidth : el.naturalWidth;
             const h = el.tagName === 'VIDEO' ? el.videoHeight : el.naturalHeight;
             if (!w || !h) return;
@@ -451,7 +463,19 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!url || animLock) return;
             animLock = true;
             let nextEl;
-            if (/\.mp4(\?|$)/i.test(url)) {
+            let deferred = false;
+
+            if (/\.(fbx|glb|gltf)(\?|$)/i.test(url)) {
+                nextEl = document.createElement('iframe');
+                const viewerUrl = 'viewer-fbx.html?src=' + encodeURIComponent(url);
+                nextEl.src = viewerUrl;
+                nextEl.title = '3D Preview';
+                nextEl.loading = 'lazy';
+                nextEl.setAttribute('allow', 'cross-origin-isolated');
+                nextEl.style.border = '0';
+                nextEl.className = 'feature-image absolute inset-0 w-full h-full';
+                deferred = true;
+            } else if (/\.mp4(\?|$)/i.test(url)) {
                 nextEl = document.createElement('video');
                 let useUrl = url;
                 try {
@@ -483,18 +507,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 nextEl.addEventListener('load', () => updateFrameForMedia(nextEl), { once: true });
                 if (nextEl.complete) updateFrameForMedia(nextEl);
             }
-            imgContainer.classList.add('is-swapping');
-            imgContainer.appendChild(nextEl);
-            baseMedia.classList.add('feature-image-out');
-            const end = () => {
-                baseMedia.classList.remove('feature-image-out');
-                imgContainer.removeChild(baseMedia);
-                nextEl.id = 'feature-image';
-                baseMedia = nextEl;
-                imgContainer.classList.remove('is-swapping');
-                animLock = false;
+
+            const runSwap = () => {
+                if (deferred) {
+                    setFixedFrameFor3D();
+                }
+                imgContainer.classList.add('is-swapping');
+                nextEl.classList.add('feature-image-in');
+                imgContainer.appendChild(nextEl);
+                baseMedia.classList.add('feature-image-out');
+                const end = () => {
+                    baseMedia.classList.remove('feature-image-out');
+                    if (baseMedia.parentElement === imgContainer) {
+                        imgContainer.removeChild(baseMedia);
+                    }
+                    nextEl.id = 'feature-image';
+                    baseMedia = nextEl;
+                    imgContainer.classList.remove('is-swapping');
+                    animLock = false;
+                };
+                setTimeout(end, 1400);
             };
-            setTimeout(end, 1400);
+
+            if (deferred) {
+                let started = false;
+                const startOnce = () => {
+                    if (started) return;
+                    started = true;
+                    runSwap();
+                };
+                nextEl.addEventListener('load', startOnce, { once: true });
+                setTimeout(startOnce, 900);
+            } else {
+                runSwap();
+            }
         }
         function openPanel(panel) {
             const current = list.querySelector('.sub-options.open');
