@@ -170,13 +170,16 @@
     const scene = new THREE.Scene();
     scene.background = null;
     const shadedMeshes = [];
+    const isMobile = (window.innerWidth || window.screen.width || 0) < 768;
 
     const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 2000);
     camera.position.set(0, 1.5, 4);
     camera.position.set(0, 1.5, 4);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    const dpr = window.devicePixelRatio || 1;
+    const maxDpr = isMobile ? 3 : 2;
+    renderer.setPixelRatio(Math.min(maxDpr, dpr));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.physicallyCorrectLights = true;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -293,7 +296,9 @@
       const center = box.getCenter(new THREE.Vector3());
       controls.target.copy(center);
       const fitDist = size * 0.9 / Math.tan((camera.fov * Math.PI) / 360);
-      camera.position.copy(center).add(new THREE.Vector3(0, size * 0.18, -fitDist * 0.7));
+      const fitScale = isMobile ? 0.5 : 0.7;
+      const yOffset = isMobile ? size * 0.12 : size * 0.18;
+      camera.position.copy(center).add(new THREE.Vector3(0, yOffset, -fitDist * fitScale));
       camera.near = Math.max(0.1, size / 500);
       camera.far = Math.max(2000, size * 10);
       camera.updateProjectionMatrix();
