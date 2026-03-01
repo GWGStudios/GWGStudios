@@ -161,6 +161,62 @@ document.addEventListener("DOMContentLoaded", () => {
         heroVideo.addEventListener('loadeddata', onReady, { once: true });
         heroVideo.play().then(onReady).catch(() => {});
     }
+    function computeMidFramePoster(src, cb) {
+        try {
+            const v = document.createElement('video');
+            v.crossOrigin = 'anonymous';
+            v.muted = true;
+            v.preload = 'auto';
+            v.src = src;
+            const done = (url) => { try { cb && cb(url); } catch(_) {} };
+            v.addEventListener('error', () => done(null), { once: true });
+            v.addEventListener('loadedmetadata', () => {
+                if (!v.duration || !v.videoWidth || !v.videoHeight) { done(null); return; }
+                const mid = Math.max(0.001, v.duration / 2);
+                const onSeeked = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = v.videoWidth;
+                        canvas.height = v.videoHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+                        const url = canvas.toDataURL('image/jpeg', 0.85);
+                        done(url);
+                    } catch(e) { done(null); }
+                };
+                v.addEventListener('seeked', onSeeked, { once: true });
+                try { v.currentTime = mid; } catch(_) { done(null); }
+            }, { once: true });
+        } catch(_) { cb && cb(null); }
+    }
+    function ensurePosterLayer(slide) {
+        if (!slide) return null;
+        let layer = slide.querySelector('.poster-layer');
+        if (!layer) {
+            layer = document.createElement('div');
+            layer.className = 'poster-layer';
+            slide.appendChild(layer);
+        }
+        return layer;
+    }
+    function applyMidFramePosterFor(videoEl) {
+        if (!videoEl) return;
+        const srcEl = videoEl.querySelector('source');
+        const src = (videoEl.currentSrc || (srcEl && srcEl.getAttribute('src')) || videoEl.getAttribute('src') || '').trim();
+        if (!src) return;
+        computeMidFramePoster(src, (url) => {
+            if (!url) return;
+            try { videoEl.setAttribute('poster', url); } catch(_) {}
+            const slide = videoEl.closest('.video-card');
+            if (!slide) return;
+            const layer = ensurePosterLayer(slide);
+            if (layer) layer.style.backgroundImage = `url(${url})`;
+            if (!slide.classList.contains('active')) {
+                slide.classList.add('show-poster');
+            }
+        });
+    }
+    document.querySelectorAll('#highlights video').forEach(v => applyMidFramePosterFor(v));
     const downArrow = document.querySelector('header .animate-bounce');
     if (downArrow) {
         downArrow.style.cursor = 'pointer';
@@ -407,12 +463,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 } catch(_) {}
                 nextEl.src = useUrl;
+                try { nextEl.crossOrigin = 'anonymous'; } catch(_) {}
                 nextEl.muted = true;
                 nextEl.loop = true;
                 nextEl.autoplay = true;
                 nextEl.playsInline = true;
                 nextEl.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-contain';
                 nextEl.addEventListener('loadeddata', () => updateFrameForMedia(nextEl), { once: true });
+                computeMidFramePoster(useUrl, (dataUrl) => {
+                    if (dataUrl) {
+                        try { nextEl.setAttribute('poster', dataUrl); } catch(_) {}
+                    }
+                });
             } else {
                 nextEl = document.createElement('img');
                 nextEl.src = url;
@@ -670,10 +732,15 @@ document.addEventListener("DOMContentLoaded", () => {
             // Update Slides State
             slides.forEach((slide, index) => {
                 const video = slide.querySelector('video');
+                const layer = slide.querySelector('.poster-layer');
                 
                 if (index === currentIndex) {
                     slide.classList.add('active');
                     slide.classList.remove('opacity-60'); 
+                    slide.classList.remove('show-poster');
+                    if (layer && layer.style) {
+                        // Keep layer in DOM for smooth crossfades; opacity controlled by class
+                    }
                     
                     if (isPlaying) {
                         video.play().catch(e => console.log("Autoplay prevented:", e));
@@ -681,9 +748,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     slide.classList.remove('active');
                     slide.classList.add('opacity-60'); // Keep dimming
-                    
+                    slide.classList.add('show-poster');
                     video.pause();
-                    video.currentTime = 0;
+                    try { video.currentTime = 0; } catch(_) {}
                     try { video.onended = null; } catch(_) {}
                 }
             });
@@ -737,6 +804,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         video.removeAttribute('loop');
                     }
                 } catch (_) {}
+                const slide = video.closest('.video-card');
+                if (slide) slide.classList.remove('show-poster');
                 video.play().catch(e => {
                     console.log("Autoplay prevented:", e);
                     isPlaying = false;
