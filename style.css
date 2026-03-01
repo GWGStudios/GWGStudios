@@ -233,6 +233,15 @@ video::-webkit-media-controls {
     transition: transform 600ms ease, opacity 600ms ease, width 600ms ease, height 600ms ease;
 }
 
+.feature-frame.frameless {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+.feature-frame.frameless::after {
+    box-shadow: none !important;
+}
+
 .feature-frame.is-swapping {
     transform: scale(0.985);
     opacity: 0.92;
