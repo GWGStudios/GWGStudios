@@ -297,10 +297,10 @@ video::-webkit-media-controls {
     display: block;
 }
 .feature-image-in {
-    animation: imgIn 1400ms ease forwards;
+    animation: imgIn 1100ms ease forwards;
 }
 .feature-image-out {
-    animation: imgOut 1400ms ease forwards;
+    animation: imgOut 1100ms ease forwards;
 }
 @keyframes imgIn {
     0%   { opacity: 0; filter: blur(14px); }
