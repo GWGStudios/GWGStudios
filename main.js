@@ -767,29 +767,12 @@ document.addEventListener("DOMContentLoaded", () => {
         activatePill(pills[0], { suppressOpen: true });
     }
 
-    gsap.from("h1", {
-        duration: 1.5,
-        y: 100,
-        opacity: 0,
-        ease: "power4.out",
-        delay: 0.5
-    });
+    if (window.gsap && window.gsap.ticker && window.gsap.ticker.lagSmoothing) { window.gsap.ticker.lagSmoothing(1000, 16); }
+    gsap.from("h1", { duration: 0.9, y: 80, opacity: 0, ease: "power3.out", delay: 0.4 });
 
-    gsap.from("p", {
-        duration: 1.5,
-        y: 50,
-        opacity: 0,
-        ease: "power4.out",
-        delay: 0.8
-    });
+    gsap.from("p", { duration: 0.9, y: 40, opacity: 0, ease: "power3.out", delay: 0.6 });
 
-    gsap.from(".animate-bounce", {
-        duration: 1,
-        y: 20,
-        opacity: 0,
-        ease: "bounce.out",
-        delay: 1.5
-    });
+    gsap.from(".animate-bounce", { duration: 0.7, y: 16, opacity: 0, ease: "power3.out", delay: 1.2 });
 
     // Ensure controls are visible by default (remove intersection reveal that could hide dots)
     const mainControls = document.getElementById('main-controls');
@@ -851,11 +834,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const translateX = computeTranslateX(currentIndex);
             if (window.gsap && animate) {
                 animating = true;
+                // Add subtle motion blur during animation
+                track.classList.add('motion-blur','blur-transition');
+                if (mainControls) mainControls.classList.add('motion-blur-soft','blur-transition');
                 window.gsap.to(track, {
                     x: translateX,
-                    duration: 1.2,
+                    duration: 0.9,
                     ease: "power3.inOut",
-                    onComplete: () => { animating = false; }
+                    onComplete: () => { 
+                        animating = false; 
+                        track.classList.remove('motion-blur');
+                        if (mainControls) mainControls.classList.remove('motion-blur-soft');
+                    }
                 });
             } else {
                 track.style.transform = `translate3d(${translateX}px,0,0)`;
@@ -931,6 +921,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const video = currentSlide.querySelector('video');
             if (video) {
                 try {
+                    video.preload = 'metadata';
                     video.loop = false;
                     if (video.hasAttribute && video.hasAttribute('loop')) {
                         video.removeAttribute('loop');

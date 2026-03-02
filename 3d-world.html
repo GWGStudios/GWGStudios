@@ -40,5 +40,52 @@
     </div>
     <button class="md:hidden text-white">Menu</button>
   </nav>
+  <header class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 z-0 overflow-hidden">
+      <video class="w-full h-full object-cover" autoplay muted playsinline loop preload="metadata" poster="assets/Anyma.jpg">
+        <source src="assets/Anyma.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="absolute inset-0"></div>
+    <div class="relative z-10 text-center mix-blend-difference">
+      <h1 class="text-6xl md:text-8xl font-extrabold tracking-tighter mb-4">3D World</h1>
+      <p class="text-xl md:text-2xl font-light text-brand-gray tracking-wide">Rendered motion, materials, and light</p>
+    </div>
+  </header>
+
+  <section class="relative py-20 px-6 bg-[#111111]">
+    <div class="max-w-[1200px] mx-auto">
+      <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight mb-8">Featured 3D Works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="rounded-2xl overflow-hidden bg-[#0b0b0b]/90 border border-white/10">
+          <video class="w-full h-56 object-cover" autoplay muted loop playsinline>
+            <source src="assets/Anyma.mp4" type="video/mp4">
+          </video>
+          <div class="p-5">
+            <h3 class="text-lg font-semibold mb-1">Anyma</h3>
+            <p class="text-sm text-brand-gray">Material study and lighting motion.</p>
+          </div>
+        </div>
+        <div class="rounded-2xl overflow-hidden bg-[#0b0b0b]/90 border border-white/10">
+          <video class="w-full h-56 object-cover" autoplay muted loop playsinline>
+            <source src="graphis%202d/0067.mp4" type="video/mp4">
+          </video>
+          <div class="p-5">
+            <h3 class="text-lg font-semibold mb-1">3D realism</h3>
+            <p class="text-sm text-brand-gray">Cinematic motion with smooth transitions.</p>
+          </div>
+        </div>
+        <div class="rounded-2xl overflow-hidden bg-[#0b0b0b]/90 border border-white/10">
+          <video class="w-full h-56 object-cover" autoplay muted loop playsinline>
+            <source src="assets/3.blend0488.mp4" type="video/mp4">
+          </video>
+          <div class="p-5">
+            <h3 class="text-lg font-semibold mb-1">Product visualization</h3>
+            <p class="text-sm text-brand-gray">Hard-surface detail and reflective materials.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </body>
 </html>

@@ -15,6 +15,13 @@ body {
     overflow-x: hidden;
 }
 
+/* Stabilize fixed nav to avoid flicker */
+nav {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    will-change: transform, opacity;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
@@ -78,7 +85,7 @@ body {
 
 /* Image Hover Effect */
 .img-hover-zoom {
-    transition: transform 0.5s ease;
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .img-hover-zoom:hover {
@@ -93,7 +100,7 @@ body {
 }
 
 .video-card {
-    transition: all 1.6s cubic-bezier(0.16, 1, 0.3, 1); /* Matches track speed */
+    transition: all 900ms cubic-bezier(0.22, 1, 0.36, 1);
     transform-origin: center center;
     border-radius: 32px;
     overflow: hidden;
@@ -102,6 +109,10 @@ body {
     mask-image: radial-gradient(white, black);
     transform: translateZ(0); /* Hardware acceleration fix */
 }
+
+.motion-blur { filter: blur(0.6px); }
+.motion-blur-soft { filter: blur(0.3px); }
+.blur-transition { transition: filter 200ms cubic-bezier(0.22, 1, 0.36, 1); }
 
 .video-card video {
     border-radius: 32px;
@@ -147,10 +158,15 @@ body {
 }
 
 .feature-pill {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     min-height: 40px;
     line-height: 1;
+    width: auto;
+}
+
+#feature-list {
+    align-items: flex-start;
 }
 
 .feature-pill .indicator {
@@ -306,7 +322,7 @@ video::-webkit-media-controls {
 
 .feature-frame {
     isolation: isolate;
-    transition: transform 600ms ease, opacity 600ms ease, width 600ms ease, height 600ms ease;
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1), opacity 600ms cubic-bezier(0.22, 1, 0.36, 1), width 600ms cubic-bezier(0.22, 1, 0.36, 1), height 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .feature-frame.frameless {
@@ -332,9 +348,9 @@ video::-webkit-media-controls {
     background-position: center;
     background-repeat: no-repeat;
     transition:
-      opacity 1200ms cubic-bezier(0.37, 0, 0.63, 1),
-      transform 1200ms cubic-bezier(0.37, 0, 0.63, 1),
-      filter 1200ms cubic-bezier(0.37, 0, 0.63, 1);
+      opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 900ms cubic-bezier(0.22, 1, 0.36, 1);
     opacity: 0;
     transform: scale(1);
     filter: blur(0px);
@@ -347,9 +363,9 @@ video::-webkit-media-controls {
     height: 100%;
     object-fit: cover;
     transition:
-      opacity 1200ms cubic-bezier(0.37, 0, 0.63, 1),
-      transform 1200ms cubic-bezier(0.37, 0, 0.63, 1),
-      filter 1200ms cubic-bezier(0.37, 0, 0.63, 1);
+      opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 900ms cubic-bezier(0.22, 1, 0.36, 1);
     filter: blur(0px);
     will-change: opacity, transform, filter;
 }
@@ -379,9 +395,9 @@ video::-webkit-media-controls {
     transform: translateY(-6px) scaleY(0.98);
     transform-origin: 0 0;
     overflow: hidden;
-    transition: max-height 2400ms cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 2000ms ease,
-                transform 2400ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: max-height 1000ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .sub-options.open {
     max-height: 520px;
@@ -397,13 +413,13 @@ video::-webkit-media-controls {
     opacity: 0;
     filter: blur(8px);
     will-change: transform, opacity, filter;
-    transition: transform 1400ms cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 1200ms ease,
-                filter 1200ms ease;
+    transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+                filter 700ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .work-card img {
-    transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1), filter 900ms ease;
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1), filter 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .work-card:hover img {
@@ -443,9 +459,9 @@ video::-webkit-media-controls {
     opacity: 0;
     transform: translateY(28px) scale(0.985);
     filter: blur(14px);
-    transition: opacity 1800ms cubic-bezier(0.16, 1, 0.3, 1),
-                transform 1800ms cubic-bezier(0.16, 1, 0.3, 1),
-                filter 1800ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                filter 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .page-transition.is-visible {
