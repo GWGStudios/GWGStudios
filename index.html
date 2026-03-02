@@ -245,7 +245,7 @@
             <div class="rounded-[28px] bg-[#0b0b0b]/90 shadow-2xl p-6 md:p-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Left: Feature Pills + Bubble -->
-                    <div class="relative">
+                    <div class="relative flex flex-col justify-center md:min-h-[60vh]">
                         <div class="flex flex-col gap-3" id="feature-list">
                             <!-- Expandable: Graphic Design -->
                             <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/15 transition"
@@ -332,7 +332,7 @@
     </section>
     <section id="showcase" class="relative h-screen w-full bg-[#111111] page-transition">
         <video id="showcase-video" class="absolute inset-0 w-full h-full object-cover" src="assets/studio logo.mp4" muted playsinline preload="auto" loop></video>
-        <div class="absolute inset-0 bg-black/30"></div>
+        <video class="absolute inset-0 w-full h-full object-cover opacity-30" src="assets/0001-0360.mp4" autoplay muted loop playsinline preload="metadata"></video>
         <div class="showcase-blur absolute inset-0 pointer-events-none"></div>
         <div class="showcase-progress absolute bottom-6 left-1/2 -translate-x-1/2">
             <div id="showcase-progress-bar"></div>

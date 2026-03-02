@@ -3,7 +3,12 @@
 
 
 if (typeof THREE !== 'undefined') {
-    initThreeJS();
+    const run = () => initThreeJS();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', run, { once: true });
+    } else {
+        run();
+    }
 }
 
 function initThreeJS() {
@@ -12,29 +17,34 @@ function initThreeJS() {
     scene.background = new THREE.Color(0x111111); // Match darker gray theme
     scene.fog = new THREE.Fog(0x111111, 10, 50);
 
+    const container = document.getElementById('three-canvas-container') || document.getElementById('canvas-container');
+    if (!container) {
+        console.error('Canvas container not found');
+        return;
+    }
+    const getSize = () => {
+        const w = container.clientWidth || window.innerWidth;
+        const h = container.clientHeight || window.innerHeight;
+        return { w, h };
+    };
+    const { w: startW, h: startH } = getSize();
+
     // Camera Setup
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, startW / startH, 0.1, 1000);
     camera.position.z = 15;
 
     // Renderer Setup
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(startW, startH);
     renderer.setPixelRatio(window.devicePixelRatio);
-    
-    const container = document.getElementById('canvas-container');
-    if (container) {
-        container.appendChild(renderer.domElement);
-    } else {
-        console.error('Canvas container not found');
-        return;
-    }
+    container.appendChild(renderer.domElement);
 
     // Objects
     let loadedModel;
     const loader = new THREE.GLTFLoader();
     
     loader.load(
-        'untitled.glb',
+        'Untitled.glb',
         function (gltf) {
             loadedModel = gltf.scene;
             
@@ -102,19 +112,51 @@ function initThreeJS() {
     pointLight2.position.set(-10, -10, -10);
     scene.add(pointLight2);
 
-    // Mouse Interaction
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetX = 0;
-    let targetY = 0;
+    let hoverX = 0;
+    let hoverY = 0;
+    let dragX = 0;
+    let dragY = 0;
+    let dragging = false;
+    let lastClientX = 0;
+    let lastClientY = 0;
 
-    const windowHalfX = window.innerWidth / 2;
-    const windowHalfY = window.innerHeight / 2;
+    const updateHover = (event) => {
+        const rect = container.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const nx = (event.clientX - rect.left) / rect.width - 0.5;
+        const ny = (event.clientY - rect.top) / rect.height - 0.5;
+        hoverX = nx;
+        hoverY = ny;
+    };
 
-    document.addEventListener('mousemove', (event) => {
-        mouseX = (event.clientX - windowHalfX);
-        mouseY = (event.clientY - windowHalfY);
-    });
+    const onPointerDown = (event) => {
+        dragging = true;
+        lastClientX = event.clientX;
+        lastClientY = event.clientY;
+        container.setPointerCapture(event.pointerId);
+    };
+    const onPointerMove = (event) => {
+        if (!dragging) {
+            updateHover(event);
+            return;
+        }
+        const rect = container.getBoundingClientRect();
+        const dx = rect.width ? (event.clientX - lastClientX) / rect.width : 0;
+        const dy = rect.height ? (event.clientY - lastClientY) / rect.height : 0;
+        lastClientX = event.clientX;
+        lastClientY = event.clientY;
+        dragY += dx * 3.0;
+        dragX += dy * 3.0;
+    };
+    const onPointerUp = (event) => {
+        dragging = false;
+        try { container.releasePointerCapture(event.pointerId); } catch (_) {}
+    };
+
+    container.addEventListener('pointerdown', onPointerDown);
+    container.addEventListener('pointermove', onPointerMove);
+    container.addEventListener('pointerup', onPointerUp);
+    container.addEventListener('pointercancel', onPointerUp);
 
     // Animation Loop
     const clock = new THREE.Clock();
@@ -124,8 +166,8 @@ function initThreeJS() {
 
         const elapsedTime = clock.getElapsedTime();
 
-        targetX = mouseX * 0.001;
-        targetY = mouseY * 0.001;
+        const targetX = dragY + hoverX * 0.9;
+        const targetY = dragX + hoverY * 0.9;
 
         if (loadedModel) {
             // Smooth rotation based on mouse
@@ -138,7 +180,7 @@ function initThreeJS() {
 
         // Particle movement
         particlesMesh.rotation.y = -elapsedTime * 0.05;
-        particlesMesh.rotation.x = mouseY * 0.0001;
+        particlesMesh.rotation.x = hoverY * 0.2;
 
         renderer.render(scene, camera);
     }
@@ -147,9 +189,10 @@ function initThreeJS() {
 
     // Resize Handler
     window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
+        const { w, h } = getSize();
+        camera.aspect = w / h;
         camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(w, h);
     });
 }
 
@@ -274,6 +317,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const revealTargets = document.querySelectorAll('header, section');
     revealTargets.forEach(el => el.classList.add('page-transition'));
+    const controlsEls = document.querySelectorAll('#main-controls .control-glass, #main-controls #main-play-btn');
+    let controlsTl = null;
+    if (controlsEls.length && window.gsap) {
+        const pillSel = '#main-controls .control-glass:not(#main-play-btn)';
+        const btnSel = '#main-controls #main-play-btn';
+        window.gsap.set([pillSel, btnSel], { autoAlpha: 0, y: 140, scale: 0.5, transformOrigin: '50% 100%' });
+        controlsTl = window.gsap.timeline({ paused: true });
+        controlsTl
+            .add('enter')
+            .to(pillSel, {
+                y: 0,
+                autoAlpha: 1,
+                scale: 1,
+                duration: 1.6,
+                ease: 'elastic.out(1, 0.45)',
+                stagger: 0.16,
+                overwrite: 'auto'
+            }, 'enter+=0.30')
+            .to(btnSel, {
+                y: 0,
+                autoAlpha: 1,
+                scale: 1,
+                duration: 1.6,
+                ease: 'elastic.out(1, 0.45)',
+                overwrite: 'auto'
+            }, 'enter+=0.36');
+        const highlightsSection = document.getElementById('highlights');
+        if (highlightsSection) {
+            const controlsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const r = entry.intersectionRatio || 0;
+                    if (r >= 0.9) {
+                        controlsTl.timeScale(1.15).play();
+                    } else if (r <= 0.5) {
+                        controlsTl.timeScale(2.5).reverse();
+                    } else if (r >= 0.6 && controlsTl.progress() === 0) {
+                        controlsTl.timeScale(1.15).play(0);
+                    }
+                });
+            }, { threshold: [0, 0.3, 0.5, 0.6, 0.9, 1] });
+            controlsObserver.observe(highlightsSection);
+            // Initial sync for cases where observer thresholds don't fire immediately
+            const ratioFromRect = () => {
+                const rect = highlightsSection.getBoundingClientRect();
+                const vh = window.innerHeight || document.documentElement.clientHeight;
+                const visible = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, 0));
+                const ratio = Math.max(0, Math.min(1, visible / Math.max(1, rect.height)));
+                return ratio;
+            };
+            const initR = ratioFromRect();
+            if (initR >= 0.9) controlsTl.timeScale(1.15).progress(1);
+            else if (initR >= 0.6) controlsTl.timeScale(1.15).play(0);
+            else controlsTl.timeScale(2.5).pause(0).progress(0);
+            window.addEventListener('resize', () => {
+                const r = ratioFromRect();
+                if (r >= 0.9) controlsTl.timeScale(1.15).play();
+                else if (r <= 0.5) controlsTl.timeScale(2.5).reverse();
+            });
+        }
+    }
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
