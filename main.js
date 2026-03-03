@@ -1025,4 +1025,107 @@ document.addEventListener("DOMContentLoaded", () => {
             updateSlidePosition(false);
         });
     }
+    (function setupScrollVideo() {
+        const section = document.getElementById('scroll-video');
+        const video = document.getElementById('scroll-video-el');
+        if (!section || !video) return;
+        if (window.gsap && window.ScrollTrigger) {
+            try { window.gsap.registerPlugin(window.ScrollTrigger); } catch(_) {}
+            const init = () => {
+                const duration = Math.max(0, video.duration || 0);
+                const fps = 24;
+                const snapTime = window.gsap && window.gsap.utils ? window.gsap.utils.snap(1 / fps) : (s => s);
+                let proxy = { t: video.currentTime || 0 };
+                let smoothTween = null;
+                function setSmooth(time) {
+                    const target = snapTime(time);
+                    if (smoothTween) { try { smoothTween.kill(); } catch(_) {} }
+                    smoothTween = gsap.to(proxy, {
+                        t: target,
+                        duration: 0.60,
+                        ease: "power4.out",
+                        overwrite: "auto",
+                        onUpdate: () => {
+                            try { video.currentTime = proxy.t; } catch(_) {}
+                        }
+                    });
+                }
+                window.ScrollTrigger.create({
+                    trigger: section,
+                    start: "top top",
+                    end: "+=500%",
+                    scrub: 2.5,
+                    pin: true,
+                    anticipatePin: 1,
+                    fastScrollEnd: true,
+                    invalidateOnRefresh: true,
+                    onUpdate: (self) => {
+                        const t = self.progress * duration;
+                        setSmooth(t);
+                    },
+                    onScrubComplete: (self) => {
+                        const t = self.progress * duration;
+                        setSmooth(t);
+                    }
+                });
+            };
+            if (video.readyState >= 2) init();
+            else video.addEventListener('loadeddata', init, { once: true });
+            return;
+        }
+        try { video.preload = 'auto'; } catch(_) {}
+        try { video.pause(); } catch(_) {}
+        let bounds = null;
+        let duration = 0;
+        let raf = null;
+        let targetTime = 0;
+        const smoothing = 0.15;
+        function computeBounds() {
+            const top = section.offsetTop;
+            const height = section.offsetHeight;
+            const start = top;
+            const end = top + Math.max(0, height - (window.innerHeight || document.documentElement.clientHeight));
+            bounds = { start, end };
+        }
+        function computeTarget() {
+            if (!bounds || duration <= 0) return;
+            const y = window.scrollY || window.pageYOffset || 0;
+            const len = Math.max(1, bounds.end - bounds.start);
+            const p = Math.max(0, Math.min(1, (y - bounds.start) / len));
+            targetTime = p * duration;
+        }
+        function tick() {
+            const ct = video.currentTime || 0;
+            const diff = targetTime - ct;
+            if (Math.abs(diff) < 0.02) {
+                try { video.currentTime = targetTime; } catch(_) {}
+                raf = null;
+                return;
+            }
+            const next = ct + diff * smoothing;
+            try { video.currentTime = Math.max(0, Math.min(duration, next)); } catch(_) {}
+            raf = requestAnimationFrame(tick);
+        }
+        function queueTick() {
+            if (!raf) raf = requestAnimationFrame(tick);
+        }
+        video.addEventListener('loadeddata', () => {
+            duration = Math.max(0, video.duration || 0);
+            computeBounds();
+            computeTarget();
+            queueTick();
+        }, { once: true });
+        window.addEventListener('scroll', () => {
+            computeTarget();
+            queueTick();
+        }, { passive: true });
+        window.addEventListener('resize', () => {
+            computeBounds();
+            computeTarget();
+            queueTick();
+        });
+        computeBounds();
+        computeTarget();
+        queueTick();
+    })();
 });
