@@ -245,7 +245,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function applyMidFramePosterFor(videoEl) {
         if (!videoEl) return;
         const srcEl = videoEl.querySelector('source');
-        const src = (videoEl.currentSrc || (srcEl && srcEl.getAttribute('src')) || videoEl.getAttribute('src') || '').trim();
+        const ds = (srcEl && srcEl.getAttribute('data-src')) || '';
+        const src = (videoEl.currentSrc || (srcEl && srcEl.getAttribute('src')) || videoEl.getAttribute('src') || ds).trim();
         if (!src) return;
         computeMidFramePoster(src, (url) => {
             if (!url) return;
@@ -260,6 +261,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     const highlightVideos = Array.from(document.querySelectorAll('#highlights video'));
+    highlightVideos.forEach(v => { try { v.preload = 'none'; } catch(_) {} });
+    highlightVideos.forEach(v => applyMidFramePosterFor(v));
     const downArrow = document.querySelector('header .animate-bounce');
     if (downArrow) {
         downArrow.style.cursor = 'pointer';
@@ -813,12 +816,38 @@ document.addEventListener("DOMContentLoaded", () => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Generate posters lazily for visible videos
-                    highlightVideos.forEach(v => {
-                        if (!v.getAttribute('poster')) applyMidFramePosterFor(v);
-                        try { v.preload = 'metadata'; } catch(_) {}
+                    let preloadIndex = currentIndex - 1;
+                    function getVideoAt(i) {
+                        const slide = slides[(i + slides.length) % slides.length];
+                        return slide ? slide.querySelector('video') : null;
+                    }
+                    function ensureLoaded(v, cb) {
+                        if (!v) { cb && cb(); return; }
+                        const se = v.querySelector('source');
+                        const ds = se ? (se.getAttribute('data-src') || '') : '';
+                        if (se && !se.getAttribute('src') && ds) {
+                            se.setAttribute('src', ds);
+                            try { v.preload = 'metadata'; v.load(); } catch(_) {}
+                        }
+                        if (v.readyState >= 2) cb && cb();
+                        else v.addEventListener('loadeddata', () => cb && cb(), { once: true });
+                    }
+                    const currentVideo = getVideoAt(currentIndex);
+                    ensureLoaded(currentVideo, () => {
+                        if (currentVideo && !currentVideo.getAttribute('poster')) applyMidFramePosterFor(currentVideo);
+                        playCurrentVideo();
+                        function preloadNextSequential() {
+                            preloadIndex += 1;
+                            const nextVid = getVideoAt(preloadIndex);
+                            ensureLoaded(nextVid, () => {
+                                if (nextVid && !nextVid.getAttribute('poster')) applyMidFramePosterFor(nextVid);
+                                setTimeout(() => {
+                                    if (entry.isIntersecting) preloadNextSequential();
+                                }, 600);
+                            });
+                        }
+                        setTimeout(preloadNextSequential, 400);
                     });
-                    playCurrentVideo();
                 } else {
                     pauseAllVideos();
                 }
@@ -857,7 +886,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (index === currentIndex) {
                     slide.classList.add('active');
                     slide.classList.remove('opacity-60'); 
-                    slide.classList.remove('show-poster');
+                    if (video && video.readyState >= 2) {
+                        slide.classList.remove('show-poster');
+                    } else {
+                        slide.classList.add('show-poster');
+                        video.addEventListener('loadeddata', () => {
+                            slide.classList.remove('show-poster');
+                        }, { once: true });
+                    }
                     if (layer && layer.style) {
                         // Keep layer in DOM for smooth crossfades; opacity controlled by class
                     }
@@ -926,7 +962,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 } catch (_) {}
                 const slide = video.closest('.video-card');
-                if (slide) slide.classList.remove('show-poster');
+                if (slide) {
+                    if (video.readyState >= 2) slide.classList.remove('show-poster');
+                    else {
+                        slide.classList.add('show-poster');
+                        video.addEventListener('loadeddata', () => {
+                            slide.classList.remove('show-poster');
+                        }, { once: true });
+                    }
+                }
                 video.play().catch(e => {
                     console.log("Autoplay prevented:", e);
                     isPlaying = false;
@@ -1057,6 +1101,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     anticipatePin: 1,
                     fastScrollEnd: true,
                     invalidateOnRefresh: true,
+                    onEnter: () => {
+                        try {
+                            video.preload = 'metadata';
+                            video.muted = true;
+                            video.play().then(() => { try { video.pause(); } catch(_) {} }).catch(() => {});
+                        } catch(_) {}
+                    },
+                    onRefresh: () => {
+                        try { duration = Math.max(0, video.duration || 0); } catch(_) {}
+                    },
                     onUpdate: (self) => {
                         const t = self.progress * duration;
                         setSmooth(t);
