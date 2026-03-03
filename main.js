@@ -415,7 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     mobilePanel.classList.remove('open', 'menu-anim-out');
                     menuBtn.classList.remove('menu-btn-expanded', 'menu-btn-anim-out');
                     menuAnimating = false;
-                }, 700);
+                }, 320);
             } else {
                 mobilePanel.classList.remove('menu-anim-out');
                 mobilePanel.classList.add('open', 'menu-anim-in');
@@ -441,7 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         mobilePanel.classList.remove('open', 'menu-anim-out');
                         menuBtn.classList.remove('menu-btn-expanded', 'menu-btn-anim-out');
                         menuAnimating = false;
-                    }, 700);
+                    }, 320);
                 });
             });
             window.addEventListener('resize', () => {
