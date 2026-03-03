@@ -1024,12 +1024,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!section || !video) return;
         if (window.gsap && window.ScrollTrigger) {
             try { window.gsap.registerPlugin(window.ScrollTrigger); } catch(_) {}
+            try { window.ScrollTrigger.normalizeScroll(true); } catch(_) {}
             const init = () => {
                 const duration = Math.max(0, video.duration || 0);
                 const fps = 24;
                 const snapTime = window.gsap && window.gsap.utils ? window.gsap.utils.snap(1 / fps) : (s => s);
                 let proxy = { t: video.currentTime || 0 };
                 let smoothTween = null;
+                try {
+                    video.muted = true;
+                    video.play().then(() => { try { video.pause(); } catch(_) {} }).catch(() => {});
+                } catch(_) {}
                 function setSmooth(time) {
                     const target = snapTime(time);
                     if (smoothTween) { try { smoothTween.kill(); } catch(_) {} }
