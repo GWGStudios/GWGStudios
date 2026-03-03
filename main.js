@@ -2,7 +2,7 @@
 
 
 
-if (typeof THREE !== 'undefined') {
+if (false && typeof THREE !== 'undefined') {
     const run = () => initThreeJS();
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', run, { once: true });
@@ -598,15 +598,8 @@ document.addEventListener("DOMContentLoaded", () => {
             let deferred = false;
 
             if (/\.(fbx|glb|gltf)(\?|$)/i.test(url)) {
-                nextEl = document.createElement('iframe');
-                const viewerUrl = 'viewer-fbx.html?src=' + encodeURIComponent(url);
-                nextEl.src = viewerUrl;
-                nextEl.title = '3D Preview';
-                nextEl.loading = 'lazy';
-                nextEl.setAttribute('allow', 'cross-origin-isolated');
-                nextEl.style.border = '0';
-                nextEl.className = 'feature-image absolute inset-0 w-full h-full';
-                deferred = true;
+                animLock = false;
+                return;
             } else if (/\.mp4(\?|$)/i.test(url)) {
                 nextEl = document.createElement('video');
                 let useUrl = url;
