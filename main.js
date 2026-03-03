@@ -204,34 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
         heroVideo.addEventListener('loadeddata', onReady, { once: true });
         heroVideo.play().then(onReady).catch(() => {});
     }
-    function computeMidFramePoster(src, cb) {
-        try {
-            const v = document.createElement('video');
-            v.crossOrigin = 'anonymous';
-            v.muted = true;
-            v.preload = 'metadata';
-            v.src = src;
-            const done = (url) => { try { cb && cb(url); } catch(_) {} };
-            v.addEventListener('error', () => done(null), { once: true });
-            v.addEventListener('loadeddata', () => {
-                if (!v.duration || !v.videoWidth || !v.videoHeight) { done(null); return; }
-                const mid = Math.max(0.001, v.duration / 2);
-                const onSeeked = () => {
-                    try {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = v.videoWidth;
-                        canvas.height = v.videoHeight;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
-                        const url = canvas.toDataURL('image/jpeg', 0.85);
-                        done(url);
-                    } catch(e) { done(null); }
-                };
-                v.addEventListener('seeked', onSeeked, { once: true });
-                try { v.currentTime = mid; } catch(_) { done(null); }
-            }, { once: true });
-        } catch(_) { cb && cb(null); }
-    }
     function ensurePosterLayer(slide) {
         if (!slide) return null;
         let layer = slide.querySelector('.poster-layer');
@@ -242,23 +214,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return layer;
     }
+    function thumbUrlFor(src) {
+        try {
+            const clean = (src || '').split('?')[0];
+            const m = clean.match(/([^\/]+)\.mp4$/i);
+            if (!m) return null;
+            return `assets/thumbnails/${m[1]}.jpg`;
+        } catch(_) { return null; }
+    }
     function applyMidFramePosterFor(videoEl) {
         if (!videoEl) return;
         const srcEl = videoEl.querySelector('source');
         const ds = (srcEl && srcEl.getAttribute('data-src')) || '';
         const src = (videoEl.currentSrc || (srcEl && srcEl.getAttribute('src')) || videoEl.getAttribute('src') || ds).trim();
         if (!src) return;
-        computeMidFramePoster(src, (url) => {
+        const localThumb = thumbUrlFor(src);
+        const assignPoster = (url) => {
             if (!url) return;
             try { videoEl.setAttribute('poster', url); } catch(_) {}
             const slide = videoEl.closest('.video-card');
             if (!slide) return;
             const layer = ensurePosterLayer(slide);
             if (layer) layer.style.backgroundImage = `url(${url})`;
-            if (!slide.classList.contains('active')) {
-                slide.classList.add('show-poster');
-            }
-        });
+            if (!slide.classList.contains('active')) slide.classList.add('show-poster');
+        };
+        if (!localThumb) return;
+        const img = new Image();
+        img.onload = () => assignPoster(localThumb);
+        img.onerror = () => {};
+        img.src = localThumb;
     }
     const highlightVideos = Array.from(document.querySelectorAll('#highlights video'));
     highlightVideos.forEach(v => { try { v.preload = 'none'; } catch(_) {} });
@@ -622,11 +606,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 nextEl.playsInline = true;
                 nextEl.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-contain';
                 nextEl.addEventListener('loadeddata', () => updateFrameForMedia(nextEl), { once: true });
-                computeMidFramePoster(useUrl, (dataUrl) => {
-                    if (dataUrl) {
-                        try { nextEl.setAttribute('poster', dataUrl); } catch(_) {}
-                    }
-                });
+                try {
+                    const tu = thumbUrlFor(useUrl);
+                    if (tu) { nextEl.setAttribute('poster', tu); }
+                } catch(_) {}
             } else {
                 nextEl = document.createElement('img');
                 nextEl.src = url;
