@@ -209,11 +209,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const v = document.createElement('video');
             v.crossOrigin = 'anonymous';
             v.muted = true;
-            v.preload = 'auto';
+            v.preload = 'metadata';
             v.src = src;
             const done = (url) => { try { cb && cb(url); } catch(_) {} };
             v.addEventListener('error', () => done(null), { once: true });
-            v.addEventListener('loadedmetadata', () => {
+            v.addEventListener('loadeddata', () => {
                 if (!v.duration || !v.videoWidth || !v.videoHeight) { done(null); return; }
                 const mid = Math.max(0.001, v.duration / 2);
                 const onSeeked = () => {
@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    document.querySelectorAll('#highlights video').forEach(v => applyMidFramePosterFor(v));
+    const highlightVideos = Array.from(document.querySelectorAll('#highlights video'));
     const downArrow = document.querySelector('header .animate-bounce');
     if (downArrow) {
         downArrow.style.cursor = 'pointer';
@@ -820,6 +820,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
+                    // Generate posters lazily for visible videos
+                    highlightVideos.forEach(v => {
+                        if (!v.getAttribute('poster')) applyMidFramePosterFor(v);
+                        try { v.preload = 'metadata'; } catch(_) {}
+                    });
                     playCurrentVideo();
                 } else {
                     pauseAllVideos();

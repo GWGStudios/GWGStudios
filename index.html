@@ -52,7 +52,7 @@
     <!-- Navigation -->
     <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-5 py-1 flex justify-between items-center rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-xl w-[92vw] sm:w-[86vw] md:w-[72vw] lg:w-[64vw] max-w-5xl transition-all duration-300">
         <div class="h-8 md:h-10">
-            <img src="assets/gwg-logo.gif" alt="GWG Logo" class="h-full object-contain">
+            <img src="assets/gwg-logo.gif" alt="GWG Logo" class="h-full object-contain" fetchpriority="high" decoding="async">
         </div>
         <div id="main-nav-links" class="hidden md:flex relative space-x-8 text-sm uppercase tracking-widest">
             <a href="index.html" class="nav-link hover:text-brand-gray transition-colors nav-link-active">Home</a>
@@ -112,7 +112,7 @@
                 
                 <!-- Slide 1 -->
                 <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700">
-                    <video class="w-full h-full object-cover" muted playsinline loop poster="assets/dwsa0000-0115.mp4">
+                    <video class="w-full h-full object-cover" muted playsinline loop preload="metadata" poster="assets/dwsa0000-0115.mp4">
                         <source src="assets/dwsa0000-0115.mp4" type="video/mp4">
                     </video>
                     
@@ -124,7 +124,7 @@
 
                 <!-- Slide 2 -->
                 <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700 opacity-60 scale-95">
-                    <video class="w-full h-full object-cover" muted playsinline loop poster="assets/tshirt.mp4">
+                    <video class="w-full h-full object-cover" muted playsinline loop preload="metadata" poster="assets/tshirt.mp4">
                         <source src="assets/tshirt.mp4" type="video/mp4">
                     </video>
                     <div class="absolute top-10 left-0 w-full text-center z-10">
@@ -134,7 +134,7 @@
 
                 <!-- Slide 3 -->
                 <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700 opacity-60 scale-95">
-                    <video class="w-full h-full object-cover" muted playsinline loop poster="assets/shoe.mp4">
+                    <video class="w-full h-full object-cover" muted playsinline loop preload="metadata" poster="assets/shoe.mp4">
                         <source src="assets/shoe.mp4" type="video/mp4">
                     </video>
                     <div class="absolute top-10 left-0 w-full text-center z-10">
@@ -144,7 +144,7 @@
 
                  <!-- Slide 4 -->
                  <div class="video-card relative flex-shrink-0 w-full md:w-[70vw] max-w-[1000px] aspect-video rounded-[32px] overflow-hidden bg-[#111] transition-all duration-700 opacity-60 scale-95">
-                    <video class="w-full h-full object-cover" muted playsinline loop poster="assets/gass.mp4">
+                    <video class="w-full h-full object-cover" muted playsinline loop preload="metadata" poster="assets/gass.mp4">
                         <source src="assets/gass.mp4" type="video/mp4">
                     </video>
                     <div class="absolute top-10 left-0 w-full text-center z-10">
@@ -181,7 +181,7 @@
                 <div class="glass-card review-card rounded-2xl p-6 md:p-7 text-[#e5e5e5]">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10">
-                            <img src="https://i.pravatar.cc/80?img=12" alt="Avatar" class="w-full h-full object-cover">
+                            <img src="https://i.pravatar.cc/80?img=12" alt="Avatar" class="w-full h-full object-cover" loading="lazy" decoding="async">
                         </div>
                         <div>
                             <div class="font-semibold">Aarav Shah</div>
@@ -199,7 +199,7 @@
                 <div class="glass-card review-card rounded-2xl p-6 md:p-7 text-[#e5e5e5]">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10">
-                            <img src="https://i.pravatar.cc/80?img=25" alt="Avatar" class="w-full h-full object-cover">
+                            <img src="https://i.pravatar.cc/80?img=25" alt="Avatar" class="w-full h-full object-cover" loading="lazy" decoding="async">
                         </div>
                         <div>
                             <div class="font-semibold">Nisha Verma</div>
@@ -217,7 +217,7 @@
                 <div class="glass-card review-card rounded-2xl p-6 md:p-7 text-[#e5e5e5]">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10">
-                            <img src="https://i.pravatar.cc/80?img=7" alt="Avatar" class="w-full h-full object-cover">
+                            <img src="https://i.pravatar.cc/80?img=7" alt="Avatar" class="w-full h-full object-cover" loading="lazy" decoding="async">
                         </div>
                         <div>
                             <div class="font-semibold">Kabir Mehta</div>
@@ -261,28 +261,28 @@
                                         data-title="Poster Series"
                                         data-desc="Bold 2D posters exploring geometry and rhythm."
                                         data-img="graphis%202d/optimized/poster-series-full.jpg">
-                                    <img src="graphis%202d/optimized/poster-series-thumb.jpg" alt="Poster Series" class="w-full h-24 sm:h-28 object-cover opacity-90">
+                                    <img src="graphis%202d/optimized/poster-series-thumb.jpg" alt="Poster Series" class="w-full h-24 sm:h-28 object-cover opacity-90" loading="lazy" decoding="async">
                                     <span class="work-card-title">Poster Series</span>
                                 </button>
                                 <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
                                         data-title="Brand System"
                                         data-desc="Minimal identity system with type-led layouts."
                                         data-img="graphis%202d/optimized/punk-rock-poster-full.jpg">
-                                    <img src="graphis%202d/optimized/punk-rock-poster-thumb.jpg" alt="Brand System" class="w-full h-24 sm:h-28 object-cover opacity-90">
+                                    <img src="graphis%202d/optimized/punk-rock-poster-thumb.jpg" alt="Brand System" class="w-full h-24 sm:h-28 object-cover opacity-90" loading="lazy" decoding="async">
                                     <span class="work-card-title">Brand System</span>
                                 </button>
                                 <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
                                         data-title="Editorial Spread"
                                         data-desc="Magazine-style composition and typographic flow."
                                         data-img="graphis%202d/optimized/skull-tshirt-full.jpg">
-                                    <img src="graphis%202d/optimized/skull-tshirt-thumb.jpg" alt="Editorial Spread" class="w-full h-24 sm:h-28 object-cover opacity-90">
+                                    <img src="graphis%202d/optimized/skull-tshirt-thumb.jpg" alt="Editorial Spread" class="w-full h-24 sm:h-28 object-cover opacity-90" loading="lazy" decoding="async">
                                     <span class="work-card-title">Editorial Spread</span>
                                 </button>
                                 <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
                                         data-title="Pattern Study"
                                         data-desc="Experimental pattern system for 2D surfaces."
                                         data-img="graphis%202d/optimized/pattern-study-full.jpg">
-                                    <img src="graphis%202d/optimized/pattern-study-thumb.jpg" alt="Pattern Study" class="w-full h-24 sm:h-28 object-cover opacity-90">
+                                    <img src="graphis%202d/optimized/pattern-study-thumb.jpg" alt="Pattern Study" class="w-full h-24 sm:h-28 object-cover opacity-90" loading="lazy" decoding="async">
                                     <span class="work-card-title">Pattern Study</span>
                                 </button>
                             </div>
@@ -331,7 +331,7 @@
         </div>
     </section>
     <section id="showcase" class="relative h-screen w-full bg-[#111111] page-transition">
-        <video id="showcase-video" class="absolute inset-0 w-full h-full object-cover" src="assets/studio logo.mp4" muted playsinline preload="auto" loop></video>
+        <video id="showcase-video" class="absolute inset-0 w-full h-full object-cover" src="assets/studio logo.mp4" muted playsinline preload="metadata" loop></video>
         <video class="absolute inset-0 w-full h-full object-cover opacity-30" src="assets/0001-0360.mp4" autoplay muted loop playsinline preload="metadata"></video>
         <div class="showcase-blur absolute inset-0 pointer-events-none"></div>
         <div class="showcase-progress absolute bottom-6 left-1/2 -translate-x-1/2">
@@ -386,7 +386,7 @@
     <!-- Contact Section -->
     <section id="contact" class="py-20 px-8 bg-[#111111] page-transition">
         <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
-            <img src="assets/gwg-logo.gif" alt="GWG Logo" class="w-48 h-auto mb-8 mx-auto mix-blend-screen opacity-90 hover:opacity-100 transition-opacity duration-500">
+            <img src="assets/gwg-logo.gif" alt="GWG Logo" class="w-48 h-auto mb-8 mx-auto mix-blend-screen opacity-90 hover:opacity-100 transition-opacity duration-500" loading="lazy" decoding="async">
             <h2 class="text-6xl md:text-8xl font-bold mb-8 hover:text-brand-gray transition-colors cursor-pointer">
                 <a href="mailto:hello@gwg.com">LET'S TALK</a>
             </h2>
