@@ -236,6 +236,46 @@
         </div>
     </section>
 
+    <!-- Closer Look Section -->
+    <section id="closer" class="relative pt-6 pb-20 bg-[#000000]">  
+        <div class="reveal-section w-full flex flex-col items-center">
+            <h2 class="section-title">Take a closer look.</h2>
+
+            <div class="feature-container" id="feature-container">
+                
+                <!-- Inner wrapper for clipping background -->
+                <div class="feature-inner-clip">
+                    <!-- Backgrounds -->
+                    <div id="bg-wrapper">
+                        <!-- Will be injected by JS -->
+                    </div>
+                    <div class="bg-overlay"></div>
+                </div>
+
+                <!-- Navigation Arrows -->
+                <button class="nav-arrow nav-prev" id="prev-btn">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                </button>
+                <button class="nav-arrow nav-next" id="next-btn">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+
+                <!-- Close Button -->
+                <button class="close-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+
+                <!-- Content Overlay -->
+                <div class="content-overlay">
+                    <div class="pill-list" id="pill-list">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <!-- Upgrade Section (GWG Studios Showcase) -->
     <section id="upgrade" class="reveal-section py-24 px-6 bg-[#000000] relative overflow-hidden">
         <div class="max-w-[1200px] mx-auto text-center">
@@ -335,46 +375,6 @@
                 <p class="text-base text-[#86868b] max-w-lg text-center leading-relaxed">
                     Transforming visions into high-fidelity digital realities. Partner with our team to redefine your brand's visual language. <a href="#contact" class="text-[#2997ff] font-medium hover:underline">Start a project ></a>
                 </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Closer Look Section -->
-    <section id="closer" class="relative pt-6 pb-20 bg-[#000000]">  
-        <div class="reveal-section w-full flex flex-col items-center">
-            <h2 class="section-title">Take a closer look.</h2>
-
-            <div class="feature-container" id="feature-container">
-                
-                <!-- Inner wrapper for clipping background -->
-                <div class="feature-inner-clip">
-                    <!-- Backgrounds -->
-                    <div id="bg-wrapper">
-                        <!-- Will be injected by JS -->
-                    </div>
-                    <div class="bg-overlay"></div>
-                </div>
-
-                <!-- Navigation Arrows -->
-                <button class="nav-arrow nav-prev" id="prev-btn">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                </button>
-                <button class="nav-arrow nav-next" id="next-btn">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-
-                <!-- Close Button -->
-                <button class="close-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-
-                <!-- Content Overlay -->
-                <div class="content-overlay">
-                    <div class="pill-list" id="pill-list">
-                        <!-- Items injected by JS -->
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
