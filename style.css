@@ -580,30 +580,37 @@ video::-webkit-media-controls {
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* Upgrade Dropdown */
+/* Upgrade Dropdown Base State (Hidden) */
 #upgrade-dropdown-menu {
-    transform-origin: top center; /* Emerging from the pill above */
+    transform-origin: top center;
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-30px) scaleY(0);
+    /* Closing Animation: Snappy fold up */
     transition: 
-        opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* "Pop" / BackOut effect */
+        opacity 0.3s cubic-bezier(0.4, 0, 1, 1),
+        transform 0.35s cubic-bezier(0.4, 0, 1, 1),
+        visibility 0.35s;
     background: rgba(20, 20, 20, 0.95);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 20px 50px rgba(0,0,0,0.6);
     z-index: 50;
+    pointer-events: none;
 }
 
-#upgrade-dropdown-menu.hidden {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(-50%) translateY(-30px) scaleY(0); /* Flattened at the top */
-}
-
+/* Upgrade Dropdown Active State (Visible) */
 #upgrade-dropdown-menu.visible {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0) scaleY(1); /* Unfolds and slides down */
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0) scaleY(1);
+    /* Opening Animation: Smooth elastic unfold */
+    transition: 
+        opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .dropdown-item {

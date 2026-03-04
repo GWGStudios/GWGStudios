@@ -1026,23 +1026,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (upgradePill && dropdownMenu) {
         upgradePill.addEventListener('click', (e) => {
             e.stopPropagation();
-            const isVisible = dropdownMenu.classList.contains('visible');
-            if (isVisible) {
-                dropdownMenu.classList.remove('visible');
-                dropdownMenu.classList.add('hidden');
-            } else {
-                dropdownMenu.classList.remove('hidden');
-                // Force reflow for transition
-                void dropdownMenu.offsetWidth;
-                dropdownMenu.classList.add('visible');
-            }
+            dropdownMenu.classList.toggle('visible');
         });
 
         // Close on outside click
         document.addEventListener('click', (e) => {
             if (!upgradePill.contains(e.target) && !dropdownMenu.contains(e.target)) {
                 dropdownMenu.classList.remove('visible');
-                dropdownMenu.classList.add('hidden');
             }
         });
 
@@ -1059,7 +1049,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateBentoContent(text);
                 
                 dropdownMenu.classList.remove('visible');
-                dropdownMenu.classList.add('hidden');
             });
         });
     }
