@@ -27,6 +27,7 @@
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="3d-world.css" />
 </head>
 <body class="bg-[#111111] text-brand-white min-h-screen">
   <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-5 py-1 flex justify-between items-center rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-xl w-[92vw] sm:w-[86vw] md:w-[72vw] lg:w-[64vw] max-w-5xl transition-all duration-300">
@@ -97,8 +98,10 @@
   <section id="scroll-video" class="relative bg-[#111111]">
     <video id="scroll-video-el" class="absolute inset-0 w-full h-[100dvh] object-cover" src="assets/anyma.mp4" muted playsinline preload="auto" poster="assets/thumbnails/anyma.jpg"></video>
   </section>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
-  <script src="main.js"></script>
+  <script src="3d-world.js"></script>
 </body>
 </html>
