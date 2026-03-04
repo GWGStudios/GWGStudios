@@ -2,8 +2,8 @@
 .feature-container {
     position: relative;
     width: 100%;
-    max-width: 980px;
-    height: 500px; /* Reduced height */
+    max-width: 1100px; /* Increased from 980px */
+    height: 560px; /* Increased from 500px */
     background-color: #000;
     border-radius: 28px;
     /* Remove overflow hidden to allow arrows to be visible outside */
@@ -311,7 +311,7 @@ h2.section-title {
     color: #f5f5f7;
     text-align: left; /* Left aligned */
     width: 100%;
-    max-width: 980px; /* Match container width */
+    max-width: 1100px; /* Match container width */
     letter-spacing: -0.02em;
 }
 
