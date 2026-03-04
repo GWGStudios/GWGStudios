@@ -11,8 +11,8 @@
         extend: {
           colors: {
             brand: {
-              black: '#0a0a0a',
-              dark: '#1a1a1a',
+              black: '#000000',
+              dark: '#000000',
               gray: '#808080',
               light: '#e5e5e5',
               white: '#ffffff',
@@ -29,7 +29,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="3d-world.css" />
 </head>
-<body class="bg-[#111111] text-brand-white min-h-screen overflow-x-hidden">
+<body class="bg-[#000000] text-brand-white min-h-screen overflow-x-hidden">
   <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-5 py-1 flex justify-between items-center rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-xl w-[92vw] sm:w-[86vw] md:w-[72vw] lg:w-[64vw] max-w-5xl transition-all duration-300">
     <div class="h-8 md:h-10">
       <img src="assets/gwg-logo.gif" alt="GWG Logo" class="h-full object-contain" fetchpriority="high" decoding="async">
@@ -62,7 +62,7 @@
     </div>
   </header>
 
-  <section class="relative py-20 px-6 bg-[#111111]">
+  <section class="relative py-20 px-6 bg-[#000000]">
     <div class="max-w-[1200px] mx-auto">
       <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight mb-8">Featured 3D Works</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -97,7 +97,7 @@
     </div>
   </section>
   
-  <section class="sequence-section relative h-screen bg-[#111111] flex items-center justify-center overflow-hidden">
+  <section class="sequence-section relative h-screen bg-[#000000] flex items-center justify-center overflow-hidden">
     <canvas id="sequenceCanvas" class="w-full h-full object-cover"></canvas>
     <div class="overlay-text absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none mix-blend-difference">
       <h1 class="text-6xl md:text-8xl font-bold tracking-tighter mb-4">Scroll to Experience</h1>

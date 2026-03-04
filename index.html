@@ -17,8 +17,8 @@
                 extend: {
                     colors: {
                         brand: {
-                            black: '#0a0a0a',
-                            dark: '#1a1a1a',
+                            black: '#000000',
+                            dark: '#000000',
                             gray: '#808080',
                             light: '#e5e5e5',
                             white: '#ffffff',
@@ -48,7 +48,7 @@
         })();
     </script>
 </head>
-<body class="bg-[#111111] text-brand-white overflow-x-hidden">
+<body class="bg-[#000000] text-brand-white overflow-x-hidden">
     
     <!-- Navigation -->
     <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-5 py-1 flex justify-between items-center rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-xl w-[92vw] sm:w-[86vw] md:w-[72vw] lg:w-[64vw] max-w-5xl transition-all duration-300">
@@ -96,7 +96,7 @@
     </header>
 
     <!-- Highlights Section (Apple-Inspired V2) -->
-    <section id="highlights" class="reveal-section relative py-10 bg-[#111111] overflow-hidden flex flex-col items-center">
+    <section id="highlights" class="reveal-section relative py-10 bg-[#000000] overflow-hidden flex flex-col items-center">
         <div class="max-w-[1400px] w-full mx-auto px-6 md:px-12 mb-12 flex justify-between items-end">
             <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight">
                 Get the highlights.
@@ -171,7 +171,7 @@
         </div>
     </section>
     <!-- Reviews Section -->
-    <section id="reviews" class="reveal-section py-24 px-6 bg-[#111111] page-transition">
+    <section id="reviews" class="reveal-section py-24 px-6 bg-[#000000] page-transition">
         <div class="max-w-[1200px] mx-auto">
             <div class="flex items-end justify-between mb-10">
                 <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight">What clients say</h2>
@@ -236,8 +236,111 @@
         </div>
     </section>
 
+    <!-- Upgrade Section (GWG Studios Showcase) -->
+    <section id="upgrade" class="reveal-section py-24 px-6 bg-[#000000] relative overflow-hidden">
+        <div class="max-w-[1200px] mx-auto text-center">
+            <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight mb-4">
+                Pushing the boundaries of <br> 3D & Digital Design.
+            </h2>
+            
+            <!-- Selector Dropdown -->
+            <div class="relative flex flex-col items-center mb-16 z-20">
+                <div class="flex items-center gap-2 text-sm text-[#86868b]">
+                    Explore our agency's core services:
+                </div>
+                <div class="relative mt-4">
+                    <div id="upgrade-pill" class="inline-flex items-center justify-center px-6 py-2 rounded-full border border-[#424245] bg-[#1d1d1f] text-white text-sm font-medium cursor-pointer hover:border-[#2997ff] transition-colors gap-2">
+                        <span id="current-selection">3D Visualization & Real-time</span>
+                        <svg class="w-4 h-4 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <!-- Dropdown Content -->
+                    <div id="upgrade-dropdown-menu" class="absolute left-1/2 mt-2 w-64 rounded-xl p-1.5 hidden">
+                        <div class="px-3 py-2.5 text-sm text-white dropdown-item rounded-lg cursor-pointer">3D Visualization & Real-time</div>
+                        <div class="px-3 py-2.5 text-sm text-white dropdown-item rounded-lg cursor-pointer">Branding & Visual Identity</div>
+                        <div class="px-3 py-2.5 text-sm text-white dropdown-item rounded-lg cursor-pointer">Motion Graphics & VFX</div>
+                    </div>
+                </div>
+                <p class="mt-6 text-sm text-[#86868b] text-center">Bespoke digital solutions tailored for the <span class="text-white font-semibold">Next Generation of Brands.</span></p>
+            </div>
+
+            <!-- Bento Grid -->
+            <div id="upgrade-bento-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-[1000px] mx-auto">
+                
+                <!-- Card 1: Main Feature -->
+                <div id="card-1" class="upgrade-card group relative overflow-hidden rounded-[28px] aspect-[1.4/1] md:aspect-auto md:h-[400px] flex flex-col justify-end p-8 text-left">
+                    <div class="absolute inset-0 z-0 bg-wrapper">
+                        <img src="graphis 2d/optimized/skull-tshirt-full.jpg" alt="Feature" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 content-wrapper">
+                        <div class="icon-box w-10 h-10 mb-4 text-white">
+                            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"/></svg>
+                        </div>
+                        <h3 class="title-text text-2xl md:text-3xl font-semibold text-white leading-tight">
+                            Hyper-realistic <br> 3D experiences that <br> captivate and convert.
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- Card 2: Side Feature 1 -->
+                <div id="card-2" class="upgrade-card group relative overflow-hidden rounded-[28px] h-[240px] md:h-[190px] flex flex-row items-center p-8 text-left">
+                    <div class="relative z-10 flex items-center gap-6 content-wrapper">
+                        <div class="icon-box w-12 h-12 flex-shrink-0 text-[#ff2d55]">
+                            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.53 16.122l9.37-9.37M9.21 16.021l9.37-9.37M16.894 9.115l3.867-3.868m-12.103 12.103l3.907-3.907m-6.068 6.068l5.035-5.035m-9.116 9.116l2.103-2.103m3.49-3.49l5.19-5.19m5.472-5.473l2.103-2.103M4.657 18.323l7.53-7.53m7-7l1.414-1.414M5.428 15.891l6.299-6.299m6.089-6.09l1.414-1.414"/></svg>
+                        </div>
+                        <h3 class="title-text text-xl font-semibold text-[#f5f5f7]">
+                            Scalable identity systems <br> built for digital <br> and physical worlds.
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- Card 3: Main Feature 2 -->
+                <div id="card-3" class="upgrade-card group relative overflow-hidden rounded-[28px] aspect-square md:aspect-auto md:h-[400px] md:-mt-[210px] flex flex-col justify-end p-8 text-left">
+                    <div class="absolute inset-0 z-0 bg-wrapper">
+                        <img src="graphis 2d/optimized/poster-series-full.jpg" alt="Feature" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 content-wrapper">
+                        <div class="icon-box w-10 h-10 mb-4 text-white">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <h3 class="title-text text-2xl font-semibold text-white">
+                            Cinematic motion graphics <br> that tell your brand's <br> unique story.
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- Card 4: Side Feature 2 -->
+                <div id="card-4" class="upgrade-card group relative overflow-hidden rounded-[28px] h-[180px] flex items-center p-8 text-left md:col-start-1 md:row-start-2">
+                    <div class="relative z-10 flex items-center gap-6 content-wrapper">
+                        <div class="icon-box w-10 h-10 flex-shrink-0 text-[#2997ff]">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        </div>
+                        <h3 class="title-text text-xl font-semibold text-[#f5f5f7]">
+                            Data-driven strategy <br> meets world-class <br> creative execution.
+                        </h3>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer GWG Studios -->
+            <div class="mt-16 flex flex-col items-center gap-6">
+                <div class="flex flex-col items-center gap-4">
+                    <img src="assets/logopng.png" alt="GWG Logo" class="w-32 h-auto opacity-90 hover:opacity-100 transition-opacity filter brightness-0 invert">
+                    <div class="text-3xl font-bold text-white tracking-tighter">
+                        GWG Studios
+                    </div>
+                </div>
+                <p class="text-base text-[#86868b] max-w-lg text-center leading-relaxed">
+                    Transforming visions into high-fidelity digital realities. Partner with our team to redefine your brand's visual language. <a href="#contact" class="text-[#2997ff] font-medium hover:underline">Start a project ></a>
+                </p>
+            </div>
+        </div>
+    </section>
+
     <!-- Closer Look Section -->
-    <section id="closer" class="relative pt-6 pb-20 bg-[#111111]">  
+    <section id="closer" class="relative pt-6 pb-20 bg-[#000000]">  
         <div class="reveal-section w-full flex flex-col items-center">
             <h2 class="section-title">Take a closer look.</h2>
 
@@ -275,7 +378,7 @@
             </div>
         </div>
     </section>
-    <section id="showcase" class="reveal-section relative h-screen w-full bg-[#111111] page-transition">
+    <section id="showcase" class="reveal-section relative h-screen w-full bg-[#000000] page-transition">
         <video id="showcase-video" class="absolute inset-0 w-full h-full object-cover" src="assets/studio logo.mp4" muted playsinline preload="metadata" loop></video>
         <video class="absolute inset-0 w-full h-full object-cover opacity-30" src="assets/0001-0360.mp4" autoplay muted loop playsinline preload="metadata"></video>
         <div class="showcase-blur absolute inset-0 pointer-events-none"></div>
@@ -329,7 +432,7 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="reveal-section py-20 px-8 bg-[#111111] page-transition">
+    <section id="contact" class="reveal-section py-20 px-8 bg-[#000000] page-transition">
         <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
             <img src="assets/gwg-logo.gif" alt="GWG Logo" class="w-48 h-auto mb-8 mx-auto mix-blend-screen opacity-90 hover:opacity-100 transition-opacity duration-500" loading="lazy" decoding="async">
             <h2 class="text-6xl md:text-8xl font-bold mb-8 hover:text-brand-gray transition-colors cursor-pointer">

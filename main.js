@@ -174,7 +174,13 @@ document.addEventListener("DOMContentLoaded", () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('is-visible');
-                revealObserver.unobserve(entry.target);
+                // For the upgrade section, we want it to repeat every time
+                if (entry.target.id !== 'upgrade') {
+                    revealObserver.unobserve(entry.target);
+                }
+            } else if (entry.target.id === 'upgrade') {
+                // Remove visibility class when leaving viewport for strictly repeating animation
+                entry.target.classList.remove('is-visible');
             }
         });
     }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
@@ -858,6 +864,203 @@ document.addEventListener("DOMContentLoaded", () => {
         // Resize Handler
         window.addEventListener('resize', () => {
             updateSlidePosition(false);
+        });
+    }
+
+    // --- Upgrade Section Animations ---
+    const upgradeSection = document.getElementById('upgrade');
+    if (upgradeSection && window.gsap) {
+        // Elements to animate within the upgrade section
+        const elements = upgradeSection.querySelectorAll('.upgrade-card, h2, #upgrade-pill, p, .flex.items-center.gap-2.text-2xl');
+        
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    // Animate in every time
+                    gsap.fromTo(elements, 
+                        { opacity: 0, y: 30 },
+                        {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.8,
+                            ease: "power3.out",
+                            stagger: 0.08,
+                            overwrite: true
+                        }
+                    );
+                } else {
+                    // Reset elements when leaving viewport for the next reveal
+                    gsap.set(elements, { opacity: 0, y: 30 });
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        obs.observe(upgradeSection);
+    }
+
+    // --- Upgrade Section Dropdown & Content Switching ---
+    const upgradePill = document.getElementById('upgrade-pill');
+    const dropdownMenu = document.getElementById('upgrade-dropdown-menu');
+    const currentSelection = document.getElementById('current-selection');
+
+    const serviceData = {
+        '3D Visualization & Real-time': [
+            {
+                title: 'Hyper-realistic <br> 3D experiences that <br> captivate and convert.',
+                img: 'graphis 2d/optimized/skull-tshirt-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"/></svg>'
+            },
+            {
+                title: 'Scalable identity systems <br> built for digital <br> and physical worlds.',
+                img: 'graphis 2d/optimized/pattern-study-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.53 16.122l9.37-9.37M9.21 16.021l9.37-9.37M16.894 9.115l3.867-3.868m-12.103 12.103l3.907-3.907m-6.068 6.068l5.035-5.035m-9.116 9.116l2.103-2.103m3.49-3.49l5.19-5.19m5.472-5.473l2.103-2.103M4.657 18.323l7.53-7.53m7-7l1.414-1.414M5.428 15.891l6.299-6.299m6.089-6.09l1.414-1.414"/></svg>'
+            },
+            {
+                title: 'Cinematic motion graphics <br> that tell your brand\'s <br> unique story.',
+                img: 'graphis 2d/optimized/poster-series-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+            },
+            {
+                title: 'Data-driven strategy <br> meets world-class <br> creative execution.',
+                img: 'graphis 2d/optimized/punk-rock-poster-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>'
+            }
+        ],
+        'Branding & Visual Identity': [
+            {
+                title: 'Iconic branding that <br> stands the test <br> of time and trends.',
+                img: 'graphis 2d/optimized/poster-series-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.53 16.122l9.37-9.37M9.21 16.021l9.37-9.37M16.894 9.115l3.867-3.868m-12.103 12.103l3.907-3.907m-6.068 6.068l5.035-5.035m-9.116 9.116l2.103-2.103m3.49-3.49l5.19-5.19m5.472-5.473l2.103-2.103M4.657 18.323l7.53-7.53m7-7l1.414-1.414M5.428 15.891l6.299-6.299m6.089-6.09l1.414-1.414"/></svg>'
+            },
+            {
+                title: 'Cohesive typography <br> and color systems <br> for every platform.',
+                img: 'graphis 2d/optimized/skull-tshirt-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3.75 3.75v16.5h16.5V3.75H3.75zm1.5 1.5h13.5v13.5H5.25V5.25zm2.25 2.25v9h9v-9h-9z"/></svg>'
+            },
+            {
+                title: 'Print & digital <br> collateral that speaks <br> your brand\'s language.',
+                img: 'graphis 2d/optimized/pattern-study-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 21a9 9 0 100-18 9 9 0 000 18zM9.75 9.75h4.5v4.5h-4.5v-4.5z"/></svg>'
+            },
+            {
+                title: 'Strategic positioning <br> for maximum market <br> impact and reach.',
+                img: 'graphis 2d/optimized/punk-rock-poster-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>'
+            }
+        ],
+        'Motion Graphics & VFX': [
+            {
+                title: 'Dynamic storytelling <br> through fluid <br> character animation.',
+                img: 'graphis 2d/optimized/punk-rock-poster-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+            },
+            {
+                title: 'Breathtaking visual <br> effects for film, web, <br> and social media.',
+                img: 'graphis 2d/optimized/poster-series-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>'
+            },
+            {
+                title: 'Seamless transition <br> logic that keeps your <br> audience engaged.',
+                img: 'graphis 2d/optimized/skull-tshirt-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m-8 6H4m0 0l4 4m-4-4l4-4"/></svg>'
+            },
+            {
+                title: 'High-energy editing <br> tailored for the <br> digital fast lane.',
+                img: 'graphis 2d/optimized/pattern-study-full.jpg',
+                icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>'
+            }
+        ]
+    };
+
+    function updateBentoContent(serviceName) {
+        const data = serviceData[serviceName];
+        if (!data) return;
+
+        data.forEach((item, index) => {
+            const cardId = index + 1;
+            const card = document.getElementById(`card-${cardId}`);
+            if (!card) return;
+
+            const contentWrap = card.querySelector('.content-wrapper');
+            const bgWrap = card.querySelector('.bg-wrapper');
+            const img = bgWrap ? bgWrap.querySelector('img') : null;
+            
+            // Cards that should NEVER show background images (2 and 4)
+            const isTextOnly = (cardId === 2 || cardId === 4);
+            const targets = isTextOnly ? [contentWrap] : [contentWrap, bgWrap];
+
+            const tl = gsap.timeline({
+                delay: index * 0.06,
+                defaults: { ease: "power2.inOut" }
+            });
+
+            // Phase 1: Fade out
+            tl.to(targets, {
+                opacity: 0,
+                scale: 0.97,
+                duration: 0.4,
+                filter: "blur(12px)",
+                onComplete: () => {
+                    // Phase 2: Update content
+                    if (item.title) card.querySelector('.title-text').innerHTML = item.title;
+                    if (item.icon) card.querySelector('.icon-box').innerHTML = item.icon;
+                    
+                    // Strictly update image only for non-text-only cards
+                    if (!isTextOnly && img && item.img) {
+                        img.src = item.img;
+                    }
+                }
+            });
+
+            // Phase 3: Fade back in
+            tl.to(targets, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.6,
+                filter: "blur(0px)",
+                clearProps: "scale,filter"
+            });
+        });
+    }
+
+    if (upgradePill && dropdownMenu) {
+        upgradePill.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = dropdownMenu.classList.contains('visible');
+            if (isVisible) {
+                dropdownMenu.classList.remove('visible');
+                dropdownMenu.classList.add('hidden');
+            } else {
+                dropdownMenu.classList.remove('hidden');
+                // Force reflow for transition
+                void dropdownMenu.offsetWidth;
+                dropdownMenu.classList.add('visible');
+            }
+        });
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            if (!upgradePill.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('visible');
+                dropdownMenu.classList.add('hidden');
+            }
+        });
+
+        // Handle option selection
+        const options = dropdownMenu.querySelectorAll('.dropdown-item');
+        options.forEach(opt => {
+            opt.addEventListener('click', () => {
+                const text = opt.innerText;
+                if (currentSelection) {
+                    currentSelection.innerText = text;
+                }
+                
+                // Update the Bento Grid content based on selection
+                updateBentoContent(text);
+                
+                dropdownMenu.classList.remove('visible');
+                dropdownMenu.classList.add('hidden');
+            });
         });
     }
 });
