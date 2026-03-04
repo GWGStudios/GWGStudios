@@ -37,6 +37,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="graphic-world.css">
     <script>
         (function () {
             var h = location.hostname;
@@ -95,12 +96,12 @@
     </header>
 
     <!-- Highlights Section (Apple-Inspired V2) -->
-    <section id="highlights" class="relative py-24 bg-[#111111] overflow-hidden flex flex-col items-center">
+    <section id="highlights" class="reveal-section relative py-10 bg-[#111111] overflow-hidden flex flex-col items-center">
         <div class="max-w-[1400px] w-full mx-auto px-6 md:px-12 mb-12 flex justify-between items-end">
             <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight">
                 Get the highlights.
             </h2>
-            </a>  <a href="3d-world.html" class="text-[#2997ff] text-base hover:underline flex items-center gap-1 mb-2">
+            <a href="3d-world.html" class="text-[#2997ff] text-base hover:underline flex items-center gap-1 mb-2">
                 Get into the world 
                 <svg class="w-4 h-4 border border-[#2997ff] rounded-full p-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </a>
@@ -170,7 +171,7 @@
         </div>
     </section>
     <!-- Reviews Section -->
-    <section id="reviews" class="py-24 px-6 bg-[#111111] page-transition">
+    <section id="reviews" class="reveal-section py-24 px-6 bg-[#111111] page-transition">
         <div class="max-w-[1200px] mx-auto">
             <div class="flex items-end justify-between mb-10">
                 <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight">What clients say</h2>
@@ -236,101 +237,45 @@
     </section>
 
     <!-- Closer Look Section -->
-    <section id="closer" class="relative py-24 px-6 bg-[#111111]">
-        <div class="max-w-[1200px] mx-auto">
-            <h2 class="text-4xl md:text-6xl font-bold text-[#f5f5f7] tracking-tight mb-8">
-                Take a closer look.
-            </h2>
+    <section id="closer" class="relative pt-6 pb-20 bg-[#111111]">  
+        <div class="reveal-section w-full flex flex-col items-center">
+            <h2 class="section-title">Take a closer look.</h2>
 
-            <div class="rounded-[28px] bg-[#0b0b0b]/90 shadow-2xl p-6 md:p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Left: Feature Pills + Bubble -->
-                    <div class="relative flex flex-col justify-center md:min-h-[60vh]">
-                        <div class="flex flex-col gap-3" id="feature-list">
-                            <!-- Expandable: Graphic Design -->
-                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/15 transition"
-                                    data-expand="true"
-                                    data-title="Graphic Designing"
-                                    data-desc="Minimal 2D design showcase with clean, slow reveals."
-                                    data-img="graphis%202d/optimized/poster-series-full.jpg">
-                                <span class="indicator" aria-hidden="true"></span>
-                                <span>Graphic Designing</span>
-                            </button>
-                            <div class="sub-options work-grid grid grid-cols-2 gap-2 pl-6 sm:gap-3 sm:pl-8">
-                                <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
-                                        data-title="Poster Series"
-                                        data-desc="Bold 2D posters exploring geometry and rhythm."
-                                        data-img="graphis%202d/optimized/poster-series-full.jpg">
-                                    <img src="graphis%202d/optimized/poster-series-thumb.jpg" alt="Poster Series" class="w-full h-24 sm:h-28 object-cover opacity-90" loading="lazy" decoding="async">
-                                    <span class="work-card-title">Poster Series</span>
-                                </button>
-                                <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
-                                        data-title="Brand System"
-                                        data-desc="Minimal identity system with type-led layouts."
-                                        data-img="graphis%202d/optimized/punk-rock-poster-full.jpg">
-                                    <img src="graphis%202d/optimized/punk-rock-poster-thumb.jpg" alt="Brand System" class="w-full h-24 sm:h-28 object-cover opacity-90" loading="lazy" decoding="async">
-                                    <span class="work-card-title">Brand System</span>
-                                </button>
-                                <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
-                                        data-title="Editorial Spread"
-                                        data-desc="Magazine-style composition and typographic flow."
-                                        data-img="graphis%202d/optimized/skull-tshirt-full.jpg">
-                                    <img src="graphis%202d/optimized/skull-tshirt-thumb.jpg" alt="Editorial Spread" class="w-full h-24 sm:h-28 object-cover opacity-90" loading="lazy" decoding="async">
-                                    <span class="work-card-title">Editorial Spread</span>
-                                </button>
-                                <button class="sub-option work-card group relative overflow-hidden border border-white/10 bg-white/5 transition"
-                                        data-title="Pattern Study"
-                                        data-desc="Experimental pattern system for 2D surfaces."
-                                        data-img="graphis%202d/optimized/pattern-study-full.jpg">
-                                    <img src="graphis%202d/optimized/pattern-study-thumb.jpg" alt="Pattern Study" class="w-full h-24 sm:h-28 object-cover opacity-90" loading="lazy" decoding="async">
-                                    <span class="work-card-title">Pattern Study</span>
-                                </button>
-                            </div>
-                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
-                                    data-title="3D Key Art"
-                                    data-desc="Hero graphics blending lighting, material studies, and depth."
-                                    data-img="graphis%202d/optimized/ge0001_1.mp4">
-                                <span class="indicator" aria-hidden="true"></span>
-                                <span>3D Key Art</span>
-                            </button>
-                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
-                                    data-title="Product Visualization"
-                                    data-desc="3D product renders for campaigns, pitch decks, and launches."
-                                    data-img="assets/Anyma.mp4">
-                                <span class="indicator" aria-hidden="true"></span>
-                                <span>Product Visualization</span>
-                            </button>
-                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
-                                    data-title="3D Modeling"
-                                    data-desc="Detailed hard‑surface and organic modeling for visuals."
-                                    data-img="graphis%202d/0301.mp4">
-                                <span class="indicator" aria-hidden="true"></span>
-                                <span>3D Modeling</span>
-                            </button>
-                            <button class="feature-pill flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-left text-sm hover:bg-white/10 transition"
-                                    data-title="3D realism"
-                                    data-desc="Cinematic 3D motion graphics with smooth transitions."
-                                    data-img="graphis%202d/0067.mp4">
-                                <span class="indicator" aria-hidden="true"></span>
-                                <span>3D Realism</span>
-                            </button>
-                        </div>
-
-                        <!-- Description Bubble -->
-                        <div id="feature-bubble" class="hidden md:block absolute left-[170px] top-0 max-w-sm bg-white/10 border border-white/15 rounded-2xl p-4 text-sm text-[#e5e5e5] shadow-xl backdrop-blur-xl transition-all duration-300 opacity-0"></div>
+            <div class="feature-container" id="feature-container">
+                
+                <!-- Inner wrapper for clipping background -->
+                <div class="feature-inner-clip">
+                    <!-- Backgrounds -->
+                    <div id="bg-wrapper">
+                        <!-- Will be injected by JS -->
                     </div>
+                    <div class="bg-overlay"></div>
+                </div>
 
-                    <!-- Right: Image -->
-                    <div class="flex items-center justify-center min-h-[60vh]">
-                        <div class="feature-frame frameless relative rounded-2xl overflow-hidden inline-flex items-center justify-center">
-                            <video id="feature-image" src="assets/studio logo.mp4" class="feature-image w-auto h-auto max-w-full max-h-[60vh] object-contain" autoplay muted loop playsinline preload="metadata"></video>
-                        </div>
+                <!-- Navigation Arrows -->
+                <button class="nav-arrow nav-prev" id="prev-btn">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                </button>
+                <button class="nav-arrow nav-next" id="next-btn">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+
+                <!-- Close Button -->
+                <button class="close-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+
+                <!-- Content Overlay -->
+                <div class="content-overlay">
+                    <div class="pill-list" id="pill-list">
+                        <!-- Items injected by JS -->
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
-    <section id="showcase" class="relative h-screen w-full bg-[#111111] page-transition">
+    <section id="showcase" class="reveal-section relative h-screen w-full bg-[#111111] page-transition">
         <video id="showcase-video" class="absolute inset-0 w-full h-full object-cover" src="assets/studio logo.mp4" muted playsinline preload="metadata" loop></video>
         <video class="absolute inset-0 w-full h-full object-cover opacity-30" src="assets/0001-0360.mp4" autoplay muted loop playsinline preload="metadata"></video>
         <div class="showcase-blur absolute inset-0 pointer-events-none"></div>
@@ -340,7 +285,7 @@
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-20 px-8 bg-brand-dark text-brand-white">
+    <section id="about" class="reveal-section py-20 px-8 bg-brand-dark text-brand-white">
         <div class="max-w-4xl mx-auto text-center">
             <h2 class="text-sm font-bold uppercase tracking-widest text-brand-gray mb-8">About the Studio</h2>
             <p class="text-3xl md:text-5xl font-light leading-tight mb-12">
@@ -384,7 +329,7 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 px-8 bg-[#111111] page-transition">
+    <section id="contact" class="reveal-section py-20 px-8 bg-[#111111] page-transition">
         <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
             <img src="assets/gwg-logo.gif" alt="GWG Logo" class="w-48 h-auto mb-8 mx-auto mix-blend-screen opacity-90 hover:opacity-100 transition-opacity duration-500" loading="lazy" decoding="async">
             <h2 class="text-6xl md:text-8xl font-bold mb-8 hover:text-brand-gray transition-colors cursor-pointer">
@@ -404,5 +349,6 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="main.js"></script>
+    <script src="graphic-world.js"></script>
 </body>
 </html>

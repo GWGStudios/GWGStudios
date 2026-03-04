@@ -1,0 +1,386 @@
+/* Base styles for the interactive feature gallery */
+.feature-container {
+    position: relative;
+    width: 100%;
+    max-width: 980px;
+    height: 500px; /* Reduced height */
+    background-color: #000;
+    border-radius: 28px;
+    /* Remove overflow hidden to allow arrows to be visible outside */
+    /* overflow: hidden; */ 
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Clip only inner content so background doesn't spill, but arrows can float outside */
+.feature-inner-clip {
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    overflow: hidden;
+    z-index: 0;
+}
+
+/* Background Layer */
+.bg-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1.2s cubic-bezier(0.25, 0.1, 0.25, 1); /* Smoother fade */
+}
+.bg-layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.bg-layer.active { opacity: 1; z-index: 1; }
+.bg-layer.inactive { opacity: 0; z-index: 0; }
+
+/* Overlay Gradient for readability */
+.bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%, transparent 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Overlay for content */
+.content-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 80px; /* Increased padding to make room for arrows */
+    pointer-events: none;
+}
+
+/* The list of pills */
+.pill-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    pointer-events: auto;
+    width: 340px;
+}
+
+/* Liquid Glass Pill Button */
+.pill-btn {
+    display: flex;
+    align-items: center;
+    /* More transparent, reflective glass look */
+    background: rgba(40, 40, 40, 0.3); 
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 4px 12px rgba(0,0,0,0.2),
+        inset 0 1px 1px rgba(255,255,255,0.2); /* Top highlight */
+    border-radius: 999px;
+    padding: 10px 18px 10px 10px;
+    color: #f5f5f7;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    transform-origin: left center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Reflection sheen */
+.pill-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0) 100%);
+    pointer-events: none;
+}
+
+.pill-btn:hover {
+    background: rgba(60, 60, 60, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.02);
+}
+
+.pill-btn.active {
+    background: rgba(245, 245, 247, 0.9); /* Almost solid white for contrast */
+    color: #1d1d1f;
+    border-color: #fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    font-weight: 600;
+}
+
+/* Icon inside pill */
+.pill-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.pill-btn.active .pill-icon {
+    background: #1d1d1f;
+    color: #fff;
+    border-color: #1d1d1f;
+    transform: rotate(45deg);
+}
+
+/* Expanded Content Bubble (Accordion) - Smooth Animation */
+.bubble-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 1.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                margin 1.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                opacity 0.4s ease; /* Faster opacity fade-in to show glass early */
+    margin-bottom: 0;
+    width: 100%;
+    opacity: 0;
+    
+    /* Move Liquid Glass effect here so it grows with the container */
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(35px) saturate(200%) brightness(1.1);
+    -webkit-backdrop-filter: blur(35px) saturate(200%) brightness(1.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    box-shadow: 
+        0 25px 60px rgba(0,0,0,0.3),
+        inset 0 1px 1px rgba(255,255,255,0.15);
+    overflow: hidden; /* Important for the growing glass effect */
+    position: relative;
+}
+
+.bubble-wrapper.open {
+    grid-template-rows: 1fr;
+    margin-bottom: 24px;
+    opacity: 1;
+    transition: grid-template-rows 1.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                margin 1.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                opacity 0.6s ease;
+}
+
+/* Reflection sheen on the expanding wrapper */
+.bubble-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.05) 45%, 
+        rgba(255,255,255,0) 50%,
+        rgba(255,255,255,0.02) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.bubble-inner {
+    min-height: 0; /* Required for grid transition */
+}
+
+.bubble-content {
+    padding: 28px;
+    color: #f5f5f7;
+    transform: translateY(-12px);
+    transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    z-index: 2;
+}
+
+.bubble-wrapper.open .bubble-content {
+    transform: translateY(0);
+}
+.bubble-wrapper.open .bubble-content {
+    transform: translateY(0);
+}
+
+.bubble-title {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #fff;
+}
+.bubble-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #a1a1a6;
+}
+
+/* Navigation Arrows (Left Side) */
+.nav-arrow {
+    position: absolute;
+    left: 24px; /* Inside the frame, left-aligned */
+    width: 32px; /* Smaller size */
+    height: 32px;
+    background: rgba(40, 40, 40, 0.4);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    z-index: 20;
+    outline: none;
+
+    /* Initial state for reveal animation */
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+.nav-prev { 
+    top: 50%; 
+    transform: translateY(-120%) translate(-40px, 0) scale(0.1); 
+    transition: background-color 0.2s, transform 1.2s cubic-bezier(0.5, 1.8, 0.3, 0.8), opacity 0.8s ease;
+}
+.nav-next { 
+    top: 50%; 
+    transform: translateY(20%) translate(-40px, 0) scale(0.1); 
+    transition: background-color 0.2s, transform 1.2s cubic-bezier(0.5, 1.8, 0.3, 0.8), opacity 0.8s ease;
+}
+
+.reveal-section.is-revealed .nav-prev { 
+    opacity: 1; 
+    transform: translateY(-120%) translate(0, 0) scale(1); 
+    transition-delay: 0.3s;
+}
+.reveal-section.is-revealed .nav-next { 
+    opacity: 1; 
+    transform: translateY(20%) translate(0, 0) scale(1); 
+    transition-delay: 0.4s;
+}
+
+.nav-arrow:hover { 
+    background: rgba(80, 80, 80, 0.8); 
+}
+.nav-prev:hover { transform: translateY(-120%) scale(1.1); }
+.nav-next:hover { transform: translateY(20%) scale(1.1); }
+
+/* Close Button (Top Right) */
+.close-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 36px;
+    height: 36px;
+    background: rgba(40, 40, 40, 0.4);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    z-index: 20;
+    transition: background-color 0.2s, transform 1.2s cubic-bezier(0.5, 1.8, 0.3, 0.8), opacity 0.8s ease;
+
+    /* Initial state for reveal animation */
+    opacity: 0;
+    transform: translate(40px, -40px) scale(0.1) rotate(45deg);
+    will-change: transform, opacity;
+}
+
+.reveal-section.is-revealed .close-btn {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    transition-delay: 0.5s;
+}
+
+.close-btn:hover { 
+    background: rgba(80, 80, 80, 0.6); 
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* Title above container */
+h2.section-title {
+    font-size: 48px; /* Slightly smaller to fit layout better */
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #f5f5f7;
+    text-align: left; /* Left aligned */
+    width: 100%;
+    max-width: 980px; /* Match container width */
+    letter-spacing: -0.02em;
+}
+
+/* Scroll Reveal Animations (Fade & Pop) */
+.reveal-section {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+    filter: blur(10px);
+    transition: 
+        opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+        transform 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+        filter 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform, opacity, filter;
+}
+
+.reveal-section.is-revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+/* Elastic Pill Reveal from left middle point */
+.pill-item {
+    opacity: 0;
+    transform: translate(-150px, 0) scale(0.1) rotate(-10deg);
+    transition: 
+        opacity 0.8s ease,
+        transform 1.2s cubic-bezier(0.5, 1.8, 0.3, 0.8); /* More aggressive overshoot for bounce */
+    will-change: transform, opacity;
+}
+
+/* Fan out effect: Start them all from a more central position initially */
+.pill-item:nth-child(1) { transform: translate(-150px, 120px) scale(0.1) rotate(-15deg); }
+.pill-item:nth-child(2) { transform: translate(-150px, 60px) scale(0.1) rotate(-10deg); }
+.pill-item:nth-child(3) { transform: translate(-150px, 0px) scale(0.1) rotate(0deg); }
+.pill-item:nth-child(4) { transform: translate(-150px, -60px) scale(0.1) rotate(10deg); }
+.pill-item:nth-child(5) { transform: translate(-150px, -120px) scale(0.1) rotate(15deg); }
+
+.reveal-section.is-revealed .pill-item {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+}
+
+/* Longer staggered delays to wait for section fade-in */
+.reveal-section.is-revealed .pill-item:nth-child(1) { transition-delay: 0.6s; }
+.reveal-section.is-revealed .pill-item:nth-child(2) { transition-delay: 0.75s; }
+.reveal-section.is-revealed .pill-item:nth-child(3) { transition-delay: 0.9s; }
+.reveal-section.is-revealed .pill-item:nth-child(4) { transition-delay: 1.05s; }
+.reveal-section.is-revealed .pill-item:nth-child(5) { transition-delay: 1.2s; }
+
+/* Staggered reveal for other section children */
+.reveal-section.is-revealed .section-title {
+    transition-delay: 0.1s;
+}
+.reveal-section.is-revealed .feature-container {
+    transition-delay: 0.2s;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #000;
+}
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}

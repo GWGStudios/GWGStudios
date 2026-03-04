@@ -12,9 +12,9 @@
           colors: {
             brand: {
               black: '#0a0a0a',
-              dark: '#1a1a1a',
-              gray: '#808080',
-              light: '#e5e5e5',
+              dark: '#1d1d1f',
+              gray: '#86868b',
+              light: '#f5f5f7',
               white: '#ffffff',
             }
           },
@@ -25,37 +25,106 @@
       }
     }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="graphic-world.css" />
+  <style>
+    body {
+        background-color: #000000;
+        font-family: 'Inter', sans-serif;
+        color: #f5f5f7;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .main-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        padding-top: 0;
+    }
+    nav { z-index: 100; }
+  </style>
 </head>
-<body class="bg-[#111111] text-brand-white min-h-screen">
+<body>
+
+  <!-- Navigation (Restored from index.html) -->
   <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-5 py-1 flex justify-between items-center rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-xl w-[92vw] sm:w-[86vw] md:w-[72vw] lg:w-[64vw] max-w-5xl transition-all duration-300">
-    <div class="h-8 md:h-10">
-      <img src="assets/gwg-logo.gif" alt="GWG Logo" class="h-full object-contain" fetchpriority="high" decoding="async">
-    </div>
-    <div id="main-nav-links" class="hidden md:flex relative space-x-8 text-sm uppercase tracking-widest">
-      <a href="index.html" class="nav-link hover:text-brand-gray transition-colors">Home</a>
-      <a href="graphic-world.html" class="nav-link hover:text-brand-gray transition-colors nav-link-active">Graphic World</a>
-      <a href="3d-world.html" class="nav-link hover:text-brand-gray transition-colors">3D World</a>
-    </div>
-    <button class="md:hidden text-white">Menu</button>
+      <div class="h-8 md:h-10">
+          <a href="index.html"><img src="assets/gwg-logo.gif" alt="GWG Logo" class="h-full object-contain" fetchpriority="high" decoding="async"></a>
+      </div>
+      <div id="main-nav-links" class="hidden md:flex relative space-x-8 text-sm uppercase tracking-widest">
+          <a href="index.html" class="nav-link hover:text-brand-gray transition-colors">Home</a>
+          <a href="graphic-world.html" class="nav-link hover:text-brand-gray transition-colors nav-link-active text-white">Graphic World</a>
+          <a href="3d-world.html" class="nav-link hover:text-brand-gray transition-colors">3D World</a>
+      </div>
+      <button class="md:hidden text-white">Menu</button>
   </nav>
-  <div id="mobile-nav-panel" class="mobile-menu-panel" style="top: 80px;">
-    <div class="mobile-menu-list md:hidden">
-      <a href="index.html" class="hover:text-white transition">Home</a>
-      <a href="graphic-world.html" class="hover:text-white transition">Graphic World</a>
-      <a href="3d-world.html" class="hover:text-white transition">3D World</a>
-    </div>
+
+  <div class="main-wrapper">
+      
+      <!-- New Hero Section (Full Screen) -->
+      <section class="reveal-section relative w-full h-screen mb-12 flex items-center justify-center overflow-hidden border-b border-white/5">
+          <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-60">
+              <source src="assets/studio logo.mp4" type="video/mp4">
+          </video>
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+          <div class="relative z-10 text-center px-4 mt-16">
+              <h1 class="text-5xl md:text-8xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60" style="font-family: 'Inter', sans-serif;">Graphic World</h1>
+              <p class="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto font-light tracking-wide">Where imagination meets precision.</p>
+          </div>
+          
+          <!-- Scroll Indicator -->
+          <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+          </div>
+      </section>
+
+      <div class="reveal-section w-full flex flex-col items-center mb-48">
+          <h2 class="section-title">Take a closer look.</h2>
+
+          <div class="feature-container" id="feature-container">
+              
+              <!-- Inner wrapper for clipping background -->
+              <div class="feature-inner-clip">
+                  <!-- Backgrounds -->
+                  <div id="bg-wrapper">
+                      <!-- Will be injected by JS -->
+                  </div>
+                  <div class="bg-overlay"></div>
+              </div>
+
+              <!-- Navigation Arrows (Now outside the clip, visible due to feature-container overflow visible) -->
+              <button class="nav-arrow nav-prev" id="prev-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </button>
+              <button class="nav-arrow nav-next" id="next-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+
+              <!-- Close Button -->
+              <button class="close-btn" onclick="window.location.href='index.html'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+
+              <!-- Content Overlay -->
+              <div class="content-overlay">
+                  <div class="pill-list" id="pill-list">
+                      <!-- Items injected by JS -->
+                  </div>
+              </div>
+
+          </div>
+      </div>
   </div>
-  <main class="min-h-screen flex items-center justify-center p-8">
-    <div class="text-center">
-      <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-4">Graphic World</h1>
-      <p class="text-lg md:text-xl text-brand-gray max-w-xl mx-auto">
-        Explore our 2D design universe. This is a placeholder page — tailor as needed.
-      </p>
-    </div>
-  </main>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-  <script src="main.js"></script>
+
+  <script src="graphic-world.js"></script>
 </body>
 </html>

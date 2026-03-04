@@ -540,7 +540,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const bubble = document.getElementById('feature-bubble');
     let baseMedia = document.getElementById('feature-image');
     const list = document.getElementById('feature-list');
+    
+    // Only run if these elements exist (index.html specific)
     if (pills.length && bubble && baseMedia && list) {
+        // ... (rest of the logic) ...
         const imgContainer = baseMedia.parentElement;
         let animLock = false;
         function setBubble(text, target) {
@@ -554,6 +557,9 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.classList.remove('opacity-100');
         }
         function setFixedFrameFor3D() {
+            if (imgContainer.classList.contains('fill-parent')) {
+                return;
+            }
             const parent = imgContainer.parentElement;
             const maxWidth = parent ? parent.clientWidth : imgContainer.clientWidth;
             const maxHeight = Math.round(window.innerHeight * 0.6);
@@ -562,6 +568,9 @@ document.addEventListener("DOMContentLoaded", () => {
             imgContainer.style.height = `${size}px`;
         }
         function updateFrameForMedia(el) {
+            if (imgContainer.classList.contains('fill-parent')) {
+                return;
+            }
             if (el.tagName === 'IFRAME') {
                 setFixedFrameFor3D();
                 return;
@@ -591,7 +600,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 nextEl = document.createElement('video');
                 let useUrl = url;
                 try {
-                    const m = url.match(/^(.*)\\.mp4(.*)$/i);
+                    const m = url.match(/^(.*)\.mp4(.*)$/i);
                     if (m) {
                         const compressed = m[1] + '_25mb.mp4' + (m[2] || '');
                         nextEl.addEventListener('error', () => { nextEl.src = url; }, { once: true });
@@ -604,7 +613,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 nextEl.loop = true;
                 nextEl.autoplay = true;
                 nextEl.playsInline = true;
-                nextEl.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-contain';
+                nextEl.className = 'feature-image feature-image-in absolute inset-0 w-full h-full ' + (imgContainer.classList.contains('fill-parent') ? 'object-cover' : 'object-contain');
                 nextEl.addEventListener('loadeddata', () => updateFrameForMedia(nextEl), { once: true });
                 try {
                     const tu = thumbUrlFor(useUrl);
@@ -614,7 +623,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 nextEl = document.createElement('img');
                 nextEl.src = url;
                 nextEl.alt = 'Feature visual';
-                nextEl.className = 'feature-image feature-image-in absolute inset-0 w-full h-full object-contain';
+                nextEl.className = 'feature-image feature-image-in absolute inset-0 w-full h-full ' + (imgContainer.classList.contains('fill-parent') ? 'object-cover' : 'object-contain');
                 nextEl.addEventListener('load', () => updateFrameForMedia(nextEl), { once: true });
                 if (nextEl.complete) updateFrameForMedia(nextEl);
             }
