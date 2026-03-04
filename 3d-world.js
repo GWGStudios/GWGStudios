@@ -90,15 +90,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const updateHover = (event) => {
             const rect = container.getBoundingClientRect();
             if (!rect.width || !rect.height) return;
-            hoverX = (event.clientX - rect.left) / rect.width - 0.5;
-            hoverY = (event.clientY - rect.top) / rect.height - 0.5;
+            const cx = event.touches ? event.touches[0].clientX : event.clientX;
+            const cy = event.touches ? event.touches[0].clientY : event.clientY;
+            hoverX = (cx - rect.left) / rect.width - 0.5;
+            hoverY = (cy - rect.top) / rect.height - 0.5;
         };
 
         container.addEventListener('pointerdown', (e) => {
+            // Allow scroll on mobile, don't capture pointer unless it's a mouse
+            if (e.pointerType === 'touch') return;
             dragging = true; lastClientX = e.clientX; lastClientY = e.clientY;
             container.setPointerCapture(e.pointerId);
         });
         container.addEventListener('pointermove', (e) => {
+            if (e.pointerType === 'touch') {
+                // Optional: slight parallax on touch move without drag
+                // updateHover(e); 
+                return;
+            }
             if (!dragging) { updateHover(e); return; }
             const rect = container.getBoundingClientRect();
             dragY += rect.width ? (e.clientX - lastClientX) / rect.width * 3.0 : 0;
@@ -132,40 +141,89 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- Scroll Video Logic ---
-    (function setupScrollVideo() {
-        const section = document.getElementById('scroll-video');
-        const video = document.getElementById('scroll-video-el');
-        if (!section || !video) return;
+    // --- Image Sequence Scroll Logic ---
+    (function setupSequenceScroll() {
+        const canvas = document.getElementById('sequenceCanvas');
+        if (!canvas) return;
+
+        const context = canvas.getContext('2d');
+        const frameCount = 350; // 0000 to 0349
+        const images = [];
+        const imageState = { frame: 0 };
+        let imagesLoaded = 0;
+        
+        // Helper to get image path
+        const currentFrame = index => `anyma/anyma${index.toString().padStart(4, '0')}.webp`;
+
+        // Preload images
+        for (let i = 0; i < frameCount; i++) {
+            const img = new Image();
+            img.src = currentFrame(i);
+            img.onload = () => {
+                imagesLoaded++;
+                if (imagesLoaded === 1) { // Render first frame immediately
+                    render();
+                }
+            };
+            images.push(img);
+        }
+
+        // Set canvas dimensions
+        const setDimensions = () => {
+            // Check if width actually changed (ignore mobile address bar resize)
+            if (canvas.width === window.innerWidth) return;
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            render();
+        };
+
+        const render = () => {
+            const frameIndex = Math.min(frameCount - 1, Math.floor(imageState.frame));
+            const img = images[frameIndex];
+            
+            if (img && img.complete && img.naturalWidth > 0) {
+                const hRatio = canvas.width / img.width;
+                const vRatio = canvas.height / img.height;
+                const ratio = Math.max(hRatio, vRatio); // object-fit: cover
+                const centerShift_x = (canvas.width - img.width * ratio) / 2;
+                const centerShift_y = (canvas.height - img.height * ratio) / 2;
+                
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(
+                    img, 
+                    0, 0, img.width, img.height,
+                    centerShift_x, centerShift_y, img.width * ratio, img.height * ratio
+                );
+            }
+        };
+
+        window.addEventListener('resize', setDimensions);
+        setDimensions();
 
         if (window.gsap && window.ScrollTrigger) {
             window.gsap.registerPlugin(window.ScrollTrigger);
-            const init = () => {
-                const duration = video.duration || 0;
-                let proxy = { t: video.currentTime || 0 };
-                let smoothTween = null;
-                
-                function setSmooth(time) {
-                    if (smoothTween) smoothTween.kill();
-                    smoothTween = gsap.to(proxy, {
-                        t: time,
-                        duration: 0.6,
-                        ease: "power4.out",
-                        onUpdate: () => { video.currentTime = proxy.t; }
-                    });
-                }
-
-                window.ScrollTrigger.create({
-                    trigger: section,
+            
+            // Mobile Optimization: Normalize scroll to prevent address bar jitter
+            if (window.innerWidth < 768) {
+                try { window.ScrollTrigger.normalizeScroll(true); } catch(_) {}
+            }
+            
+            window.gsap.to(imageState, {
+                frame: frameCount - 1,
+                snap: "frame",
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".sequence-section",
                     start: "top top",
-                    end: "+=500%",
-                    scrub: 2.5,
+                    end: "+=500%", // Long scroll for smoothness
+                    scrub: 0.5, // Smooth scrubbing (interpolation)
                     pin: true,
-                    onUpdate: (self) => setSmooth(self.progress * duration)
-                });
-            };
-            if (video.readyState >= 2) init();
-            else video.addEventListener('loadeddata', init, { once: true });
+                    anticipatePin: 1,
+                    onUpdate: render // Force render on scrub
+                },
+                onUpdate: render // Force render on tween update
+            });
         }
     })();
 

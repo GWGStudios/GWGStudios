@@ -49,6 +49,7 @@
     </div>
   </div>
   <header class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+    <div id="canvas-container" class="absolute inset-0 z-0 opacity-40 pointer-events-none md:pointer-events-auto"></div>
     <div class="absolute inset-0 z-0 overflow-hidden">
       <video class="w-full h-full object-cover" autoplay muted playsinline loop preload="metadata" poster="assets/thumbnails/anyma2.jpg">
         <source src="assets/anyma2.mp4" type="video/mp4">
@@ -67,7 +68,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="rounded-2xl overflow-hidden bg-[#0b0b0b]/90 border border-white/10">
           <video class="w-full h-56 object-cover" autoplay muted loop playsinline preload="metadata">
-            <source src="assets/Anyma.mp4" type="video/mp4">
+            <source src="assets/anyma.webm" type="video/webm">
           </video>
           <div class="p-5">
             <h3 class="text-lg font-semibold mb-1">Anyma</h3>
@@ -95,9 +96,15 @@
       </div>
     </div>
   </section>
-  <section id="scroll-video" class="relative bg-[#111111]">
-    <video id="scroll-video-el" class="absolute inset-0 w-full h-[100dvh] object-cover" src="assets/anyma.mp4" muted playsinline preload="auto" poster="assets/thumbnails/anyma.jpg"></video>
+  
+  <section class="sequence-section relative h-screen bg-[#111111] flex items-center justify-center overflow-hidden">
+    <canvas id="sequenceCanvas" class="w-full h-full object-cover"></canvas>
+    <div class="overlay-text absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none mix-blend-difference">
+      <h1 class="text-6xl md:text-8xl font-bold tracking-tighter mb-4">Scroll to Experience</h1>
+      <p class="text-xl text-brand-gray tracking-wide">350 Frame WebP Image Sequence</p>
+    </div>
   </section>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
