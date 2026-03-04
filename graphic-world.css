@@ -2,8 +2,8 @@
 .feature-container {
     position: relative;
     width: 100%;
-    max-width: 1100px; /* Increased from 980px */
-    height: 560px; /* Increased from 500px */
+    max-width: 1200px; /* Increased from 1100px */
+    height: 650px; /* Increased from 560px */
     background-color: #000;
     border-radius: 28px;
     /* Remove overflow hidden to allow arrows to be visible outside */
@@ -54,7 +54,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 80px; /* Increased padding to make room for arrows */
+    padding-left: 100px; /* Increased from 80px */
     pointer-events: none;
 }
 
@@ -65,7 +65,7 @@
     align-items: flex-start;
     gap: 12px;
     pointer-events: auto;
-    width: 340px;
+    width: 380px; /* Increased from 340px */
 }
 
 /* Liquid Glass Pill Button */
