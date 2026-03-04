@@ -54,18 +54,25 @@
   </style>
 </head>
 <body>
+  <audio id="bg-music" src="assets/Aattam.mp3" preload="auto" autoplay></audio>
 
   <!-- Navigation (Restored from index.html) -->
   <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-5 py-1 flex justify-between items-center rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-xl w-[92vw] sm:w-[86vw] md:w-[72vw] lg:w-[64vw] max-w-5xl transition-all duration-300">
       <div class="h-8 md:h-10">
           <a href="index.html"><img src="assets/gwg-logo.gif" alt="GWG Logo" class="h-full object-contain" fetchpriority="high" decoding="async"></a>
       </div>
-      <div id="main-nav-links" class="hidden md:flex relative space-x-8 text-sm uppercase tracking-widest">
-          <a href="index.html" class="nav-link hover:text-brand-gray transition-colors">Home</a>
-          <a href="graphic-world.html" class="nav-link hover:text-brand-gray transition-colors nav-link-active text-white">Graphic World</a>
-          <a href="3d-world.html" class="nav-link hover:text-brand-gray transition-colors">3D World</a>
+      <div class="flex items-center gap-3">
+          <div id="main-nav-links" class="hidden md:flex relative space-x-8 text-sm uppercase tracking-widest">
+              <a href="index.html" class="nav-link hover:text-brand-gray transition-colors">Home</a>
+              <a href="graphic-world.html" class="nav-link hover:text-brand-gray transition-colors nav-link-active text-white">Graphic World</a>
+              <a href="3d-world.html" class="nav-link hover:text-brand-gray transition-colors">3D World</a>
+          </div>
+          <div id="audio-toggle" class="audio-toggle-btn flex items-center justify-center">
+              <span id="audio-toggle-icon" class="audio-toggle-icon">
+              </span>
+          </div>
+          <button class="md:hidden text-white">Menu</button>
       </div>
-      <button class="md:hidden text-white">Menu</button>
   </nav>
 
   <div class="main-wrapper">

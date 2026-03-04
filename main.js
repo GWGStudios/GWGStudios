@@ -4,6 +4,89 @@
 
 // GSAP Animations for Text Reveal
 document.addEventListener("DOMContentLoaded", () => {
+    // --- Background Music Init ---
+    const bgMusic = document.getElementById('bg-music');
+    let bgMusicInitialized = false;
+
+    function initBgMusic() {
+        if (!bgMusic || bgMusicInitialized) return;
+
+        try {
+            bgMusic.volume = 0.5;
+        } catch (_) {}
+
+        const startAt = 64; // 1:02 in seconds
+
+        function startPlayback() {
+            if (bgMusicInitialized) return;
+            try {
+                if (bgMusic.currentTime < startAt && !isNaN(bgMusic.duration)) {
+                    bgMusic.currentTime = Math.min(startAt, bgMusic.duration - 1);
+                } else {
+                    bgMusic.currentTime = startAt;
+                }
+            } catch (_) {}
+
+            const p = bgMusic.play();
+            if (p && typeof p.catch === 'function') {
+                p.catch(() => {});
+            }
+            bgMusicInitialized = true;
+        }
+
+        if (bgMusic.readyState >= 1) {
+            startPlayback();
+        } else {
+            bgMusic.addEventListener('loadedmetadata', () => {
+                startPlayback();
+            }, { once: true });
+        }
+    }
+
+    initBgMusic();
+    window.addEventListener('click', initBgMusic);
+    window.addEventListener('touchstart', initBgMusic);
+
+    const audioToggle = document.getElementById('audio-toggle');
+    const audioToggleIcon = document.getElementById('audio-toggle-icon');
+    const pauseIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="5" width="3" height="14" rx="1.5"></rect><rect x="14" y="5" width="3" height="14" rx="1.5"></rect></svg>';
+    const playIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5v14l11-7z"></path></svg>';
+
+    function syncAudioToggle() {
+        if (!audioToggleIcon || !bgMusic) return;
+        const isPlaying = !bgMusic.paused && !bgMusic.ended && bgMusic.currentTime > 0;
+        audioToggleIcon.innerHTML = isPlaying ? pauseIcon : playIcon;
+    }
+
+    if (audioToggle) {
+        audioToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!bgMusic) return;
+
+            if (!bgMusicInitialized) {
+                initBgMusic();
+                setTimeout(syncAudioToggle, 80);
+                return;
+            }
+
+            if (bgMusic.paused) {
+                const p = bgMusic.play();
+                if (p && typeof p.catch === 'function') {
+                    p.catch(() => {});
+                }
+            } else {
+                bgMusic.pause();
+            }
+            setTimeout(syncAudioToggle, 40);
+        });
+    }
+
+    if (bgMusic) {
+        bgMusic.addEventListener('play', syncAudioToggle);
+        bgMusic.addEventListener('pause', syncAudioToggle);
+        syncAudioToggle();
+    }
+
     const heroVideo = document.getElementById('hero-video');
     if (heroVideo) {
         const onReady = () => heroVideo.classList.add('ready');
