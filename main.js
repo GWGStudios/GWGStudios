@@ -1024,22 +1024,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (upgradePill && dropdownMenu) {
-        upgradePill.addEventListener('click', (e) => {
+        const toggleDropdown = (e) => {
+            e.preventDefault();
             e.stopPropagation();
             dropdownMenu.classList.toggle('visible');
-        });
+        };
 
-        // Close on outside click
-        document.addEventListener('click', (e) => {
+        // Use both click and touchstart for better mobile response
+        upgradePill.addEventListener('click', toggleDropdown);
+        // We use { passive: false } to allow e.preventDefault() if needed, 
+        // but for a simple toggle, standard click is usually enough if it's a div with cursor:pointer.
+        // However, adding a specific touch handler can solve issues on some mobile browsers.
+
+        // Close on outside click/touch
+        const closeOnOutside = (e) => {
             if (!upgradePill.contains(e.target) && !dropdownMenu.contains(e.target)) {
                 dropdownMenu.classList.remove('visible');
             }
-        });
+        };
+
+        document.addEventListener('click', closeOnOutside);
+        document.addEventListener('touchstart', closeOnOutside, { passive: true });
 
         // Handle option selection
         const options = dropdownMenu.querySelectorAll('.dropdown-item');
         options.forEach(opt => {
-            opt.addEventListener('click', () => {
+            const handleSelect = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
                 const text = opt.innerText;
                 if (currentSelection) {
                     currentSelection.innerText = text;
@@ -1049,7 +1062,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateBentoContent(text);
                 
                 dropdownMenu.classList.remove('visible');
-            });
+            };
+
+            opt.addEventListener('click', handleSelect);
+            // Touchend is better for selection feedback
+            opt.addEventListener('touchend', handleSelect, { passive: false });
         });
     }
 });
