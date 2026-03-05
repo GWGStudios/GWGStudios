@@ -2,63 +2,8 @@
 
 
 
-// Haptic Feedback Utility inspired by haptics.lochie.me (Optimized for iOS 18+)
-let hapticElement = null;
-const triggerHaptics = (pattern = 15) => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (!isMobile) return;
-
-    // 1. Standard Vibration API (Android/Chrome)
-    if ('vibrate' in navigator) {
-        if (typeof pattern === 'number') {
-            navigator.vibrate(pattern);
-        } else if (Array.isArray(pattern)) {
-            const vibrationPattern = [];
-            pattern.forEach((step) => {
-                if (step.duration) {
-                    vibrationPattern.push(step.duration);
-                    if (step.delay) vibrationPattern.push(step.delay);
-                } else if (typeof step === 'number') {
-                    vibrationPattern.push(step);
-                }
-            });
-            navigator.vibrate(vibrationPattern);
-        }
-        return;
-    }
-
-    // 2. iOS Haptic Workaround (Safari iOS 18+ switch trick)
-    try {
-        if (!hapticElement) {
-            hapticElement = document.createElement('input');
-            hapticElement.type = 'checkbox';
-            hapticElement.setAttribute('switch', ''); // Non-standard iOS switch attribute
-            hapticElement.style.position = 'fixed';
-            hapticElement.style.opacity = '0';
-            hapticElement.style.pointerEvents = 'none';
-            hapticElement.style.top = '-100px';
-            hapticElement.style.left = '-100px';
-            hapticElement.id = 'haptic-trigger-ios';
-            document.body.appendChild(hapticElement);
-        }
-        // Toggling a checkbox with 'switch' attribute triggers a light native haptic on iOS Safari
-        hapticElement.checked = !hapticElement.checked;
-    } catch (e) {
-        console.warn('Haptics failed on this device');
-    }
-};
-
 // GSAP Animations for Text Reveal
 document.addEventListener("DOMContentLoaded", () => {
-    // Global Haptic Listener for all buttons and links
-    document.addEventListener('click', (e) => {
-        const interactive = e.target.closest('button, a, .clickable, [role="button"], #upgrade-pill, .dropdown-item, .nav-arrow, .close-btn, .dot');
-        if (interactive) {
-            // Light tap for generic interactions
-            triggerHaptics(12);
-        }
-    }, { passive: true });
-
     const heroVideo = document.getElementById('hero-video');
     if (heroVideo) {
         const onReady = () => heroVideo.classList.add('ready');
@@ -896,13 +841,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (video.paused) {
                     video.play();
                     isPlaying = true;
-                    // Haptic pattern for play (inspired by lochie.me)
-                    triggerHaptics([{ duration: 12 }, { delay: 40, duration: 8 }]);
                 } else {
                     video.pause();
                     isPlaying = false;
-                    // Simple haptic for pause
-                    triggerHaptics(15);
                 }
                 updatePlayButtonIcon();
             });
@@ -916,8 +857,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     currentIndex = dotIndex;
                     isPlaying = true; // start playing when user navigates
                     updateSlidePosition(true);
-                    // Light tap for dot navigation
-                    triggerHaptics(10);
                 });
             });
         }
@@ -1107,20 +1046,18 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             e.stopPropagation();
             dropdownMenu.classList.toggle('visible');
-            // Haptic for open/close
-            triggerHaptics(15);
         };
 
         // Use both click and touchstart for better mobile response
         upgradePill.addEventListener('click', toggleDropdown);
+        // We use { passive: false } to allow e.preventDefault() if needed, 
+        // but for a simple toggle, standard click is usually enough if it's a div with cursor:pointer.
+        // However, adding a specific touch handler can solve issues on some mobile browsers.
 
         // Close on outside click/touch
         const closeOnOutside = (e) => {
             if (!upgradePill.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                if (dropdownMenu.classList.contains('visible')) {
-                    dropdownMenu.classList.remove('visible');
-                    triggerHaptics(10); // Light haptic on auto-close
-                }
+                dropdownMenu.classList.remove('visible');
             }
         };
 
@@ -1143,8 +1080,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateBentoContent(text);
                 
                 dropdownMenu.classList.remove('visible');
-                // Haptic pattern for successful selection
-                triggerHaptics([{ duration: 15 }, { delay: 40, duration: 10 }]);
             };
 
             opt.addEventListener('click', handleSelect);

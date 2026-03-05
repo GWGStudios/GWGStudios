@@ -376,7 +376,6 @@ video::-webkit-media-controls {
     background: rgba(0, 0, 0, 0.45);
     color: #eaeaea;
     backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
 }
 
 .sub-options.open .work-card {
