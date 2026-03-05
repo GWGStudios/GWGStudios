@@ -221,9 +221,10 @@
     left: 24px; /* Inside the frame, left-aligned */
     width: 32px; /* Smaller size */
     height: 32px;
-    background: rgba(40, 40, 40, 0.4);
+    background: rgba(40, 40, 40, 0.45);
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -274,8 +275,9 @@
     right: 24px;
     width: 36px;
     height: 36px;
-    background: rgba(40, 40, 40, 0.4);
+    background: rgba(40, 40, 40, 0.45);
     backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     display: flex;

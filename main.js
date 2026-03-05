@@ -2,29 +2,49 @@
 
 
 
-// Haptic Feedback Utility inspired by haptics.lochie.me
+// Haptic Feedback Utility inspired by haptics.lochie.me (Optimized for iOS 18+)
+let hapticElement = null;
 const triggerHaptics = (pattern = 15) => {
-    // Check for vibration support and mobile device
-    if (!('vibrate' in navigator)) return;
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (!isMobile) return;
 
-    if (typeof pattern === 'number') {
-        navigator.vibrate(pattern);
-    } else if (Array.isArray(pattern)) {
-        const vibrationPattern = [];
-        pattern.forEach((step, index) => {
-            if (step.duration) {
-                vibrationPattern.push(step.duration);
-                // If there's a delay and it's not the last step, add it
-                if (step.delay) {
-                    vibrationPattern.push(step.delay);
+    // 1. Standard Vibration API (Android/Chrome)
+    if ('vibrate' in navigator) {
+        if (typeof pattern === 'number') {
+            navigator.vibrate(pattern);
+        } else if (Array.isArray(pattern)) {
+            const vibrationPattern = [];
+            pattern.forEach((step) => {
+                if (step.duration) {
+                    vibrationPattern.push(step.duration);
+                    if (step.delay) vibrationPattern.push(step.delay);
+                } else if (typeof step === 'number') {
+                    vibrationPattern.push(step);
                 }
-            } else if (typeof step === 'number') {
-                vibrationPattern.push(step);
-            }
-        });
-        navigator.vibrate(vibrationPattern);
+            });
+            navigator.vibrate(vibrationPattern);
+        }
+        return;
+    }
+
+    // 2. iOS Haptic Workaround (Safari iOS 18+ switch trick)
+    try {
+        if (!hapticElement) {
+            hapticElement = document.createElement('input');
+            hapticElement.type = 'checkbox';
+            hapticElement.setAttribute('switch', ''); // Non-standard iOS switch attribute
+            hapticElement.style.position = 'fixed';
+            hapticElement.style.opacity = '0';
+            hapticElement.style.pointerEvents = 'none';
+            hapticElement.style.top = '-100px';
+            hapticElement.style.left = '-100px';
+            hapticElement.id = 'haptic-trigger-ios';
+            document.body.appendChild(hapticElement);
+        }
+        // Toggling a checkbox with 'switch' attribute triggers a light native haptic on iOS Safari
+        hapticElement.checked = !hapticElement.checked;
+    } catch (e) {
+        console.warn('Haptics failed on this device');
     }
 };
 

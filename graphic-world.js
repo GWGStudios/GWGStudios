@@ -1,24 +1,42 @@
 
-// Haptic Feedback Utility inspired by haptics.lochie.me
+// Haptic Feedback Utility inspired by haptics.lochie.me (Optimized for iOS 18+)
+let hapticElement = null;
 const triggerHaptics = (pattern = 15) => {
-    if (!('vibrate' in navigator)) return;
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (!isMobile) return;
 
-    if (typeof pattern === 'number') {
-        navigator.vibrate(pattern);
-    } else if (Array.isArray(pattern)) {
-        const vibrationPattern = [];
-        pattern.forEach((step, index) => {
-            if (step.duration) {
-                vibrationPattern.push(step.duration);
-                if (step.delay) vibrationPattern.push(step.delay);
-            } else if (typeof step === 'number') {
-                vibrationPattern.push(step);
-            }
-        });
-        navigator.vibrate(vibrationPattern);
+    if ('vibrate' in navigator) {
+        if (typeof pattern === 'number') {
+            navigator.vibrate(pattern);
+        } else if (Array.isArray(pattern)) {
+            const vibrationPattern = [];
+            pattern.forEach((step) => {
+                if (step.duration) {
+                    vibrationPattern.push(step.duration);
+                    if (step.delay) vibrationPattern.push(step.delay);
+                } else if (typeof step === 'number') {
+                    vibrationPattern.push(step);
+                }
+            });
+            navigator.vibrate(vibrationPattern);
+        }
+        return;
     }
+
+    try {
+        if (!hapticElement) {
+            hapticElement = document.createElement('input');
+            hapticElement.type = 'checkbox';
+            hapticElement.setAttribute('switch', '');
+            hapticElement.style.position = 'fixed';
+            hapticElement.style.opacity = '0';
+            hapticElement.style.pointerEvents = 'none';
+            hapticElement.style.top = '-100px';
+            hapticElement.id = 'haptic-trigger-ios';
+            document.body.appendChild(hapticElement);
+        }
+        hapticElement.checked = !hapticElement.checked;
+    } catch (e) {}
 };
 
 const features = [
