@@ -4,89 +4,6 @@
 
 // GSAP Animations for Text Reveal
 document.addEventListener("DOMContentLoaded", () => {
-    // --- Background Music Init ---
-    const bgMusic = document.getElementById('bg-music');
-    let bgMusicInitialized = false;
-
-    function initBgMusic() {
-        if (!bgMusic || bgMusicInitialized) return;
-
-        try {
-            bgMusic.volume = 0.5;
-        } catch (_) {}
-
-        const startAt = 64; // 1:02 in seconds
-
-        function startPlayback() {
-            if (bgMusicInitialized) return;
-            try {
-                if (bgMusic.currentTime < startAt && !isNaN(bgMusic.duration)) {
-                    bgMusic.currentTime = Math.min(startAt, bgMusic.duration - 1);
-                } else {
-                    bgMusic.currentTime = startAt;
-                }
-            } catch (_) {}
-
-            const p = bgMusic.play();
-            if (p && typeof p.catch === 'function') {
-                p.catch(() => {});
-            }
-            bgMusicInitialized = true;
-        }
-
-        if (bgMusic.readyState >= 1) {
-            startPlayback();
-        } else {
-            bgMusic.addEventListener('loadedmetadata', () => {
-                startPlayback();
-            }, { once: true });
-        }
-    }
-
-    initBgMusic();
-    window.addEventListener('click', initBgMusic);
-    window.addEventListener('touchstart', initBgMusic);
-
-    const audioToggle = document.getElementById('audio-toggle');
-    const audioToggleIcon = document.getElementById('audio-toggle-icon');
-    const pauseIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="5" width="3" height="14" rx="1.5"></rect><rect x="14" y="5" width="3" height="14" rx="1.5"></rect></svg>';
-    const playIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5v14l11-7z"></path></svg>';
-
-    function syncAudioToggle() {
-        if (!audioToggleIcon || !bgMusic) return;
-        const isPlaying = !bgMusic.paused && !bgMusic.ended && bgMusic.currentTime > 0;
-        audioToggleIcon.innerHTML = isPlaying ? pauseIcon : playIcon;
-    }
-
-    if (audioToggle) {
-        audioToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!bgMusic) return;
-
-            if (!bgMusicInitialized) {
-                initBgMusic();
-                setTimeout(syncAudioToggle, 80);
-                return;
-            }
-
-            if (bgMusic.paused) {
-                const p = bgMusic.play();
-                if (p && typeof p.catch === 'function') {
-                    p.catch(() => {});
-                }
-            } else {
-                bgMusic.pause();
-            }
-            setTimeout(syncAudioToggle, 40);
-        });
-    }
-
-    if (bgMusic) {
-        bgMusic.addEventListener('play', syncAudioToggle);
-        bgMusic.addEventListener('pause', syncAudioToggle);
-        syncAudioToggle();
-    }
-
     const heroVideo = document.getElementById('hero-video');
     if (heroVideo) {
         const onReady = () => heroVideo.classList.add('ready');
@@ -990,7 +907,7 @@ document.addEventListener("DOMContentLoaded", () => {
         '3D Visualization & Real-time': [
             {
                 title: 'Hyper-realistic <br> 3D experiences that <br> captivate and convert.',
-                img: 'graphis 2d/optimized/skull-tshirt-full.jpg',
+                video: 'assets/gass.mp4',
                 icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"/></svg>'
             },
             {
@@ -1000,7 +917,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             {
                 title: 'Cinematic motion graphics <br> that tell your brand\'s <br> unique story.',
-                img: 'graphis 2d/optimized/poster-series-full.jpg',
+                video: 'assets/anyma2.mp4',
                 icon: '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
             },
             {
@@ -1012,7 +929,7 @@ document.addEventListener("DOMContentLoaded", () => {
         'Branding & Visual Identity': [
             {
                 title: 'Iconic branding that <br> stands the test <br> of time and trends.',
-                img: 'graphis 2d/optimized/poster-series-full.jpg',
+                video: 'assets/product 2.mp4',
                 icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.53 16.122l9.37-9.37M9.21 16.021l9.37-9.37M16.894 9.115l3.867-3.868m-12.103 12.103l3.907-3.907m-6.068 6.068l5.035-5.035m-9.116 9.116l2.103-2.103m3.49-3.49l5.19-5.19m5.472-5.473l2.103-2.103M4.657 18.323l7.53-7.53m7-7l1.414-1.414M5.428 15.891l6.299-6.299m6.089-6.09l1.414-1.414"/></svg>'
             },
             {
@@ -1022,7 +939,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             {
                 title: 'Print & digital <br> collateral that speaks <br> your brand\'s language.',
-                img: 'graphis 2d/optimized/pattern-study-full.jpg',
+                video: 'assets/tshirt.mp4',
                 icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 21a9 9 0 100-18 9 9 0 000 18zM9.75 9.75h4.5v4.5h-4.5v-4.5z"/></svg>'
             },
             {
@@ -1034,7 +951,7 @@ document.addEventListener("DOMContentLoaded", () => {
         'Motion Graphics & VFX': [
             {
                 title: 'Dynamic storytelling <br> through fluid <br> character animation.',
-                img: 'graphis 2d/optimized/punk-rock-poster-full.jpg',
+                video: 'assets/CGI.mp4',
                 icon: '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
             },
             {
@@ -1044,7 +961,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             {
                 title: 'Seamless transition <br> logic that keeps your <br> audience engaged.',
-                img: 'graphis 2d/optimized/skull-tshirt-full.jpg',
+                video: 'assets/shoe.mp4',
                 icon: '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m-8 6H4m0 0l4 4m-4-4l4-4"/></svg>'
             },
             {
@@ -1067,6 +984,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const contentWrap = card.querySelector('.content-wrapper');
             const bgWrap = card.querySelector('.bg-wrapper');
             const img = bgWrap ? bgWrap.querySelector('img') : null;
+            const video = bgWrap ? bgWrap.querySelector('video') : null;
             
             // Cards that should NEVER show background images (2 and 4)
             const isTextOnly = (cardId === 2 || cardId === 4);
@@ -1088,9 +1006,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (item.title) card.querySelector('.title-text').innerHTML = item.title;
                     if (item.icon) card.querySelector('.icon-box').innerHTML = item.icon;
                     
-                    // Strictly update image only for non-text-only cards
-                    if (!isTextOnly && img && item.img) {
-                        img.src = item.img;
+                    // Update background only for non-text-only cards
+                    if (!isTextOnly && bgWrap) {
+                        if (item.video) {
+                            if (video) {
+                                video.src = item.video;
+                                video.load();
+                                video.play().catch(() => {});
+                                video.classList.remove('hidden');
+                            }
+                            if (img) img.classList.add('hidden');
+                        } else if (item.img) {
+                            if (img) {
+                                img.src = item.img;
+                                img.classList.remove('hidden');
+                            }
+                            if (video) {
+                                video.pause();
+                                video.classList.add('hidden');
+                            }
+                        }
                     }
                 }
             });
@@ -1151,5 +1086,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // Touchend is better for selection feedback
             opt.addEventListener('touchend', handleSelect, { passive: false });
         });
+
+        // Initialize with default selection
+        if (currentSelection) {
+            updateBentoContent(currentSelection.innerText);
+        }
     }
 });
