@@ -1,3 +1,26 @@
+
+// Haptic Feedback Utility inspired by haptics.lochie.me
+const triggerHaptics = (pattern = 15) => {
+    if (!('vibrate' in navigator)) return;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) return;
+
+    if (typeof pattern === 'number') {
+        navigator.vibrate(pattern);
+    } else if (Array.isArray(pattern)) {
+        const vibrationPattern = [];
+        pattern.forEach((step, index) => {
+            if (step.duration) {
+                vibrationPattern.push(step.duration);
+                if (step.delay) vibrationPattern.push(step.delay);
+            } else if (typeof step === 'number') {
+                vibrationPattern.push(step);
+            }
+        });
+        navigator.vibrate(vibrationPattern);
+    }
+};
+
 const features = [
     {
         id: 'design',
@@ -156,6 +179,14 @@ function setActive(index) {
 
 // Nav Arrows
 document.addEventListener('DOMContentLoaded', () => {
+    // Global Haptic Listener for all buttons and links in graphic-world
+    document.addEventListener('click', (e) => {
+        const interactive = e.target.closest('button, a, .clickable, [role="button"], .pill-btn, .nav-arrow, .close-btn');
+        if (interactive) {
+            triggerHaptics(12);
+        }
+    }, { passive: true });
+
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     
