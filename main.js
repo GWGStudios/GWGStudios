@@ -186,6 +186,456 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
     revealTargets.forEach(el => revealObserver.observe(el));
 
+    const nowPlaying = document.getElementById('now-playing');
+    if (nowPlaying) {
+        const volumeTrack = nowPlaying.querySelector('[data-np-volume-track]') || nowPlaying.querySelector('.np-volume-track');
+        const volumeFill = nowPlaying.querySelector('[data-np-volume-fill]') || nowPlaying.querySelector('.np-volume-fill');
+        const progressTrack = nowPlaying.querySelector('[data-np-progress-track]') || nowPlaying.querySelector('.np-progress-track');
+        const progressFill = nowPlaying.querySelector('[data-np-progress-fill]') || nowPlaying.querySelector('.np-progress-fill');
+        const elapsedEl = nowPlaying.querySelector('[data-np-elapsed]');
+        const remainingEl = nowPlaying.querySelector('[data-np-remaining]');
+        const titleEl = nowPlaying.querySelector('[data-np-title]') || nowPlaying.querySelector('.np-title');
+        const artistEl = nowPlaying.querySelector('[data-np-artist]') || nowPlaying.querySelector('.np-artist');
+        const coverEl = nowPlaying.querySelector('[data-np-cover]') || nowPlaying.querySelector('.np-cover-img');
+        const bgEl = nowPlaying.querySelector('[data-np-bg]') || nowPlaying.querySelector('.now-playing-bg');
+        const prevBtn = nowPlaying.querySelector('[data-np-prev]') || nowPlaying.querySelector('.np-skip[aria-label="Previous"]');
+        const nextBtn = nowPlaying.querySelector('[data-np-next]') || nowPlaying.querySelector('.np-skip[aria-label="Next"]');
+        const playBtn = nowPlaying.querySelector('[data-np-play]') || nowPlaying.querySelector('.np-play');
+        const playIcon = nowPlaying.querySelector('[data-np-play-icon]') || (playBtn ? playBtn.querySelector('svg') : null);
+        const audioEl = nowPlaying.querySelector('[data-np-audio]') || nowPlaying.querySelector('audio');
+        const clamp01 = (n) => Math.max(0, Math.min(1, Number.isFinite(n) ? n : 0));
+        const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+        const fmt = (seconds) => {
+            const s = Math.max(0, Math.floor(Number.isFinite(seconds) ? seconds : 0));
+            const m = Math.floor(s / 60);
+            const r = s % 60;
+            return `${m}:${String(r).padStart(2, '0')}`;
+        };
+        const playlist = [
+            { title: 'Jaqeen', artist: 'Talwiinder, Rish • Video Available', src: 'assets/Aattam.mp3', cover: 'assets/thumbnails/anyma2.jpg' },
+            { title: 'Track 2', artist: 'Artist • Video Available', src: 'assets/Aattam.mp3', cover: 'assets/thumbnails/anyma.jpg' },
+            { title: 'Track 3', artist: 'Artist • Video Available', src: 'assets/Aattam.mp3', cover: 'assets/thumbnails/gass.jpg' }
+        ];
+        const normalizeIndex = (i) => {
+            const n = playlist.length || 1;
+            const x = ((i % n) + n) % n;
+            return x;
+        };
+        let trackIndex = 0;
+        let switchToken = 0;
+        try {
+            const stored = localStorage.getItem('np_track');
+            const parsed = stored == null ? NaN : parseInt(stored, 10);
+            if (Number.isFinite(parsed)) trackIndex = normalizeIndex(parsed);
+        } catch (_) {}
+        const setBasicProgress = (current, duration) => {
+            if (!progressTrack || !progressFill) return;
+            const d = Number.isFinite(duration) && duration > 0 ? duration : 0;
+            const c = d > 0 ? clamp(Number.isFinite(current) ? current : 0, 0, d) : 0;
+            const frac = d > 0 ? c / d : 0;
+            progressFill.style.width = `${Math.round(frac * 100)}%`;
+            const pct = Math.round(frac * 100);
+            progressTrack.setAttribute('aria-valuenow', String(pct));
+            progressTrack.setAttribute('aria-valuetext', `${pct}%`);
+            if (elapsedEl) elapsedEl.textContent = fmt(c);
+            if (remainingEl) remainingEl.textContent = d > 0 ? `-${fmt(Math.max(0, d - c))}` : '-0:00';
+        };
+        const applyTrack = (i, opts = {}) => {
+            const nextIndex = normalizeIndex(i);
+            const track = playlist[nextIndex];
+            const token = ++switchToken;
+            const canAnimate = (el) => !!(el && el.animate);
+            const cancelAnims = (el) => {
+                if (!el || !el.getAnimations) return;
+                try { el.getAnimations().forEach(a => a.cancel()); } catch (_) {}
+            };
+            const swapText = (el, nextText) => {
+                if (!el) return;
+                if (!canAnimate(el)) { el.textContent = nextText; return; }
+                cancelAnims(el);
+                const out = el.animate(
+                    [{ opacity: 1, transform: 'translate3d(0,0,0)' }, { opacity: 0, transform: 'translate3d(0,8px,0)' }],
+                    { duration: 140, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                );
+                out.onfinish = () => {
+                    if (token !== switchToken) return;
+                    el.textContent = nextText;
+                    el.animate(
+                        [{ opacity: 0, transform: 'translate3d(0,-6px,0)' }, { opacity: 1, transform: 'translate3d(0,0,0)' }],
+                        { duration: 240, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                    );
+                };
+            };
+            const swapCover = (nextSrc, nextAlt) => {
+                if (!coverEl || !nextSrc) return;
+                if (!canAnimate(coverEl)) {
+                    coverEl.setAttribute('src', nextSrc);
+                    coverEl.setAttribute('alt', nextAlt);
+                    return;
+                }
+                const wrap = coverEl.closest('.np-cover');
+                if (!wrap) {
+                    coverEl.setAttribute('src', nextSrc);
+                    coverEl.setAttribute('alt', nextAlt);
+                    return;
+                }
+                const prevSrc = coverEl.getAttribute('src') || coverEl.src || '';
+                const overlay = document.createElement('img');
+                overlay.src = prevSrc;
+                overlay.alt = '';
+                overlay.decoding = 'async';
+                overlay.loading = 'eager';
+                overlay.style.position = 'absolute';
+                overlay.style.inset = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.objectFit = 'cover';
+                overlay.style.pointerEvents = 'none';
+                overlay.style.borderRadius = 'inherit';
+                overlay.style.opacity = '1';
+                overlay.style.transform = 'scale(1)';
+                wrap.appendChild(overlay);
+                cancelAnims(coverEl);
+                cancelAnims(overlay);
+                coverEl.style.opacity = '0';
+                coverEl.style.transform = 'scale(1.02)';
+                const img = new Image();
+                img.onload = () => {
+                    if (token !== switchToken) { overlay.remove(); return; }
+                    coverEl.setAttribute('src', nextSrc);
+                    coverEl.setAttribute('alt', nextAlt);
+                    coverEl.animate(
+                        [{ opacity: 0, transform: 'scale(1.02)' }, { opacity: 1, transform: 'scale(1)' }],
+                        { duration: 360, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                    );
+                    const fade = overlay.animate(
+                        [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(0.985)' }],
+                        { duration: 360, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                    );
+                    fade.onfinish = () => overlay.remove();
+                };
+                img.onerror = () => {
+                    if (token !== switchToken) { overlay.remove(); return; }
+                    coverEl.setAttribute('src', nextSrc);
+                    coverEl.setAttribute('alt', nextAlt);
+                    coverEl.animate(
+                        [{ opacity: 0, transform: 'scale(1.02)' }, { opacity: 1, transform: 'scale(1)' }],
+                        { duration: 360, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                    );
+                    const fade = overlay.animate(
+                        [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(0.985)' }],
+                        { duration: 360, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                    );
+                    fade.onfinish = () => overlay.remove();
+                };
+                img.src = nextSrc;
+            };
+            const swapAmbient = (nextSrc) => {
+                if (!bgEl || !nextSrc) return;
+                const makeLayer = (src) => {
+                    const layer = document.createElement('div');
+                    layer.className = 'np-ambient-layer';
+                    layer.style.backgroundImage = `url(${src})`;
+                    return layer;
+                };
+                const current = bgEl.querySelector('.np-ambient-layer:last-of-type');
+                if (!canAnimate(bgEl)) {
+                    if (current) current.style.backgroundImage = `url(${nextSrc})`;
+                    else bgEl.appendChild(makeLayer(nextSrc));
+                    return;
+                }
+                const img = new Image();
+                img.onload = () => {
+                    if (token !== switchToken) return;
+                    const next = makeLayer(nextSrc);
+                    next.style.opacity = '0';
+                    next.style.filter = 'blur(110px) saturate(1.55) contrast(1.08) brightness(0.82)';
+                    bgEl.appendChild(next);
+                    const inAnim = next.animate(
+                        [
+                            { opacity: 0, filter: 'blur(140px) saturate(1.45) contrast(1.08) brightness(0.78)', transform: 'scale(1.22)' },
+                            { opacity: 0.68, filter: 'blur(86px) saturate(1.55) contrast(1.08) brightness(0.82)', transform: 'scale(1.18)' }
+                        ],
+                        { duration: 520, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                    );
+                    if (current) {
+                        cancelAnims(current);
+                        const outAnim = current.animate(
+                            [
+                                { opacity: getComputedStyle(current).opacity || '0.68', filter: getComputedStyle(current).filter || 'blur(86px)', transform: getComputedStyle(current).transform || 'scale(1.18)' },
+                                { opacity: 0, filter: 'blur(160px) saturate(1.2) contrast(1.05) brightness(0.72)', transform: 'scale(1.26)' }
+                            ],
+                            { duration: 520, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                        );
+                        outAnim.onfinish = () => { try { current.remove(); } catch (_) {} };
+                    }
+                    inAnim.onfinish = () => {
+                        const layers = bgEl.querySelectorAll('.np-ambient-layer');
+                        if (layers.length > 2) {
+                            for (let k = 0; k < layers.length - 2; k += 1) {
+                                try { layers[k].remove(); } catch (_) {}
+                            }
+                        }
+                    };
+                };
+                img.onerror = () => {
+                    if (token !== switchToken) return;
+                    const next = makeLayer(nextSrc);
+                    if (current) { try { current.remove(); } catch (_) {} }
+                    bgEl.appendChild(next);
+                };
+                img.src = nextSrc;
+            };
+            if (titleEl) swapText(titleEl, track.title);
+            if (artistEl) swapText(artistEl, track.artist);
+            swapCover(track.cover, `${track.title} cover art`);
+            swapAmbient(track.cover);
+            if (elapsedEl) swapText(elapsedEl, '0:00');
+            if (remainingEl) swapText(remainingEl, '-0:00');
+            if (progressFill && canAnimate(progressFill)) {
+                cancelAnims(progressFill);
+                progressFill.animate(
+                    [{ opacity: 1 }, { opacity: 0.6 }, { opacity: 1 }],
+                    { duration: 260, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+                );
+            }
+            setBasicProgress(0, 0);
+            trackIndex = nextIndex;
+            try { localStorage.setItem('np_track', String(trackIndex)); } catch (_) {}
+            if (audioEl) {
+                const wasPlaying = opts.wasPlaying === true;
+                try { audioEl.pause(); } catch (_) {}
+                if (track.src) {
+                    try { audioEl.setAttribute('src', track.src); } catch (_) {}
+                    try { audioEl.src = track.src; } catch (_) {}
+                }
+                try { audioEl.currentTime = 0; } catch (_) {}
+                try { audioEl.load(); } catch (_) {}
+                if (wasPlaying) {
+                    const playWhenReady = () => {
+                        audioEl.removeEventListener('canplay', playWhenReady);
+                        audioEl.play().catch(() => {});
+                    };
+                    audioEl.addEventListener('canplay', playWhenReady);
+                }
+            }
+        };
+        applyTrack(trackIndex, { wasPlaying: false });
+        const getInitial = () => {
+            let v = 0.62;
+            try {
+                const stored = localStorage.getItem('np_volume');
+                if (stored != null) {
+                    const parsed = parseFloat(stored);
+                    if (Number.isFinite(parsed)) return clamp01(parsed);
+                }
+            } catch (_) {}
+            if (volumeFill) {
+                const fromStyle = parseFloat((volumeFill.style.width || '').replace('%', ''));
+                if (Number.isFinite(fromStyle)) v = fromStyle / 100;
+            }
+            return clamp01(v);
+        };
+        const volumeFromClientX = (clientX) => {
+            if (!volumeTrack) return 0;
+            const r = volumeTrack.getBoundingClientRect();
+            const w = Math.max(1, r.width);
+            return clamp01((clientX - r.left) / w);
+        };
+        const setVolume = (v, opts = {}) => {
+            const vv = clamp01(v);
+            if (volumeFill) volumeFill.style.width = `${Math.round(vv * 100)}%`;
+            if (volumeTrack) {
+                const pct = Math.round(vv * 100);
+                volumeTrack.setAttribute('aria-valuenow', String(pct));
+                volumeTrack.setAttribute('aria-valuetext', `${pct}%`);
+            }
+            if (audioEl) {
+                try { audioEl.volume = vv; } catch (_) {}
+            }
+            if (opts.persist !== false) {
+                try { localStorage.setItem('np_volume', String(vv)); } catch (_) {}
+            }
+        };
+        const startVolume = getInitial();
+        setVolume(startVolume, { persist: false });
+        if (audioEl) {
+            try { audioEl.volume = startVolume; } catch (_) {}
+        }
+        if (volumeTrack && volumeFill) {
+            let dragging = false;
+            const stop = () => { dragging = false; };
+            volumeTrack.addEventListener('pointerdown', (e) => {
+                if (e.button != null && e.button !== 0) return;
+                dragging = true;
+                try { volumeTrack.setPointerCapture(e.pointerId); } catch (_) {}
+                setVolume(volumeFromClientX(e.clientX));
+                e.preventDefault();
+            });
+            volumeTrack.addEventListener('pointermove', (e) => {
+                if (!dragging) return;
+                setVolume(volumeFromClientX(e.clientX));
+            });
+            volumeTrack.addEventListener('pointerup', stop);
+            volumeTrack.addEventListener('pointercancel', stop);
+            volumeTrack.addEventListener('lostpointercapture', stop);
+            volumeTrack.addEventListener('keydown', (e) => {
+                const key = e.key;
+                const currentPct = parseInt(volumeTrack.getAttribute('aria-valuenow') || '0', 10);
+                const current = clamp01(currentPct / 100);
+                const step = e.shiftKey ? 0.1 : 0.05;
+                if (key === 'ArrowLeft' || key === 'ArrowDown') {
+                    setVolume(current - step);
+                    e.preventDefault();
+                } else if (key === 'ArrowRight' || key === 'ArrowUp') {
+                    setVolume(current + step);
+                    e.preventDefault();
+                } else if (key === 'Home') {
+                    setVolume(0);
+                    e.preventDefault();
+                } else if (key === 'End') {
+                    setVolume(1);
+                    e.preventDefault();
+                }
+            });
+        }
+
+        if (audioEl && playBtn && playIcon) {
+            const pauseSvg = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            const playSvg = '<path d="M8 5v14l11-7L8 5z"/>';
+            const setPlayingUI = (isPlaying) => {
+                playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+                playIcon.innerHTML = isPlaying ? pauseSvg : playSvg;
+            };
+            setPlayingUI(false);
+            playBtn.addEventListener('click', async () => {
+                try {
+                    if (audioEl.paused) {
+                        await audioEl.play();
+                    } else {
+                        audioEl.pause();
+                    }
+                } catch (_) {}
+                setPlayingUI(!audioEl.paused);
+            });
+            audioEl.addEventListener('play', () => setPlayingUI(true));
+            audioEl.addEventListener('pause', () => setPlayingUI(false));
+            audioEl.addEventListener('ended', () => setPlayingUI(false));
+        }
+
+        if (audioEl && prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                const wasPlaying = !audioEl.paused;
+                applyTrack(trackIndex - 1, { wasPlaying });
+            });
+        }
+        if (audioEl && nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                const wasPlaying = !audioEl.paused;
+                applyTrack(trackIndex + 1, { wasPlaying });
+            });
+        }
+        if (audioEl) {
+            audioEl.addEventListener('ended', () => {
+                applyTrack(trackIndex + 1, { wasPlaying: true });
+            });
+        }
+
+        if (audioEl && progressTrack && progressFill) {
+            const durSafe = () => {
+                const d = audioEl.duration;
+                return Number.isFinite(d) && d > 0 ? d : 0;
+            };
+            const timeFromClientX = (clientX) => {
+                const r = progressTrack.getBoundingClientRect();
+                const frac = clamp01((clientX - r.left) / Math.max(1, r.width));
+                const d = durSafe();
+                return d > 0 ? frac * d : 0;
+            };
+            const setProgress = (current, duration) => {
+                const d = duration > 0 ? duration : 0;
+                const c = d > 0 ? clamp(current, 0, d) : 0;
+                const frac = d > 0 ? c / d : 0;
+                progressFill.style.width = `${Math.round(frac * 100)}%`;
+                const pct = Math.round(frac * 100);
+                progressTrack.setAttribute('aria-valuenow', String(pct));
+                progressTrack.setAttribute('aria-valuetext', `${pct}%`);
+                if (elapsedEl) elapsedEl.textContent = fmt(c);
+                if (remainingEl) remainingEl.textContent = `-${fmt(Math.max(0, d - c))}`;
+            };
+            const sync = () => setProgress(audioEl.currentTime || 0, durSafe());
+            const boot = () => {
+                const d = durSafe();
+                if (d > 0) {
+                    const total = fmt(d);
+                    if (remainingEl && remainingEl.textContent === '-3:20') remainingEl.textContent = `-${total}`;
+                }
+                sync();
+            };
+            audioEl.addEventListener('loadedmetadata', boot);
+            audioEl.addEventListener('durationchange', boot);
+            audioEl.addEventListener('timeupdate', sync);
+            audioEl.addEventListener('seeked', sync);
+            audioEl.addEventListener('ended', sync);
+            boot();
+
+            let dragging = false;
+            let wasPlaying = false;
+            const stop = () => {
+                dragging = false;
+                if (wasPlaying) {
+                    try { audioEl.play().catch(() => {}); } catch (_) {}
+                }
+                wasPlaying = false;
+            };
+            progressTrack.addEventListener('pointerdown', (e) => {
+                if (e.button != null && e.button !== 0) return;
+                dragging = true;
+                wasPlaying = !audioEl.paused;
+                try { progressTrack.setPointerCapture(e.pointerId); } catch (_) {}
+                if (wasPlaying) {
+                    try { audioEl.pause(); } catch (_) {}
+                }
+                const t = timeFromClientX(e.clientX);
+                try { audioEl.currentTime = t; } catch (_) {}
+                setProgress(t, durSafe());
+                e.preventDefault();
+            });
+            progressTrack.addEventListener('pointermove', (e) => {
+                if (!dragging) return;
+                const t = timeFromClientX(e.clientX);
+                try { audioEl.currentTime = t; } catch (_) {}
+                setProgress(t, durSafe());
+            });
+            progressTrack.addEventListener('pointerup', stop);
+            progressTrack.addEventListener('pointercancel', stop);
+            progressTrack.addEventListener('lostpointercapture', stop);
+            progressTrack.addEventListener('keydown', (e) => {
+                const d = durSafe();
+                if (!(d > 0)) return;
+                const key = e.key;
+                const step = e.shiftKey ? 10 : 5;
+                if (key === 'ArrowLeft' || key === 'ArrowDown') {
+                    try { audioEl.currentTime = clamp((audioEl.currentTime || 0) - step, 0, d); } catch (_) {}
+                    sync();
+                    e.preventDefault();
+                } else if (key === 'ArrowRight' || key === 'ArrowUp') {
+                    try { audioEl.currentTime = clamp((audioEl.currentTime || 0) + step, 0, d); } catch (_) {}
+                    sync();
+                    e.preventDefault();
+                } else if (key === 'Home') {
+                    try { audioEl.currentTime = 0; } catch (_) {}
+                    sync();
+                    e.preventDefault();
+                } else if (key === 'End') {
+                    try { audioEl.currentTime = d; } catch (_) {}
+                    sync();
+                    e.preventDefault();
+                }
+            });
+        }
+    }
+
     const navLinksWrap = document.getElementById('main-nav-links');
     if (navLinksWrap) {
         const links = Array.from(navLinksWrap.querySelectorAll('a'));
@@ -585,6 +1035,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const track = document.getElementById('slider-track');
     if (track) {
         const slides = Array.from(track.children);
+        const highlightsAmbient = document.querySelector('[data-highlights-ambient]');
         // Main Static Controls
         const mainPlayBtn = document.getElementById('main-play-btn');
         const dots = document.querySelectorAll('#main-controls .dot');
@@ -601,6 +1052,270 @@ document.addEventListener("DOMContentLoaded", () => {
         let isPlaying = true;
         let animating = false;
         let progressRAF = null;
+        let ambientToken = 0;
+        let ambientVideoToken = 0;
+        let ambientVideoA = null;
+        let ambientVideoB = null;
+        let ambientVideoActive = 0;
+        let ambientUnbind = null;
+        
+        function posterUrlForIndex(index) {
+            const slide = slides[index];
+            if (!slide) return '';
+            const video = slide.querySelector('video');
+            const poster = video ? (video.getAttribute('poster') || '') : '';
+            if (poster) return poster;
+            const layer = slide.querySelector('.poster-layer');
+            if (layer) {
+                const bg = layer.style && layer.style.backgroundImage ? layer.style.backgroundImage : '';
+                const m = bg.match(/url\((['"]?)(.*?)\1\)/i);
+                if (m && m[2]) return m[2];
+            }
+            return '';
+        }
+        
+        function videoSrcFor(video) {
+            if (!video) return '';
+            const current = video.currentSrc || '';
+            if (current) return current;
+            const se = video.querySelector('source');
+            if (!se) return '';
+            return se.getAttribute('src') || se.getAttribute('data-src') || '';
+        }
+
+        function ensureVideoSrc(video) {
+            if (!video) return '';
+            const se = video.querySelector('source');
+            if (!se) return '';
+            const ds = se.getAttribute('data-src') || '';
+            const s = se.getAttribute('src') || '';
+            if (!s && ds) {
+                se.setAttribute('src', ds);
+                try { video.preload = 'metadata'; video.load(); } catch (_) {}
+                return ds;
+            }
+            return s || ds;
+        }
+        
+        function setHighlightsAmbient(url, animate = true) {
+            if (!highlightsAmbient || !url) return;
+            const canAnimate = !!(highlightsAmbient.animate);
+            const makeLayer = (src) => {
+                const layer = document.createElement('div');
+                layer.className = 'highlights-ambient-layer';
+                layer.style.backgroundImage = `url(${src})`;
+                return layer;
+            };
+            const token = ++ambientToken;
+            const current = highlightsAmbient.querySelector('.highlights-ambient-layer:last-of-type');
+            if (!animate || !canAnimate) {
+                if (current) {
+                    current.style.backgroundImage = `url(${url})`;
+                } else {
+                    highlightsAmbient.appendChild(makeLayer(url));
+                }
+                return;
+            }
+            const img = new Image();
+            img.onload = () => {
+                if (token !== ambientToken) return;
+                const next = makeLayer(url);
+                next.style.opacity = '0';
+                next.style.filter = 'blur(120px) saturate(1.75) contrast(1.18) brightness(0.90)';
+                highlightsAmbient.appendChild(next);
+                next.animate(
+                    [
+                        { opacity: 0, filter: 'blur(150px) saturate(1.35) contrast(1.08) brightness(0.76)', transform: 'scale(1.28)' },
+                        { opacity: 0.8, filter: 'blur(92px) saturate(1.85) contrast(1.18) brightness(0.92)', transform: 'scale(1.26)' }
+                    ],
+                    { duration: 560, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                );
+                if (current) {
+                    try { current.getAnimations().forEach(a => a.cancel()); } catch (_) {}
+                    const out = current.animate(
+                        [
+                            { opacity: getComputedStyle(current).opacity || '0.8', filter: getComputedStyle(current).filter || 'blur(92px)', transform: getComputedStyle(current).transform || 'scale(1.26)' },
+                            { opacity: 0, filter: 'blur(170px) saturate(1.25) contrast(1.05) brightness(0.72)', transform: 'scale(1.32)' }
+                        ],
+                        { duration: 560, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                    );
+                    out.onfinish = () => { try { current.remove(); } catch (_) {} };
+                }
+                const layers = highlightsAmbient.querySelectorAll('.highlights-ambient-layer');
+                if (layers.length > 2) {
+                    for (let k = 0; k < layers.length - 2; k += 1) {
+                        try { layers[k].remove(); } catch (_) {}
+                    }
+                }
+            };
+            img.onerror = () => {
+                if (token !== ambientToken) return;
+                if (current) {
+                    current.style.backgroundImage = `url(${url})`;
+                } else {
+                    highlightsAmbient.appendChild(makeLayer(url));
+                }
+            };
+            img.src = url;
+        }
+        
+        function ensureHighlightsAmbientVideos() {
+            if (!highlightsAmbient) return false;
+            if (ambientVideoA && ambientVideoB) return true;
+            const mk = () => {
+                const v = document.createElement('video');
+                v.className = 'highlights-ambient-video';
+                v.muted = true;
+                v.playsInline = true;
+                v.autoplay = false;
+                v.preload = 'metadata';
+                v.loop = true;
+                v.setAttribute('aria-hidden', 'true');
+                v.tabIndex = -1;
+                v.style.opacity = '0';
+                return v;
+            };
+            ambientVideoA = mk();
+            ambientVideoB = mk();
+            highlightsAmbient.appendChild(ambientVideoA);
+            highlightsAmbient.appendChild(ambientVideoB);
+            return true;
+        }
+        
+        function bindAmbientToVideo(sourceVideo, ambientVideo) {
+            if (!sourceVideo || !ambientVideo) return () => {};
+            let raf = 0;
+            const syncOnce = () => {
+                if (!sourceVideo || !ambientVideo) return;
+                if (ambientVideo.readyState < 2) return;
+                const s = sourceVideo.currentTime || 0;
+                const a = ambientVideo.currentTime || 0;
+                if (Math.abs(a - s) > 0.16) {
+                    try { ambientVideo.currentTime = s; } catch (_) {}
+                }
+            };
+            const tick = () => {
+                syncOnce();
+                if (!sourceVideo.paused && !sourceVideo.ended) {
+                    raf = requestAnimationFrame(tick);
+                } else {
+                    raf = 0;
+                }
+            };
+            const onPlay = () => {
+                try { ambientVideo.play().catch(() => {}); } catch (_) {}
+                if (!raf) raf = requestAnimationFrame(tick);
+            };
+            const onPause = () => {
+                try { ambientVideo.pause(); } catch (_) {}
+                if (raf) { cancelAnimationFrame(raf); raf = 0; }
+            };
+            const onSeek = () => {
+                syncOnce();
+            };
+            sourceVideo.addEventListener('play', onPlay);
+            sourceVideo.addEventListener('pause', onPause);
+            sourceVideo.addEventListener('ended', onPause);
+            sourceVideo.addEventListener('seeking', onSeek);
+            sourceVideo.addEventListener('timeupdate', onSeek);
+            if (!sourceVideo.paused && !sourceVideo.ended) onPlay();
+            else onPause();
+            return () => {
+                sourceVideo.removeEventListener('play', onPlay);
+                sourceVideo.removeEventListener('pause', onPause);
+                sourceVideo.removeEventListener('ended', onPause);
+                sourceVideo.removeEventListener('seeking', onSeek);
+                sourceVideo.removeEventListener('timeupdate', onSeek);
+                if (raf) cancelAnimationFrame(raf);
+            };
+        }
+        
+        function setHighlightsAmbientFromVideo(sourceVideo, animate = true) {
+            if (!highlightsAmbient || !sourceVideo) return false;
+            const src = videoSrcFor(sourceVideo);
+            if (!src) return false;
+            if (!ensureHighlightsAmbientVideos()) return false;
+            const token = ++ambientVideoToken;
+            const nextIndex = ambientVideoActive === 0 ? 1 : 0;
+            const nextVideo = nextIndex === 0 ? ambientVideoA : ambientVideoB;
+            const prevVideo = ambientVideoActive === 0 ? ambientVideoA : ambientVideoB;
+            if (!nextVideo) return false;
+            if (ambientUnbind) { try { ambientUnbind(); } catch (_) {} }
+            ambientUnbind = null;
+            const srcChanged = (nextVideo.getAttribute('data-src') || '') !== src;
+            if (srcChanged) {
+                try { nextVideo.pause(); } catch (_) {}
+                nextVideo.setAttribute('data-src', src);
+                try { nextVideo.setAttribute('src', src); } catch (_) {}
+                try { nextVideo.src = src; } catch (_) {}
+                try { nextVideo.load(); } catch (_) {}
+            }
+            const ready = () => {
+                if (token !== ambientVideoToken) return;
+                try { nextVideo.currentTime = sourceVideo.currentTime || 0; } catch (_) {}
+                if (!sourceVideo.paused && !sourceVideo.ended) {
+                    try { nextVideo.play().catch(() => {}); } catch (_) {}
+                } else {
+                    try { nextVideo.pause(); } catch (_) {}
+                }
+                ambientUnbind = bindAmbientToVideo(sourceVideo, nextVideo);
+                const canAnimate = !!(nextVideo.animate && prevVideo && prevVideo.animate);
+                if (!animate || !canAnimate) {
+                    nextVideo.style.opacity = '0.8';
+                    nextVideo.style.filter = 'blur(92px) saturate(1.85) contrast(1.18) brightness(0.92)';
+                    nextVideo.style.transform = 'scale(1.26)';
+                    if (prevVideo && prevVideo !== nextVideo) prevVideo.style.opacity = '0';
+                    ambientVideoActive = nextIndex;
+                    return;
+                }
+                try { nextVideo.getAnimations().forEach(a => a.cancel()); } catch (_) {}
+                try { prevVideo.getAnimations().forEach(a => a.cancel()); } catch (_) {}
+                nextVideo.animate(
+                    [
+                        { opacity: 0, filter: 'blur(150px) saturate(1.35) contrast(1.08) brightness(0.76)', transform: 'scale(1.28)' },
+                        { opacity: 0.8, filter: 'blur(92px) saturate(1.85) contrast(1.18) brightness(0.92)', transform: 'scale(1.26)' }
+                    ],
+                    { duration: 560, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                );
+                if (prevVideo && prevVideo !== nextVideo) {
+                    const out = prevVideo.animate(
+                        [
+                            { opacity: getComputedStyle(prevVideo).opacity || '0.8', filter: getComputedStyle(prevVideo).filter || 'blur(92px)', transform: getComputedStyle(prevVideo).transform || 'scale(1.26)' },
+                            { opacity: 0, filter: 'blur(170px) saturate(1.25) contrast(1.05) brightness(0.72)', transform: 'scale(1.32)' }
+                        ],
+                        { duration: 560, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+                    );
+                    out.onfinish = () => {
+                        try { prevVideo.pause(); } catch (_) {}
+                    };
+                }
+                ambientVideoActive = nextIndex;
+            };
+            if (nextVideo.readyState >= 2 && !srcChanged) {
+                ready();
+            } else {
+                const onCanPlay = () => {
+                    nextVideo.removeEventListener('canplay', onCanPlay);
+                    ready();
+                };
+                nextVideo.addEventListener('canplay', onCanPlay);
+                setTimeout(() => {
+                    nextVideo.removeEventListener('canplay', onCanPlay);
+                    ready();
+                }, 800);
+            }
+            return true;
+        }
+        
+        function updateHighlightsAmbientForCurrent(animate = true) {
+            const slide = slides[currentIndex];
+            const video = slide ? slide.querySelector('video') : null;
+            if (video) ensureVideoSrc(video);
+            if (video && setHighlightsAmbientFromVideo(video, animate)) {
+                return;
+            }
+            setHighlightsAmbient(posterUrlForIndex(currentIndex), animate);
+        }
         
         function computeTranslateX(index) {
             const trackRect = track.parentElement.getBoundingClientRect();
@@ -614,6 +1329,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         // Initial setup
+        updateHighlightsAmbientForCurrent(false);
         updateSlidePosition(false);
         
         // Start playing videos on user interaction or intersection
@@ -729,6 +1445,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // Update Play Button Icon
             updatePlayButtonIcon();
 
+            updateHighlightsAmbientForCurrent(animate);
+
             // Ensure progress and auto-advance are bound for the active slide
             if (isPlaying) {
                 cancelProgress();
@@ -758,6 +1476,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const currentSlide = slides[currentIndex];
             const video = currentSlide.querySelector('video');
             if (video) {
+                ensureVideoSrc(video);
                 try {
                     video.preload = 'metadata';
                     video.loop = false;
@@ -779,9 +1498,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("Autoplay prevented:", e);
                     isPlaying = false;
                     updatePlayButtonIcon();
+                    updateHighlightsAmbientForCurrent(true);
                 });
                 isPlaying = true;
                 updatePlayButtonIcon();
+                updateHighlightsAmbientForCurrent(true);
                 
                 // When video ends, go next
                 video.onended = () => {
