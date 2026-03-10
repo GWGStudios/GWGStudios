@@ -1017,9 +1017,22 @@ video::-webkit-media-controls {
     }
 
     .np-player {
+        aspect-ratio: auto;
         padding: 14px 14px 12px;
         border-radius: 24px;
         gap: 10px;
+    }
+
+    .np-title-row {
+        grid-template-columns: 36px 1fr 36px;
+    }
+
+    .np-title-spacer,
+    .np-wave,
+    .np-airplay,
+    .np-controls-side {
+        width: 36px;
+        height: 36px;
     }
 
     .np-title {
@@ -1031,7 +1044,15 @@ video::-webkit-media-controls {
     }
 
     .np-controls-center {
-        gap: 22px;
+        gap: 18px;
+    }
+
+    .np-controls {
+        grid-template-columns: 36px 1fr 36px;
+    }
+
+    .np-icon-btn {
+        padding: 4px;
     }
 
     .np-play {
