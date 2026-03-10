@@ -384,3 +384,78 @@ h2.section-title {
 ::-webkit-scrollbar-thumb:hover {
     background: #444;
 }
+
+@media (max-width: 768px) {
+    .feature-container {
+        height: 560px;
+        border-radius: 24px;
+    }
+
+    .feature-inner-clip {
+        border-radius: 24px;
+    }
+
+    .content-overlay {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .pill-list {
+        width: 340px;
+    }
+}
+
+@media (max-width: 640px) {
+    h2.section-title {
+        font-size: clamp(28px, 8vw, 44px);
+        margin-bottom: 16px;
+        text-align: center;
+    }
+
+    .feature-container {
+        height: 520px;
+        border-radius: 22px;
+    }
+
+    .feature-inner-clip {
+        border-radius: 22px;
+    }
+
+    .bg-overlay {
+        background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.22) 55%, rgba(0,0,0,0) 100%);
+    }
+
+    .content-overlay {
+        justify-content: flex-end;
+        padding: 0 18px 18px;
+    }
+
+    .pill-list {
+        width: 100%;
+        max-width: 420px;
+        align-items: center;
+    }
+
+    .pill-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 16px;
+    }
+
+    .pill-icon {
+        margin-right: 10px;
+    }
+
+    .nav-arrow {
+        left: 14px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .close-btn {
+        top: 16px;
+        right: 16px;
+        width: 34px;
+        height: 34px;
+    }
+}

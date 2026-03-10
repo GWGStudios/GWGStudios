@@ -936,3 +936,123 @@ video::-webkit-media-controls {
 .np-speaker {
     color: rgba(255,255,255,0.62);
 }
+
+@media (max-width: 768px) {
+    nav {
+        top: max(12px, env(safe-area-inset-top)) !important;
+        padding: 6px 14px !important;
+        width: calc(100vw - 24px) !important;
+    }
+
+    .mobile-menu-panel {
+        width: calc(100vw - 24px);
+    }
+
+    .showcase-progress {
+        width: min(420px, 72vw);
+    }
+}
+
+@media (max-width: 640px) {
+    header h1 {
+        font-size: clamp(44px, 11vw, 64px);
+        line-height: 0.95;
+    }
+
+    header p {
+        font-size: clamp(16px, 4.6vw, 22px);
+    }
+
+    #highlights > div.relative.z-10 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    #main-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 0 18px;
+    }
+
+    #main-controls .control-glass {
+        padding: 10px 16px;
+        height: 44px;
+        gap: 12px;
+    }
+
+    #main-controls #main-play-btn {
+        height: 44px;
+        width: 44px;
+    }
+
+    .dot.active {
+        width: 34px;
+    }
+
+    #reviews {
+        padding-top: 72px !important;
+        padding-bottom: 72px !important;
+    }
+
+    #upgrade {
+        padding-top: 72px !important;
+        padding-bottom: 72px !important;
+    }
+
+    #now-playing {
+        padding-top: 72px !important;
+        padding-bottom: 72px !important;
+    }
+
+    .now-playing-stack {
+        gap: 14px;
+        width: min(400px, 92vw);
+    }
+
+    .np-cover {
+        border-radius: 30px;
+    }
+
+    .np-player {
+        padding: 14px 14px 12px;
+        border-radius: 24px;
+        gap: 10px;
+    }
+
+    .np-title {
+        font-size: 22px;
+    }
+
+    .np-artist {
+        font-size: 14px;
+    }
+
+    .np-controls-center {
+        gap: 22px;
+    }
+
+    .np-play {
+        width: 52px;
+        height: 42px;
+    }
+
+    .np-progress-meta {
+        font-size: 11px;
+    }
+
+    #showcase {
+        height: 100dvh;
+    }
+
+    #contact h2 {
+        font-size: clamp(46px, 12vw, 78px);
+        line-height: 0.92;
+    }
+
+    #contact .w-48 {
+        width: 9.5rem;
+    }
+}
