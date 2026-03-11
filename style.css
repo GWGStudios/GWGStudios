@@ -1018,9 +1018,9 @@ video::-webkit-media-controls {
 
     .np-player {
         aspect-ratio: auto;
-        padding: 14px 14px 12px;
+        padding: 12px 12px 10px;
         border-radius: 24px;
-        gap: 10px;
+        gap: 8px;
     }
 
     .np-title-row {
@@ -1044,7 +1044,7 @@ video::-webkit-media-controls {
     }
 
     .np-controls-center {
-        gap: 18px;
+        gap: 14px;
     }
 
     .np-controls {
@@ -1052,17 +1052,27 @@ video::-webkit-media-controls {
     }
 
     .np-icon-btn {
-        padding: 4px;
+        padding: 3px;
     }
 
     .np-play {
-        width: 52px;
-        height: 42px;
+        width: 48px;
+        height: 40px;
     }
 
     .np-progress-meta {
         font-size: 11px;
     }
+
+    .np-progress-meta {
+        margin-top: 6px;
+    }
+
+    .np-volume {
+        margin-top: 0;
+        gap: 8px;
+    }
+
 
     #showcase {
         height: 100dvh;

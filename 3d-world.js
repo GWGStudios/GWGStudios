@@ -147,13 +147,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!canvas) return;
 
         const context = canvas.getContext('2d');
-        const frameCount = 350; // 0000 to 0349
+        const frameCount = 115;
         const images = [];
         const imageState = { frame: 0 };
         let imagesLoaded = 0;
+        let viewW = window.innerWidth;
+        let viewH = window.innerHeight;
         
         // Helper to get image path
-        const currentFrame = index => `anyma/anyma${index.toString().padStart(4, '0')}.webp`;
+        const currentFrame = index => `assets/insta-sequence/insta${(index + 1).toString().padStart(4, '0')}.webp`;
 
         // Preload images
         for (let i = 0; i < frameCount; i++) {
@@ -170,11 +172,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Set canvas dimensions
         const setDimensions = () => {
-            // Check if width actually changed (ignore mobile address bar resize)
-            if (canvas.width === window.innerWidth) return;
-            
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            if (viewW === w && viewH === h) return;
+            viewW = w;
+            viewH = h;
+            const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+            canvas.width = Math.round(w * dpr);
+            canvas.height = Math.round(h * dpr);
+            canvas.style.width = `${w}px`;
+            canvas.style.height = `${h}px`;
+            context.setTransform(dpr, 0, 0, dpr, 0, 0);
             render();
         };
 
@@ -183,13 +191,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const img = images[frameIndex];
             
             if (img && img.complete && img.naturalWidth > 0) {
-                const hRatio = canvas.width / img.width;
-                const vRatio = canvas.height / img.height;
+                const hRatio = viewW / img.width;
+                const vRatio = viewH / img.height;
                 const ratio = Math.max(hRatio, vRatio); // object-fit: cover
-                const centerShift_x = (canvas.width - img.width * ratio) / 2;
-                const centerShift_y = (canvas.height - img.height * ratio) / 2;
+                const centerShift_x = (viewW - img.width * ratio) / 2;
+                const centerShift_y = (viewH - img.height * ratio) / 2;
                 
-                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.clearRect(0, 0, viewW, viewH);
                 context.drawImage(
                     img, 
                     0, 0, img.width, img.height,
@@ -199,7 +207,17 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         window.addEventListener('resize', setDimensions);
-        setDimensions();
+        (function initDims() {
+            const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+            viewW = window.innerWidth;
+            viewH = window.innerHeight;
+            canvas.width = Math.round(viewW * dpr);
+            canvas.height = Math.round(viewH * dpr);
+            canvas.style.width = `${viewW}px`;
+            canvas.style.height = `${viewH}px`;
+            context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        })();
+        render();
 
         if (window.gsap && window.ScrollTrigger) {
             window.gsap.registerPlugin(window.ScrollTrigger);
@@ -216,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 scrollTrigger: {
                     trigger: ".sequence-section",
                     start: "top top",
-                    end: "+=500%", // Long scroll for smoothness
+                    end: "+=350%",
                     scrub: 0.5, // Smooth scrubbing (interpolation)
                     pin: true,
                     anticipatePin: 1,
