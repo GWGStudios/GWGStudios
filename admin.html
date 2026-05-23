@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - GWG Studios</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { black: '#000000', dark: '#0a0a0a', gray: '#808080', accent: '#2997ff' }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 border-r border-white/10 flex flex-col p-6 fixed h-full bg-brand-black z-20">
+        <div class="mb-12">
+            <img src="assets/logopng.png" alt="GWG Logo" class="w-24 filter brightness-0 invert">
+            <p class="text-[10px] uppercase tracking-[0.3em] text-brand-gray mt-4">Management</p>
+        </div>
+
+        <nav class="space-y-2 flex-1">
+            <a href="#" class="sidebar-item active flex items-center space-x-3 p-3 rounded-lg text-sm transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span>Submissions</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-sm text-brand-gray transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                <span>Projects</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-sm text-brand-gray transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span>Clients</span>
+            </a>
+        </nav>
+
+        <div class="pt-6 border-t border-white/10 space-y-4">
+            <button onclick="localStorage.clear(); location.reload();" class="flex items-center space-x-3 p-3 text-xs text-red-400 hover:text-red-300 transition-colors w-full text-left">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                <span>Clear All Data</span>
+            </button>
+            <a href="index.html" class="flex items-center space-x-3 p-3 text-xs text-brand-gray hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span>Back to Site</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 p-12 bg-brand-dark min-h-screen">
+        <header class="flex justify-between items-center mb-12">
+            <div>
+                <h1 class="text-3xl font-light tracking-tight">Project Inquiries</h1>
+                <p class="text-brand-gray text-sm mt-2">Manage and review incoming creative requirements.</p>
+                <div id="db-status" class="mt-2 text-[9px] uppercase tracking-widest text-green-500 flex items-center gap-2">
+                    <span class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></span>
+                    Database Connected
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="addTestEntry()" class="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all">Add Test Entry</button>
+                <div id="new-submissions-badge" class="px-4 py-2 glass rounded-full text-xs font-medium text-brand-accent hidden">
+                    0 New
+                </div>
+                <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                    <span class="text-xs font-bold uppercase">JD</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="glass p-6 rounded-2xl">
+                <p class="text-xs text-brand-gray uppercase tracking-widest mb-2">Total Inquiries</p>
+                <p id="total-inquiries" class="text-3xl font-light">0</p>
+            </div>
+            <div class="glass p-6 rounded-2xl">
+                <p class="text-xs text-brand-gray uppercase tracking-widest mb-2">Pending Review</p>
+                <p id="pending-review" class="text-3xl font-light text-brand-accent">0</p>
+            </div>
+            <div class="glass p-6 rounded-2xl">
+                <p class="text-xs text-brand-gray uppercase tracking-widest mb-2">Active Projects</p>
+                <p class="text-3xl font-light">0</p>
+            </div>
+        </div>
+
+        <!-- Submissions Table -->
+        <div class="glass rounded-2xl overflow-hidden mb-12">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-white/5 border-b border-white/10">
+                        <tr>
+                            <th class="p-6 text-xs uppercase tracking-widest text-brand-gray font-medium">Client</th>
+                            <th class="p-6 text-xs uppercase tracking-widest text-brand-gray font-medium">Service</th>
+                            <th class="p-6 text-xs uppercase tracking-widest text-brand-gray font-medium">Budget</th>
+                            <th class="p-6 text-xs uppercase tracking-widest text-brand-gray font-medium">Deadline</th>
+                            <th class="p-6 text-xs uppercase tracking-widest text-brand-gray font-medium">Status</th>
+                            <th class="p-6 text-xs uppercase tracking-widest text-brand-gray font-medium text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissions-body" class="divide-y divide-white/5">
+                        <!-- Dynamic content will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Details Modal -->
+    <div id="details-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-6">
+        <div class="glass w-full max-w-3xl rounded-[32px] overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-8 border-b border-white/10 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-light tracking-tight">Inquiry Details</h2>
+                    <p id="modal-project-id" class="text-[10px] uppercase tracking-[0.3em] text-brand-accent mt-1"></p>
+                </div>
+                <button onclick="closeModal()" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="modal-content" class="p-8 overflow-y-auto space-y-8 text-sm">
+                <!-- Content injected by JS -->
+            </div>
+            <div class="p-8 border-t border-white/10 flex justify-end space-x-4">
+                <button onclick="updateInquiryStatus('approved')" class="px-6 py-2 bg-brand-accent text-white rounded-full text-xs font-medium hover:bg-brand-accent/80 transition-all">Approve Project</button>
+                <button onclick="deleteInquiry()" class="px-6 py-2 bg-red-500/20 text-red-400 border border-red-500/20 rounded-full text-xs font-medium hover:bg-red-500/30 transition-all">Delete Inquiry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- External JS -->
+    <script src="admin.js"></script>
+</body>
+</html>

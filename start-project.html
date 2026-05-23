@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Your Project - GWG Studios</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Config for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#000000',
+                            dark: '#050505',
+                            gray: '#808080',
+                            light: '#e5e5e5',
+                            white: '#ffffff',
+                            accent: '#2997ff'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- GSAP & Plugins -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <link rel="stylesheet" href="start-project.css">
+</head>
+<body class="bg-brand-black text-brand-white selection:bg-brand-accent selection:text-white overflow-x-hidden">
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Background Ambient Gradients -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-accent/5 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 rounded-full blur-[120px] animate-pulse-slow" style="animation-delay: 2s;"></div>
+    </div>
+
+    <!-- Navigation (Minimal) -->
+    <nav class="fixed top-0 left-0 w-full z-50 px-6 py-8 flex justify-between items-center mix-blend-difference">
+        <a href="index.html" class="group flex items-center space-x-2 text-sm uppercase tracking-[0.2em] font-medium opacity-60 hover:opacity-100 transition-opacity">
+            <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span>Back to Studio</span>
+        </a>
+        <div class="h-6 opacity-80">
+            <img src="assets/logopng.png" alt="GWG Logo" class="h-full object-contain filter brightness-0 invert">
+        </div>
+    </nav>
+
+    <main class="relative z-10">
+        <!-- SECTION 1: Introduction -->
+        <section id="intro" class="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+            <div class="max-w-4xl">
+                <h1 class="intro-title text-5xl md:text-7xl lg:text-8xl font-extralight tracking-tight mb-8 leading-tight">
+                    Start Your Project
+                </h1>
+                <p class="intro-text text-lg md:text-xl text-brand-gray font-light max-w-2xl mx-auto leading-relaxed opacity-0 transform translate-y-8">
+                    Tell us exactly what you need. Every detail helps us create a world-class result tailored specifically for your vision.
+                </p>
+            </div>
+            
+            <div class="scroll-indicator absolute bottom-12 left-1/2 -translate-x-1/2 opacity-0 flex flex-col items-center z-50">
+                <img src="assets/logopng.png" alt="GWG Logo" class="h-8 w-auto opacity-40 filter brightness-0 invert floating mb-4">
+                <span id="admin-trigger-2" class="text-[8px] uppercase tracking-[0.4em] text-white/20 hover:text-white/60 transition-colors cursor-pointer font-light pointer-events-auto">Next Generation of Brands.</span>
+            </div>
+        </section>
+
+        <!-- Form Container -->
+        <div id="form-wrapper" class="max-w-4xl mx-auto px-6 pb-32">
+            <!-- SECTION 2: Service Selection -->
+            <section id="service-selection" class="mb-24 opacity-0 transform translate-y-12">
+                <h2 class="text-sm uppercase tracking-[0.3em] text-brand-gray text-center mb-12 font-medium">What Do You Need?</h2>
+                
+                <div class="service-selector-container relative flex justify-center">
+                    <div class="service-selector relative flex p-1 bg-white/5 backdrop-blur-2xl rounded-full border border-white/10 w-full max-w-lg overflow-hidden">
+                        <!-- Active Indicator Background -->
+                        <div id="selector-active-bg" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white rounded-full transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_0_20px_rgba(255,255,255,0.3)]"></div>
+                        
+                        <button type="button" data-service="graphic" class="service-option relative z-10 flex-1 py-4 text-sm font-medium tracking-wider transition-colors duration-300 text-black">
+                            Graphic Design
+                        </button>
+                        <button type="button" data-service="3d" class="service-option relative z-10 flex-1 py-4 text-sm font-medium tracking-wider transition-colors duration-300 text-white/60 hover:text-white">
+                            3D Animation
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <form id="project-form" class="space-y-24">
+                <!-- SECTION A: Basic Information -->
+                <div class="form-section opacity-0 transform translate-y-12">
+                    <div class="mb-12">
+                        <span class="text-[10px] uppercase tracking-[0.4em] text-brand-accent font-bold mb-4 block">Section 01</span>
+                        <h3 class="text-3xl font-light tracking-tight">Let's Start With Your Details</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
+                        <div class="input-group relative">
+                            <input type="text" id="full-name" name="name" required placeholder=" " class="peer w-full bg-transparent border-b border-white/20 py-4 focus:border-white transition-colors outline-none font-light">
+                            <label for="full-name" class="absolute left-0 top-4 text-brand-gray transition-all duration-300 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-brand-accent peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs">Full Name</label>
+                        </div>
+                        
+                        <div class="input-group relative">
+                            <input type="text" id="brand-name" name="brand" placeholder=" " class="peer w-full bg-transparent border-b border-white/20 py-4 focus:border-white transition-colors outline-none font-light">
+                            <label for="brand-name" class="absolute left-0 top-4 text-brand-gray transition-all duration-300 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-brand-accent peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs">Brand / Company Name</label>
+                        </div>
+
+                        <div class="input-group relative">
+                            <input type="email" id="email" name="email" required placeholder=" " class="peer w-full bg-transparent border-b border-white/20 py-4 focus:border-white transition-colors outline-none font-light">
+                            <label for="email" class="absolute left-0 top-4 text-brand-gray transition-all duration-300 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-brand-accent peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs">Email Address</label>
+                        </div>
+
+                        <div class="input-group relative">
+                            <input type="tel" id="phone" name="phone" placeholder=" " class="peer w-full bg-transparent border-b border-white/20 py-4 focus:border-white transition-colors outline-none font-light">
+                            <label for="phone" class="absolute left-0 top-4 text-brand-gray transition-all duration-300 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-brand-accent peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs">Phone Number</label>
+                        </div>
+
+                        <div class="input-group relative md:col-span-2">
+                            <input type="text" id="website" name="website" placeholder=" " class="peer w-full bg-transparent border-b border-white/20 py-4 focus:border-white transition-colors outline-none font-light">
+                            <label for="website" class="absolute left-0 top-4 text-brand-gray transition-all duration-300 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-brand-accent peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs">Website / Social Media Links</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC CONTENT AREA -->
+                <div id="dynamic-form-content">
+                    <!-- Content will be injected by JS based on selection -->
+                </div>
+
+                <!-- SECTION: Final Notes & Submit -->
+                <div class="form-section opacity-0 transform translate-y-12">
+                    <div class="mb-12">
+                        <span class="text-[10px] uppercase tracking-[0.4em] text-brand-accent font-bold mb-4 block">Final Step</span>
+                        <h3 class="text-3xl font-light tracking-tight">Anything Else You Want Us To Know?</h3>
+                    </div>
+                    
+                    <div class="input-group relative">
+                        <textarea id="final-notes" name="notes" rows="4" placeholder=" " class="peer w-full bg-transparent border-b border-white/20 py-4 focus:border-white transition-colors outline-none font-light resize-none"></textarea>
+                        <label for="final-notes" class="absolute left-0 top-4 text-brand-gray transition-all duration-300 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-brand-accent peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs">Special requirements, ideas, or concerns...</label>
+                    </div>
+
+                    <div class="mt-24 flex flex-col items-center">
+                        <button type="submit" id="submit-btn" class="group relative px-12 py-5 bg-white text-black rounded-full font-medium tracking-[0.1em] uppercase text-sm overflow-hidden transition-all duration-500 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95">
+                            <span class="relative z-10">Start Creative Production</span>
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                        </button>
+                        <p class="mt-6 text-[10px] uppercase tracking-[0.2em] text-brand-gray opacity-60">Your vision is safe with us.</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Success Overlay -->
+    <div id="success-overlay" class="fixed inset-0 z-[100] bg-brand-black flex flex-col items-center justify-center text-center px-6 hidden opacity-0">
+        <div class="success-content max-w-2xl">
+            <div class="mb-12 relative">
+                <div class="w-24 h-24 border border-white/20 rounded-full flex items-center justify-center mx-auto">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div class="absolute inset-0 w-24 h-24 border border-brand-accent rounded-full animate-ping opacity-20 mx-auto"></div>
+            </div>
+            <h2 class="text-4xl md:text-6xl font-extralight tracking-tight mb-6">Your Vision Has Been Received.</h2>
+            <p class="text-brand-gray text-lg font-light leading-relaxed mb-12">
+                Our creative team will review your project and contact you shortly.
+            </p>
+            <a href="index.html" class="text-xs uppercase tracking-[0.3em] font-medium border-b border-white/20 pb-2 hover:border-white transition-colors">
+                Return to Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Secret Password Modal -->
+    <div id="admin-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-xl hidden items-center justify-center p-6">
+        <div class="w-full max-w-sm p-8 rounded-3xl border border-white/10 bg-white/5 text-center">
+            <h3 class="text-xl font-light tracking-tight mb-6">Admin Authentication</h3>
+            <input type="password" id="admin-pass-input" placeholder="Enter Access Key" class="w-full bg-white/5 border border-white/10 rounded-full px-6 py-3 text-center outline-none focus:border-brand-accent transition-colors mb-6 font-light tracking-widest">
+            <div class="flex space-x-4">
+                <button id="admin-cancel" class="flex-1 px-6 py-3 rounded-full text-xs font-medium bg-white/5 hover:bg-white/10 transition-colors">Cancel</button>
+                <button id="admin-confirm" class="flex-1 px-6 py-3 rounded-full text-xs font-medium bg-brand-accent hover:bg-brand-accent/80 transition-colors">Verify</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="start-project.js"></script>
+</body>
+</html>

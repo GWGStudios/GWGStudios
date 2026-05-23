@@ -1634,4 +1634,40 @@ document.addEventListener("DOMContentLoaded", () => {
             updateBentoContent(currentSelection.innerText);
         }
     }
+
+    // Secret Admin Trigger
+    const adminTrigger = document.getElementById('admin-trigger');
+    const adminModal = document.getElementById('admin-modal');
+    const adminPassInput = document.getElementById('admin-pass-input');
+    const adminConfirm = document.getElementById('admin-confirm');
+    const adminCancel = document.getElementById('admin-cancel');
+
+    if (adminTrigger && adminModal) {
+        adminTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            adminModal.classList.remove('hidden');
+            adminModal.classList.add('flex');
+            adminPassInput.focus();
+        });
+
+        const verify = () => {
+            if (adminPassInput.value === "69") {
+                window.location.href = "admin.html";
+            } else {
+                alert("Incorrect Password.");
+                adminPassInput.value = "";
+            }
+        };
+
+        adminConfirm.addEventListener('click', verify);
+        adminCancel.addEventListener('click', () => {
+            adminModal.classList.add('hidden');
+            adminModal.classList.remove('flex');
+            adminPassInput.value = "";
+        });
+
+        adminPassInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verify();
+        });
+    }
 });

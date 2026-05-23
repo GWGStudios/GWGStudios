@@ -378,7 +378,7 @@
                         <div class="px-3 py-2.5 text-sm text-white dropdown-item rounded-lg cursor-pointer">Motion Graphics & VFX</div>
                     </div>
                 </div>
-                <p class="mt-6 text-sm text-[#86868b] text-center">Bespoke digital solutions tailored for the <span class="text-white font-semibold">Next Generation of Brands.</span></p>
+                <p class="mt-6 text-sm text-[#86868b] text-center">Bespoke digital solutions tailored for the <span id="admin-trigger" class="text-white font-semibold cursor-pointer hover:text-brand-accent transition-colors">Next Generation of Brands.</span></p>
             </div>
 
             <!-- Bento Grid -->
@@ -453,8 +453,8 @@
                     </div>
                 </div>
                 <p class="text-base text-[#86868b] max-w-lg text-center leading-relaxed">
-                    Transforming visions into high-fidelity digital realities. Partner with our team to redefine your brand's visual language. <a href="#contact" class="text-[#2997ff] font-medium hover:underline">Start a project ></a>
-                </p>
+                    Transforming visions into high-fidelity digital realities. Partner with our team to redefine your brand's visual language. <a href="start-project.html" class="text-[#2997ff] font-medium hover:underline">Start a project ></a>
+            </p>
             </div>
         </div>
     </section>
@@ -612,6 +612,18 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="common-nav.js"></script>
+    <!-- Secret Password Modal -->
+    <div id="admin-modal" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-xl hidden items-center justify-center p-6">
+        <div class="w-full max-w-sm p-8 rounded-3xl border border-white/10 bg-white/5 text-center">
+            <h3 class="text-xl font-light tracking-tight mb-6">Admin Authentication</h3>
+            <input type="password" id="admin-pass-input" placeholder="Enter Access Key" class="w-full bg-white/5 border border-white/10 rounded-full px-6 py-3 text-center outline-none focus:border-brand-accent transition-colors mb-6 font-light tracking-widest">
+            <div class="flex space-x-4">
+                <button id="admin-cancel" class="flex-1 px-6 py-3 rounded-full text-xs font-medium bg-white/5 hover:bg-white/10 transition-colors">Cancel</button>
+                <button id="admin-confirm" class="flex-1 px-6 py-3 rounded-full text-xs font-medium bg-brand-accent hover:bg-brand-accent/80 transition-colors">Verify</button>
+            </div>
+        </div>
+    </div>
+
     <script src="main.js"></script>
     <script src="graphic-world.js"></script>
 </body>

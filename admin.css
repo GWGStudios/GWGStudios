@@ -1,0 +1,58 @@
+:root {
+    --brand-accent: #2997ff;
+    --brand-black: #000000;
+    --brand-dark: #0a0a0a;
+    --brand-gray: #808080;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--brand-black);
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-item.active {
+    background: rgba(41, 151, 255, 0.1);
+    color: var(--brand-accent);
+    border-right: 2px solid var(--brand-accent);
+}
+
+/* Custom Scrollbar for Dashboard */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--brand-black);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Modal for details */
+#details-modal {
+    z-index: 1000;
+}
+
+.modal-content {
+    max-height: 85vh;
+    overflow-y: auto;
+}
