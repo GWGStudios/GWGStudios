@@ -730,16 +730,17 @@ document.addEventListener("DOMContentLoaded", () => {
         function getCardWidth() {
             const firstCard = cards[0];
             if (!firstCard) return 482;
-            const gap = 32; 
+            const gap = window.innerWidth < 768 ? 24 : 32; 
             return firstCard.offsetWidth + gap;
         }
 
         function updateSlider(animate = true) {
             const cardWidth = getCardWidth();
             const containerWidth = container.offsetWidth;
+            const isMobile = window.innerWidth < 768;
             
             // Add padding to slider track to allow first/last cards to center
-            const sidePadding = (containerWidth / 2) - (cardWidth / 2);
+            const sidePadding = (containerWidth / 2) - (cards[0].offsetWidth / 2);
             slider.style.paddingLeft = `${sidePadding}px`;
             slider.style.paddingRight = `${sidePadding}px`;
             
@@ -752,12 +753,12 @@ document.addEventListener("DOMContentLoaded", () => {
             cards.forEach((wrapper, index) => {
                 const card = wrapper.querySelector('.interactive-review-card');
                 const distance = Math.abs(index - currentIndex);
-                const normalizedDist = Math.min(1, distance / 2.5); // Focus range
+                const normalizedDist = Math.min(1, distance / (isMobile ? 1.2 : 2.5)); 
                 
                 // Smoother falloff curves
-                const scale = 1 - Math.pow(normalizedDist, 1.5) * 0.2;
-                const opacity = 1 - Math.pow(normalizedDist, 2) * 0.7;
-                const blur = normalizedDist * 4;
+                const scale = 1 - Math.pow(normalizedDist, 1.5) * (isMobile ? 0.12 : 0.2);
+                const opacity = 1 - Math.pow(normalizedDist, 2) * (isMobile ? 0.6 : 0.7);
+                const blur = isMobile ? (normalizedDist * 2) : (normalizedDist * 4);
                 
                 card.style.opacity = Math.max(0.3, opacity);
                 

@@ -708,7 +708,8 @@ video::-webkit-media-controls {
 
 @media (max-width: 768px) {
     .review-card-wrapper {
-        width: 100%;
+        width: 85vw; /* Fixed width for mobile cards */
+        max-width: 320px;
     }
     .interactive-review-card {
         padding: 24px;
