@@ -258,14 +258,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }, { threshold: 0.15 });
     revealTargets.forEach(el => revealObserver.observe(el));
-
-    // Mobile Menu Logic
-    const menuBtn = document.querySelector('nav button');
-    const mobilePanel = document.getElementById('mobile-nav-panel');
-    if (menuBtn && mobilePanel) {
-        menuBtn.addEventListener('click', () => {
-            mobilePanel.classList.toggle('open');
-            mobilePanel.classList.toggle('menu-anim-in');
-        });
-    }
 });

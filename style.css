@@ -87,10 +87,6 @@ nav {
     transform: translateZ(0); /* Hardware acceleration fix */
 }
 
-.motion-blur { filter: blur(0.6px); }
-.motion-blur-soft { filter: blur(0.3px); }
-.blur-transition { transition: filter 200ms cubic-bezier(0.22, 1, 0.36, 1); }
-
 .video-card video {
     border-radius: 32px;
     width: 100%;
@@ -112,7 +108,6 @@ nav {
 .video-card.opacity-60 {
     opacity: 0.3;
     transform: scale(1); /* No shrink */
-    filter: blur(2px) grayscale(50%);
 }
 
 /* Control Bar Styling */
@@ -132,6 +127,56 @@ nav {
     -webkit-backdrop-filter: blur(22px) saturate(160%);
     border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
+}
+
+.review-slider-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE/Edge */
+    padding: 20px 0;
+    margin: -20px 0;
+}
+
+.review-slider-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+#review-slider {
+    display: flex;
+    will-change: transform;
+    width: max-content;
+    transition: none; /* Removed transition to avoid conflict with native scroll */
+}
+
+.review-card {
+    scroll-snap-align: center; /* Changed to center for more predictable snapping */
+    scroll-snap-stop: always;
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), 
+                opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), 
+                filter 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: grab;
+    will-change: transform, opacity, filter;
+}
+
+.review-card:active {
+    cursor: grabbing;
+}
+
+/* Immersive focus effect - more subtle to avoid "glitchy" appearance */
+.review-card {
+    filter: blur(1px) brightness(0.8);
+    transform: scale(0.96);
+    opacity: 0.4;
+}
+
+.review-card.is-in-view {
+    filter: blur(0) brightness(1);
+    transform: scale(1);
+    opacity: 1;
 }
 
 .feature-pill {
@@ -639,6 +684,38 @@ video::-webkit-media-controls {
     color: #ffffff;
 }
 
+/* Reviews Section Enhanced Styles */
+.interactive-review-card {
+    cursor: default;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.interactive-review-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
+}
+
+.review-slider-container {
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    padding: 40px 0;
+}
+
+#review-slider {
+    will-change: transform;
+}
+
+@media (max-width: 768px) {
+    .review-card-wrapper {
+        width: 100%;
+    }
+    .interactive-review-card {
+        padding: 24px;
+        border-radius: 30px;
+    }
+}
+
 .now-playing-bg {
     background: #000000;
     overflow: hidden;
@@ -680,68 +757,6 @@ video::-webkit-media-controls {
     transform: scale(1.18);
     opacity: 0.68;
     will-change: opacity, filter, transform;
-}
-
-.highlights-ambient {
-    background: #000000;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.highlights-ambient-video {
-    position: absolute;
-    inset: -12%;
-    width: 124%;
-    height: 124%;
-    object-fit: cover;
-    filter: blur(92px) saturate(1.85) contrast(1.18) brightness(0.92);
-    transform: scale(1.26);
-    opacity: 0.8;
-    will-change: opacity, filter, transform;
-    z-index: 1;
-    -webkit-mask-image: radial-gradient(820px circle at 50% 52%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.92) 42%, rgba(0,0,0,0) 78%);
-    mask-image: radial-gradient(820px circle at 50% 52%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.92) 42%, rgba(0,0,0,0) 78%);
-}
-
-.highlights-ambient::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background:
-        radial-gradient(1100px circle at 50% 40%, rgba(255,255,255,0.14), transparent 64%),
-        radial-gradient(980px circle at 32% 56%, rgba(255, 90, 140, 0.42), transparent 64%),
-        radial-gradient(980px circle at 72% 58%, rgba(70, 140, 255, 0.40), transparent 64%),
-        radial-gradient(900px circle at 56% 72%, rgba(255, 150, 70, 0.24), transparent 66%),
-        linear-gradient(180deg, rgba(0,0,0,0.14) 0%, rgba(0,0,0,0.92) 100%);
-    opacity: 1;
-    mix-blend-mode: overlay;
-    filter: blur(8px);
-}
-
-.highlights-ambient::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    background:
-        radial-gradient(1200px circle at 50% 44%, rgba(0,0,0,0) 42%, rgba(0,0,0,0.86) 100%),
-        linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.86) 100%);
-}
-
-.highlights-ambient-layer {
-    position: absolute;
-    inset: -12%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(92px) saturate(1.85) contrast(1.18) brightness(0.92);
-    transform: scale(1.26);
-    opacity: 0.8;
-    will-change: opacity, filter, transform;
-    z-index: 1;
-    -webkit-mask-image: radial-gradient(820px circle at 50% 52%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.92) 42%, rgba(0,0,0,0) 78%);
-    mask-image: radial-gradient(820px circle at 50% 52%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.92) 42%, rgba(0,0,0,0) 78%);
 }
 
 .now-playing-stack {

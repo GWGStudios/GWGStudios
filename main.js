@@ -643,69 +643,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let capsule = navLinksWrap.querySelector('.nav-capsule');
         if (capsule) { capsule.remove(); }
         capsule = null;
-        const menuBtn = navLinksWrap.parentElement ? navLinksWrap.parentElement.querySelector('button') : null;
-        const mobilePanel = document.getElementById('mobile-nav-panel');
-        if (menuBtn && !menuBtn.classList.contains('menu-btn')) {
-            menuBtn.classList.add('menu-btn');
-        }
-        let menuAnimating = false;
-        function toggleMobileMenu() {
-            if (!mobilePanel || !menuBtn || menuAnimating) return;
-            menuAnimating = true;
-            const nav = navLinksWrap.parentElement;
-            const rect = nav.getBoundingClientRect();
-            mobilePanel.style.top = `${Math.round(rect.bottom + 8)}px`;
-            if (mobilePanel.classList.contains('open')) {
-                mobilePanel.classList.remove('menu-anim-in');
-                mobilePanel.classList.add('menu-anim-out');
-                menuBtn.classList.remove('menu-btn-anim-in');
-                menuBtn.classList.add('menu-btn-anim-out');
-                setTimeout(() => {
-                    mobilePanel.classList.remove('open', 'menu-anim-out');
-                    menuBtn.classList.remove('menu-btn-expanded', 'menu-btn-anim-out');
-                    menuAnimating = false;
-                }, 320);
-            } else {
-                mobilePanel.classList.remove('menu-anim-out');
-                mobilePanel.classList.add('open', 'menu-anim-in');
-                menuBtn.classList.add('menu-btn-expanded', 'menu-btn-anim-in');
-                setTimeout(() => {
-                    mobilePanel.classList.remove('menu-anim-in');
-                    menuBtn.classList.remove('menu-btn-anim-in');
-                    menuAnimating = false;
-                }, 1000);
-            }
-        }
-        if (menuBtn && mobilePanel) {
-            menuBtn.addEventListener('click', toggleMobileMenu);
-            mobilePanel.querySelectorAll('a').forEach(a => {
-                a.addEventListener('click', () => {
-                    if (menuAnimating) return;
-                    menuAnimating = true;
-                    mobilePanel.classList.remove('menu-anim-in');
-                    mobilePanel.classList.add('menu-anim-out');
-                    menuBtn.classList.remove('menu-btn-anim-in');
-                    menuBtn.classList.add('menu-btn-anim-out');
-                    setTimeout(() => {
-                        mobilePanel.classList.remove('open', 'menu-anim-out');
-                        menuBtn.classList.remove('menu-btn-expanded', 'menu-btn-anim-out');
-                        menuAnimating = false;
-                    }, 320);
-                });
-            });
-            window.addEventListener('resize', () => {
-                if (!mobilePanel.classList.contains('open')) return;
-                const nav = navLinksWrap.parentElement;
-                const rect = nav.getBoundingClientRect();
-                mobilePanel.style.top = `${Math.round(rect.bottom + 8)}px`;
-            });
-            window.addEventListener('scroll', () => {
-                if (!mobilePanel.classList.contains('open')) return;
-                const nav = navLinksWrap.parentElement;
-                const rect = nav.getBoundingClientRect();
-                mobilePanel.style.top = `${Math.round(rect.bottom + 8)}px`;
-            }, { passive: true });
-        }
+
         function moveCapsuleTo(el) {
             if (!el || !capsule) return;
             const cr = navLinksWrap.getBoundingClientRect();
@@ -778,6 +716,125 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })();
 
+    // Reviews Slider Logic (Interactive Glass Edition)
+    (function setupReviewSlider() {
+        const container = document.querySelector('.review-slider-container');
+        const slider = document.getElementById('review-slider');
+        const prevBtn = document.getElementById('review-prev');
+        const nextBtn = document.getElementById('review-next');
+        if (!container || !slider || !prevBtn || !nextBtn) return;
+
+        let currentIndex = 0;
+        const cards = slider.querySelectorAll('.review-card-wrapper');
+        
+        function getCardWidth() {
+            const firstCard = cards[0];
+            if (!firstCard) return 482;
+            const gap = 32; 
+            return firstCard.offsetWidth + gap;
+        }
+
+        function updateSlider(animate = true) {
+            const cardWidth = getCardWidth();
+            const containerWidth = container.offsetWidth;
+            
+            // Add padding to slider track to allow first/last cards to center
+            const sidePadding = (containerWidth / 2) - (cardWidth / 2);
+            slider.style.paddingLeft = `${sidePadding}px`;
+            slider.style.paddingRight = `${sidePadding}px`;
+            
+            // Calculate scrollAmount based on index
+            let scrollAmount = currentIndex * cardWidth;
+            
+            slider.style.transition = animate ? 'transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)' : 'none';
+            slider.style.transform = `translateX(-${scrollAmount}px)`;
+            
+            cards.forEach((wrapper, index) => {
+                const card = wrapper.querySelector('.interactive-review-card');
+                const distance = Math.abs(index - currentIndex);
+                const normalizedDist = Math.min(1, distance / 2.5); // Focus range
+                
+                // Smoother falloff curves
+                const scale = 1 - Math.pow(normalizedDist, 1.5) * 0.2;
+                const opacity = 1 - Math.pow(normalizedDist, 2) * 0.7;
+                const blur = normalizedDist * 4;
+                
+                card.style.opacity = Math.max(0.3, opacity);
+                
+                if (!card.matches(':hover')) {
+                    card.style.filter = `blur(${blur}px)`;
+                    card.style.transform = `scale(${Math.max(0.8, scale)})`;
+                    card.style.zIndex = Math.round((1 - normalizedDist) * 10);
+                }
+            });
+
+            // Buttons always active in a loop
+            prevBtn.style.opacity = '1';
+            prevBtn.style.pointerEvents = 'auto';
+            nextBtn.style.opacity = '1';
+            nextBtn.style.pointerEvents = 'auto';
+        }
+
+        let autoplayTimer;
+        function startAutoplay() {
+            stopAutoplay();
+            autoplayTimer = setInterval(() => {
+                currentIndex = (currentIndex + 1) % cards.length;
+                updateSlider();
+            }, 5000);
+        }
+
+        function stopAutoplay() {
+            if (autoplayTimer) clearInterval(autoplayTimer);
+        }
+
+        nextBtn.addEventListener('click', () => {
+            stopAutoplay();
+            currentIndex = (currentIndex + 1) % cards.length;
+            updateSlider();
+            startAutoplay();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            stopAutoplay();
+            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+            updateSlider();
+            startAutoplay();
+        });
+
+        cards.forEach(wrapper => {
+            const card = wrapper.querySelector('.interactive-review-card');
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 15;
+                const rotateY = (centerX - x) / 15;
+                
+                card.style.transition = 'transform 0.15s ease-out, box-shadow 0.4s ease, filter 0.4s ease';
+                card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-15px) scale(1.05)`;
+                card.style.filter = 'blur(0px)';
+                card.style.zIndex = '50';
+                card.style.opacity = '1';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+                updateSlider(); 
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            updateSlider(false);
+        });
+
+        updateSlider(false);
+        startAutoplay();
+    })();
+
     // Reviews reveal animation
     const reviews = document.getElementById('reviews');
     if (reviews && window.gsap) {
@@ -791,10 +848,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     y: 24,
                     duration: 0.8,
                     ease: "power3.out",
-                    stagger: 0.15
+                    stagger: 0.1
                 });
             });
-        }, { threshold: 0.3 });
+        }, { threshold: 0.2 });
         obs.observe(reviews);
     }
     // Closer Look interactions
@@ -1032,10 +1089,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- Apple-Inspired Slider Logic ---
-    const track = document.getElementById('slider-track');
-    if (track) {
-        const slides = Array.from(track.children);
-        const highlightsAmbient = document.querySelector('[data-highlights-ambient]');
+        const track = document.getElementById('slider-track');
+        if (track) {
+            const slides = Array.from(track.children);
         // Main Static Controls
         const mainPlayBtn = document.getElementById('main-play-btn');
         const dots = document.querySelectorAll('#main-controls .dot');
@@ -1052,12 +1108,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let isPlaying = true;
         let animating = false;
         let progressRAF = null;
-        let ambientToken = 0;
-        let ambientVideoToken = 0;
-        let ambientVideoA = null;
-        let ambientVideoB = null;
-        let ambientVideoActive = 0;
-        let ambientUnbind = null;
         
         function posterUrlForIndex(index) {
             const slide = slides[index];
@@ -1097,226 +1147,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return s || ds;
         }
         
-        function setHighlightsAmbient(url, animate = true) {
-            if (!highlightsAmbient || !url) return;
-            const canAnimate = !!(highlightsAmbient.animate);
-            const makeLayer = (src) => {
-                const layer = document.createElement('div');
-                layer.className = 'highlights-ambient-layer';
-                layer.style.backgroundImage = `url(${src})`;
-                return layer;
-            };
-            const token = ++ambientToken;
-            const current = highlightsAmbient.querySelector('.highlights-ambient-layer:last-of-type');
-            if (!animate || !canAnimate) {
-                if (current) {
-                    current.style.backgroundImage = `url(${url})`;
-                } else {
-                    highlightsAmbient.appendChild(makeLayer(url));
-                }
-                return;
-            }
-            const img = new Image();
-            img.onload = () => {
-                if (token !== ambientToken) return;
-                const next = makeLayer(url);
-                next.style.opacity = '0';
-                next.style.filter = 'blur(120px) saturate(1.75) contrast(1.18) brightness(0.90)';
-                highlightsAmbient.appendChild(next);
-                next.animate(
-                    [
-                        { opacity: 0, filter: 'blur(150px) saturate(1.35) contrast(1.08) brightness(0.76)', transform: 'scale(1.28)' },
-                        { opacity: 0.8, filter: 'blur(92px) saturate(1.85) contrast(1.18) brightness(0.92)', transform: 'scale(1.26)' }
-                    ],
-                    { duration: 560, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
-                );
-                if (current) {
-                    try { current.getAnimations().forEach(a => a.cancel()); } catch (_) {}
-                    const out = current.animate(
-                        [
-                            { opacity: getComputedStyle(current).opacity || '0.8', filter: getComputedStyle(current).filter || 'blur(92px)', transform: getComputedStyle(current).transform || 'scale(1.26)' },
-                            { opacity: 0, filter: 'blur(170px) saturate(1.25) contrast(1.05) brightness(0.72)', transform: 'scale(1.32)' }
-                        ],
-                        { duration: 560, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
-                    );
-                    out.onfinish = () => { try { current.remove(); } catch (_) {} };
-                }
-                const layers = highlightsAmbient.querySelectorAll('.highlights-ambient-layer');
-                if (layers.length > 2) {
-                    for (let k = 0; k < layers.length - 2; k += 1) {
-                        try { layers[k].remove(); } catch (_) {}
-                    }
-                }
-            };
-            img.onerror = () => {
-                if (token !== ambientToken) return;
-                if (current) {
-                    current.style.backgroundImage = `url(${url})`;
-                } else {
-                    highlightsAmbient.appendChild(makeLayer(url));
-                }
-            };
-            img.src = url;
-        }
-        
-        function ensureHighlightsAmbientVideos() {
-            if (!highlightsAmbient) return false;
-            if (ambientVideoA && ambientVideoB) return true;
-            const mk = () => {
-                const v = document.createElement('video');
-                v.className = 'highlights-ambient-video';
-                v.muted = true;
-                v.playsInline = true;
-                v.autoplay = false;
-                v.preload = 'metadata';
-                v.loop = true;
-                v.setAttribute('aria-hidden', 'true');
-                v.tabIndex = -1;
-                v.style.opacity = '0';
-                return v;
-            };
-            ambientVideoA = mk();
-            ambientVideoB = mk();
-            highlightsAmbient.appendChild(ambientVideoA);
-            highlightsAmbient.appendChild(ambientVideoB);
-            return true;
-        }
-        
-        function bindAmbientToVideo(sourceVideo, ambientVideo) {
-            if (!sourceVideo || !ambientVideo) return () => {};
-            let raf = 0;
-            const syncOnce = () => {
-                if (!sourceVideo || !ambientVideo) return;
-                if (ambientVideo.readyState < 2) return;
-                const s = sourceVideo.currentTime || 0;
-                const a = ambientVideo.currentTime || 0;
-                if (Math.abs(a - s) > 0.16) {
-                    try { ambientVideo.currentTime = s; } catch (_) {}
-                }
-            };
-            const tick = () => {
-                syncOnce();
-                if (!sourceVideo.paused && !sourceVideo.ended) {
-                    raf = requestAnimationFrame(tick);
-                } else {
-                    raf = 0;
-                }
-            };
-            const onPlay = () => {
-                try { ambientVideo.play().catch(() => {}); } catch (_) {}
-                if (!raf) raf = requestAnimationFrame(tick);
-            };
-            const onPause = () => {
-                try { ambientVideo.pause(); } catch (_) {}
-                if (raf) { cancelAnimationFrame(raf); raf = 0; }
-            };
-            const onSeek = () => {
-                syncOnce();
-            };
-            sourceVideo.addEventListener('play', onPlay);
-            sourceVideo.addEventListener('pause', onPause);
-            sourceVideo.addEventListener('ended', onPause);
-            sourceVideo.addEventListener('seeking', onSeek);
-            sourceVideo.addEventListener('timeupdate', onSeek);
-            if (!sourceVideo.paused && !sourceVideo.ended) onPlay();
-            else onPause();
-            return () => {
-                sourceVideo.removeEventListener('play', onPlay);
-                sourceVideo.removeEventListener('pause', onPause);
-                sourceVideo.removeEventListener('ended', onPause);
-                sourceVideo.removeEventListener('seeking', onSeek);
-                sourceVideo.removeEventListener('timeupdate', onSeek);
-                if (raf) cancelAnimationFrame(raf);
-            };
-        }
-        
-        function setHighlightsAmbientFromVideo(sourceVideo, animate = true) {
-            if (!highlightsAmbient || !sourceVideo) return false;
-            const src = videoSrcFor(sourceVideo);
-            if (!src) return false;
-            if (!ensureHighlightsAmbientVideos()) return false;
-            const token = ++ambientVideoToken;
-            const nextIndex = ambientVideoActive === 0 ? 1 : 0;
-            const nextVideo = nextIndex === 0 ? ambientVideoA : ambientVideoB;
-            const prevVideo = ambientVideoActive === 0 ? ambientVideoA : ambientVideoB;
-            if (!nextVideo) return false;
-            if (ambientUnbind) { try { ambientUnbind(); } catch (_) {} }
-            ambientUnbind = null;
-            const srcChanged = (nextVideo.getAttribute('data-src') || '') !== src;
-            if (srcChanged) {
-                try { nextVideo.pause(); } catch (_) {}
-                nextVideo.setAttribute('data-src', src);
-                try { nextVideo.setAttribute('src', src); } catch (_) {}
-                try { nextVideo.src = src; } catch (_) {}
-                try { nextVideo.load(); } catch (_) {}
-            }
-            const ready = () => {
-                if (token !== ambientVideoToken) return;
-                try { nextVideo.currentTime = sourceVideo.currentTime || 0; } catch (_) {}
-                if (!sourceVideo.paused && !sourceVideo.ended) {
-                    try { nextVideo.play().catch(() => {}); } catch (_) {}
-                } else {
-                    try { nextVideo.pause(); } catch (_) {}
-                }
-                ambientUnbind = bindAmbientToVideo(sourceVideo, nextVideo);
-                const canAnimate = !!(nextVideo.animate && prevVideo && prevVideo.animate);
-                if (!animate || !canAnimate) {
-                    nextVideo.style.opacity = '0.8';
-                    nextVideo.style.filter = 'blur(92px) saturate(1.85) contrast(1.18) brightness(0.92)';
-                    nextVideo.style.transform = 'scale(1.26)';
-                    if (prevVideo && prevVideo !== nextVideo) prevVideo.style.opacity = '0';
-                    ambientVideoActive = nextIndex;
-                    return;
-                }
-                try { nextVideo.getAnimations().forEach(a => a.cancel()); } catch (_) {}
-                try { prevVideo.getAnimations().forEach(a => a.cancel()); } catch (_) {}
-                nextVideo.animate(
-                    [
-                        { opacity: 0, filter: 'blur(150px) saturate(1.35) contrast(1.08) brightness(0.76)', transform: 'scale(1.28)' },
-                        { opacity: 0.8, filter: 'blur(92px) saturate(1.85) contrast(1.18) brightness(0.92)', transform: 'scale(1.26)' }
-                    ],
-                    { duration: 560, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
-                );
-                if (prevVideo && prevVideo !== nextVideo) {
-                    const out = prevVideo.animate(
-                        [
-                            { opacity: getComputedStyle(prevVideo).opacity || '0.8', filter: getComputedStyle(prevVideo).filter || 'blur(92px)', transform: getComputedStyle(prevVideo).transform || 'scale(1.26)' },
-                            { opacity: 0, filter: 'blur(170px) saturate(1.25) contrast(1.05) brightness(0.72)', transform: 'scale(1.32)' }
-                        ],
-                        { duration: 560, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
-                    );
-                    out.onfinish = () => {
-                        try { prevVideo.pause(); } catch (_) {}
-                    };
-                }
-                ambientVideoActive = nextIndex;
-            };
-            if (nextVideo.readyState >= 2 && !srcChanged) {
-                ready();
-            } else {
-                const onCanPlay = () => {
-                    nextVideo.removeEventListener('canplay', onCanPlay);
-                    ready();
-                };
-                nextVideo.addEventListener('canplay', onCanPlay);
-                setTimeout(() => {
-                    nextVideo.removeEventListener('canplay', onCanPlay);
-                    ready();
-                }, 800);
-            }
-            return true;
-        }
-        
-        function updateHighlightsAmbientForCurrent(animate = true) {
-            const slide = slides[currentIndex];
-            const video = slide ? slide.querySelector('video') : null;
-            if (video) ensureVideoSrc(video);
-            if (video && setHighlightsAmbientFromVideo(video, animate)) {
-                return;
-            }
-            setHighlightsAmbient(posterUrlForIndex(currentIndex), animate);
-        }
-        
         function computeTranslateX(index) {
             const trackRect = track.parentElement.getBoundingClientRect();
             const containerCenter = trackRect.width / 2;
@@ -1329,7 +1159,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         // Initial setup
-        updateHighlightsAmbientForCurrent(false);
         updateSlidePosition(false);
         
         // Start playing videos on user interaction or intersection
@@ -1381,17 +1210,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const translateX = computeTranslateX(currentIndex);
             if (window.gsap && animate) {
                 animating = true;
-                // Add subtle motion blur during animation
-                track.classList.add('motion-blur','blur-transition');
-                if (mainControls) mainControls.classList.add('motion-blur-soft','blur-transition');
                 window.gsap.to(track, {
                     x: translateX,
                     duration: 0.9,
                     ease: "power3.inOut",
                     onComplete: () => { 
                         animating = false; 
-                        track.classList.remove('motion-blur');
-                        if (mainControls) mainControls.classList.remove('motion-blur-soft');
                     }
                 });
             } else {
@@ -1445,8 +1269,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // Update Play Button Icon
             updatePlayButtonIcon();
 
-            updateHighlightsAmbientForCurrent(animate);
-
             // Ensure progress and auto-advance are bound for the active slide
             if (isPlaying) {
                 cancelProgress();
@@ -1498,11 +1320,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("Autoplay prevented:", e);
                     isPlaying = false;
                     updatePlayButtonIcon();
-                    updateHighlightsAmbientForCurrent(true);
                 });
                 isPlaying = true;
                 updatePlayButtonIcon();
-                updateHighlightsAmbientForCurrent(true);
                 
                 // When video ends, go next
                 video.onended = () => {
